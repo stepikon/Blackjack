@@ -13,14 +13,13 @@ namespace Blackjack
         string name;
 
         CardFace[] shoe;
-        public Card[] hand;
 
         private Card hiddenCard;
 
         Random random;
 
-        public Dealer(string name, int deckAmount, Random random)
-            :base(name)
+        public Dealer(string name, Card hand, int deckAmount, Random random)
+            :base(name, hand)
         {
             this.name = name;
             this.deckAmount = deckAmount;
@@ -159,26 +158,18 @@ namespace Blackjack
             }
         }
 
-        public CardFace Deal()
+        public void Deal(Character character)
         {
             CardFace card = shoe[cardToDeal];
+            character.hand.AddToHand(card);
             cardToDeal++;
-            return card;
         }
 
         public void Display()
         {
-            cardToDeal = 0;
-            Console.BackgroundColor = ConsoleColor.White;
-            CardFace card, card2;
-            card2 = new CardAce("A", "Hearts", "red", ConsoleColor.Black, false);
-
-            for (int i = 0; i < deckAmount*52; i++)
+            foreach (CardFace card in shoe)
             {
-                card = Deal();
-                Console.ForegroundColor = card.C;
-                Console.WriteLine(card.Name + card.Suit + card.Color + card.GetCardValue());
-                //Console.WriteLine(card.GetType()==card2.GetType());
+                Console.WriteLine(card.Name);
             }
         }
     }

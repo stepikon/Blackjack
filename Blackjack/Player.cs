@@ -6,8 +6,8 @@ namespace Blackjack
 {
     abstract class Player:Character
     {
-        public Player(string name):
-            base(name)
+        public Player(string name, Card hand):
+            base(name, hand)
         { }
     }
 }

@@ -9,5 +9,6 @@ namespace Blackjack
     {
         public abstract void AddToHand(Card card);
         public abstract void RemoveFromHand(Card card);
+        public abstract void Display();
     }
 }

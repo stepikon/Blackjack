@@ -52,5 +52,10 @@ namespace Blackjack
         {
             Console.WriteLine("Cannot remove from {0}", card);
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 }

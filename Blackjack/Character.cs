@@ -8,11 +8,12 @@ namespace Blackjack
     {
         private string name;
 
-        private Card hand;
+        public Card hand;
 
-        public Character(string name)
+        public Character(string name, Card hand)
         { 
             this.name = name;
+            this.hand = hand;
         }
     }
 }

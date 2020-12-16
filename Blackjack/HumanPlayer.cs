@@ -9,8 +9,8 @@ namespace Blackjack
         private int chips;
 
 
-        public HumanPlayer(string name) :
-            base(name)
+        public HumanPlayer(string name, Card hand) :
+            base(name, hand)
         { }
     }
 }

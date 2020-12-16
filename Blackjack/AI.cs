@@ -6,8 +6,8 @@ namespace Blackjack
 {
     class AI:Player
     {
-        public AI(string name) :
-            base(name)
+        public AI(string name, Card hand) :
+            base(name, hand)
         { }
     }
 }
