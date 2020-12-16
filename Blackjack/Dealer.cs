@@ -4,28 +4,36 @@ using System.Text;
 
 namespace Blackjack
 {
-    class Dealer
+    class Dealer:Character
     {
         int deckAmount;
         int deckPenetration;
         int cardToDeal;
 
-        Card[] shoe;
-        Card[] hand;
+        string name;
+
+        CardFace[] shoe;
+        public Card[] hand;
+
+        private Card hiddenCard;
 
         Random random;
 
-        public Dealer(int deckAmount, Random random)
+        public Dealer(string name, int deckAmount, Random random)
+            :base(name)
         {
+            this.name = name;
             this.deckAmount = deckAmount;
             this.random = random;
 
-            shoe = new Card[52*deckAmount];
+            shoe = new CardFace[52*deckAmount];
         }
+
+        public string Name { get; }
 
         public void BuildShoe()
         {
-            string rank = "", suit="", color = "";
+            string name = "", suit="", color = "";
             ConsoleColor consoleColor = 0;
 
             for (int i = 0; i < deckAmount; i++)
@@ -64,56 +72,56 @@ namespace Blackjack
                         switch (k)
                         {
                             case 0:
-                                rank = "K";
-                                shoe[i * 52 + j * 13 + k] = new CardKing(rank, suit, color, consoleColor);
+                                name = "K";
+                                shoe[i * 52 + j * 13 + k] = new CardKing(name, suit, color, consoleColor);
                                 break;
                             case 1:
-                                rank = "A";
-                                shoe[i * 52 + j * 13 + k] = new CardAce(rank, suit, color, consoleColor, false);
+                                name = "A";
+                                shoe[i * 52 + j * 13 + k] = new CardAce(name, suit, color, consoleColor, false);
                                 break;
                             case 2:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardTwo(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardTwo(name, suit, color, consoleColor);
                                 break;
                             case 3:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardThree(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardThree(name, suit, color, consoleColor);
                                 break;
                             case 4:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardFour(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardFour(name, suit, color, consoleColor);
                                 break;
                             case 5:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardFive(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardFive(name, suit, color, consoleColor);
                                 break;
                             case 6:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardSix(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardSix(name, suit, color, consoleColor);
                                 break;
                             case 7:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardSeven(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardSeven(name, suit, color, consoleColor);
                                 break;
                             case 8:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardEight(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardEight(name, suit, color, consoleColor);
                                 break;
                             case 9:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardNine(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardNine(name, suit, color, consoleColor);
                                 break;
                             case 10:
-                                rank = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardTen(rank, suit, color, consoleColor);
+                                name = k.ToString();
+                                shoe[i * 52 + j * 13 + k] = new CardTen(name, suit, color, consoleColor);
                                 break;
                             case 11:
-                                rank = "J";
-                                shoe[i * 52 + j * 13 + k] = new CardJack(rank, suit, color, consoleColor);
+                                name = "J";
+                                shoe[i * 52 + j * 13 + k] = new CardJack(name, suit, color, consoleColor);
                                 break;
                             case 12:
-                                rank = "Q";
-                                shoe[i * 52 + j * 13 + k] = new CardQueen(rank, suit, color, consoleColor);
+                                name = "Q";
+                                shoe[i * 52 + j * 13 + k] = new CardQueen(name, suit, color, consoleColor);
                                 break;
                             default:
                                 Console.WriteLine("Never Happens");
@@ -138,7 +146,7 @@ namespace Blackjack
 
         public void Shuffle()
         {
-            Card temp;
+            CardFace temp;
             int index;
 
             for (int i = 0; i < deckAmount*52; i++)
@@ -151,9 +159,9 @@ namespace Blackjack
             }
         }
 
-        public Card Deal()
+        public CardFace Deal()
         {
-            Card card = shoe[cardToDeal];
+            CardFace card = shoe[cardToDeal];
             cardToDeal++;
             return card;
         }
@@ -162,15 +170,15 @@ namespace Blackjack
         {
             cardToDeal = 0;
             Console.BackgroundColor = ConsoleColor.White;
-            Card card, card2;
+            CardFace card, card2;
             card2 = new CardAce("A", "Hearts", "red", ConsoleColor.Black, false);
 
             for (int i = 0; i < deckAmount*52; i++)
             {
                 card = Deal();
                 Console.ForegroundColor = card.C;
-                Console.WriteLine(card.Rank + card.Suit + card.Color + card.GetCardValue(true) + "or" + card.GetCardValue(false));
-                Console.WriteLine(card.GetType()==card2.GetType());
+                Console.WriteLine(card.Name + card.Suit + card.Color + card.GetCardValue());
+                //Console.WriteLine(card.GetType()==card2.GetType());
             }
         }
     }
