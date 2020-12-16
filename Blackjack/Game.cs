@@ -19,13 +19,40 @@ namespace Blackjack
 
         public void Run()
         {
-            for (int i = 0; i < 200; i++)
+            //Deal
+            for (int i = 0; i < 2; i++)
             {
-                dealer.Deal(players[0]);
+                for (int j = 0; j < players.Length; j++)
+                {
+                    dealer.Deal(players[j]);
+                }
 
-                players[0].hand.Display();
+                if (i==0)
+                {
+                    dealer.Deal(dealer);
+                }
+                else
+                {
+                    dealer.DealHidden();
+                }
             }
-            
+
+            foreach (Player p in players)
+            {
+                p.hand.Display();
+            }
+            Console.WriteLine();
+            dealer.hand.Display();
+
+            //getChoices...
+
+            Console.WriteLine();
+            dealer.RevealHidden();
+            dealer.hand.Display();
+
+            //Dealers turn...
+
+            //outcomes
         }
     }
 }

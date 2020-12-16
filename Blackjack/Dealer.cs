@@ -165,6 +165,18 @@ namespace Blackjack
             cardToDeal++;
         }
 
+        public void DealHidden()
+        {
+            hiddenCard = shoe[cardToDeal];
+            cardToDeal++;
+        }
+
+        public void RevealHidden()
+        {
+            hand.AddToHand(hiddenCard);
+            hiddenCard = null;
+        }
+
         public void Display()
         {
             foreach (CardFace card in shoe)
