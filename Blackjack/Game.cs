@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Blackjack
 {
@@ -19,40 +20,72 @@ namespace Blackjack
 
         public void Run()
         {
-            //Deal
-            for (int i = 0; i < 2; i++)
+            do
             {
-                for (int j = 0; j < players.Length; j++)
+                Console.WriteLine("newRound");
+                //Deal
+                for (int i = 0; i < 2; i++)
                 {
-                    dealer.Deal(players[j]);
+                    for (int j = 0; j < players.Length; j++)
+                    {
+                        dealer.Deal(players[j], 0);
+                    }
+
+                    if (i == 0)
+                    {
+                        dealer.Deal(dealer, 0);
+                    }
+                    else
+                    {
+                        dealer.DealHidden();
+                    }
                 }
 
-                if (i==0)
+                foreach (Player p in players)
                 {
-                    dealer.Deal(dealer);
+                    p.DisplayHands();
                 }
-                else
+                Console.WriteLine();
+                dealer.DisplayHand();
+
+                Console.WriteLine("-----");
+
+                foreach (Player p in players)
                 {
-                    dealer.DealHidden();
+                    p.TakeTurn(dealer);
                 }
-            }
 
-            foreach (Player p in players)
-            {
-                p.hand.Display();
-            }
-            Console.WriteLine();
-            dealer.hand.Display();
+                Console.WriteLine();
+                dealer.RevealHidden();
+                dealer.DisplayHand();
 
-            //getChoices...
+                Console.WriteLine("-----");
 
-            Console.WriteLine();
-            dealer.RevealHidden();
-            dealer.hand.Display();
+                dealer.TakeTurn();
+                dealer.DisplayHand();
 
-            //Dealers turn...
+                Console.WriteLine("----");
 
-            //outcomes
+                foreach (Player p in players)
+                {
+                    foreach (int i in p.GetHandValues())
+                    {
+                        Console.Write("player: {0} ", i);
+                    }
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine(dealer.GetHandValue(dealer.hand).Item2);
+                Console.WriteLine("----");
+                //outcomes
+
+                foreach (Player p in players)
+                {
+                    p.ResetHands();
+                }
+
+                dealer.ResetHand();
+            } while (Console.ReadKey().KeyChar!='q');
         }
     }
 }

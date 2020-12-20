@@ -12,23 +12,25 @@ namespace Blackjack
 
         string name;
 
-        CardFace[] shoe;
+        Card[] shoe;
 
         private Card hiddenCard;
 
         Random random;
 
-        public Dealer(string name, Card hand, int deckAmount, Random random)
+        public Dealer(string name, List<Card> hand, int deckAmount, Random random)
             :base(name, hand)
         {
             this.name = name;
             this.deckAmount = deckAmount;
             this.random = random;
 
-            shoe = new CardFace[52*deckAmount];
+            shoe = new Card[52*deckAmount];
         }
 
         public string Name { get; }
+        public int DeckAmount { get; }
+        public int CardToDeal { get; }
 
         public void BuildShoe()
         {
@@ -145,7 +147,7 @@ namespace Blackjack
 
         public void Shuffle()
         {
-            CardFace temp;
+            Card temp;
             int index;
 
             for (int i = 0; i < deckAmount*52; i++)
@@ -158,10 +160,10 @@ namespace Blackjack
             }
         }
 
-        public void Deal(Character character)
+        public void Deal(Character character, int i)
         {
-            CardFace card = shoe[cardToDeal];
-            character.hand.AddToHand(card);
+            Card card = shoe[cardToDeal];
+            character.hands[i].Add(card);
             cardToDeal++;
         }
 
@@ -173,16 +175,144 @@ namespace Blackjack
 
         public void RevealHidden()
         {
-            hand.AddToHand(hiddenCard);
+            hand.Add(hiddenCard);
             hiddenCard = null;
+        }
+
+        public void TakeTurn()
+        {
+            string choice = "";
+
+            do
+            {
+                choice = GetChoice();
+
+                switch (choice)
+                {
+                    case CHOICE_HIT:
+                        Hit();
+                        break;
+                    case CHOICE_STAND:
+                        Stand();
+                        break;
+                    default:
+                        break;
+                }
+            } while (choice!=CHOICE_STAND);
+        }
+
+        public override string GetChoice()
+        {
+            if (GetHandValue(hand).Item2<17)
+            {
+                return CHOICE_HIT;
+            }
+            else if (GetHandValue(hand).Item2 == 17 && GetHandValue(hand).Item3)
+            {
+                return CHOICE_HIT;
+            }
+            else
+            {
+                return CHOICE_STAND;
+            }
+        }
+
+        public override Tuple<int, int, bool> GetHandValue(List<Card> hand)
+        {
+            int handValue = 0;
+            bool hasSoftAce = false;
+
+            foreach (Card c in hand)
+            {
+                handValue += c.GetCardValue();
+            }
+
+            foreach (Card c in hand)
+            {
+                if (c is CardAce)
+                {
+                    CardAce cA = (CardAce)c;
+                    if (!cA.AceIsOne)
+                    {
+                        hasSoftAce = true;
+                        break;
+                    }
+                }
+            }
+
+            if (handValue > 21 && hasSoftAce) //since 11+11=22, one hand can only contain 1 soft ace.
+            {
+                SetSoftAceToHard();
+
+                handValue = 0;
+                hasSoftAce = false;
+                foreach (Card c in hand)
+                {
+                    handValue += c.GetCardValue();
+                }
+
+                foreach (Card c in hand)
+                {
+                    if (c is CardAce)
+                    {
+                        CardAce cA = (CardAce)c;
+                        if (!cA.AceIsOne)
+                        {
+                            hasSoftAce = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return new Tuple<int, int, bool>(hasSoftAce ? handValue - 10 : handValue, handValue, hasSoftAce);
+        }
+
+        public override void SetSoftAceToHard()
+        {
+            foreach (Card c in hand)
+            {
+                if (c is CardAce)
+                {
+                    CardAce cA = (CardAce)c;
+                    if (!cA.AceIsOne)
+                    {
+                        cA.AceIsOne = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void Hit()
+        {
+            Deal(this, 0);
+        }
+
+        private void Stand()
+        { 
+        
+        }
+
+        public void DisplayHand()
+        {
+            foreach (Card c in hand)
+            {
+                Console.WriteLine(c.Name);
+            }
         }
 
         public void Display()
         {
-            foreach (CardFace card in shoe)
+            foreach (Card card in shoe)
             {
                 Console.WriteLine(card.Name);
             }
+        }
+
+        public void ResetHand()
+        {
+            hand.Clear();
         }
     }
 }

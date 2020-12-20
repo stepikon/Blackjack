@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blackjack
 {
-    class CardTwo:CardFace
+    class CardTwo:Card
     {
         public CardTwo(string name, string suit, string color, ConsoleColor colorOfConsole)
             :base(name, suit, color, colorOfConsole)
@@ -19,9 +19,14 @@ namespace Blackjack
         {
             return 1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardThree: CardFace
+    class CardThree:Card
     {
         public CardThree(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -36,9 +41,14 @@ namespace Blackjack
         {
             return 1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardFour : CardFace
+    class CardFour : Card
     {
         public CardFour(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -53,9 +63,14 @@ namespace Blackjack
         {
             return 1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardFive : CardFace
+    class CardFive : Card
     {
         public CardFive(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -70,9 +85,14 @@ namespace Blackjack
         {
             return 1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardSix : CardFace
+    class CardSix : Card
     {
         public CardSix(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -87,9 +107,14 @@ namespace Blackjack
         {
             return 1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardSeven : CardFace
+    class CardSeven : Card
     {
         public CardSeven(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -104,9 +129,14 @@ namespace Blackjack
         {
             return 0;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardEight : CardFace
+    class CardEight : Card
     {
         public CardEight(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -121,9 +151,14 @@ namespace Blackjack
         {
             return 0;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardNine : CardFace
+    class CardNine : Card
     {
         public CardNine(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -138,9 +173,14 @@ namespace Blackjack
         {
             return 0;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardTen : CardFace
+    class CardTen : Card
     {
         public CardTen(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -155,9 +195,14 @@ namespace Blackjack
         {
             return -1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardJack : CardFace
+    class CardJack : Card
     {
         public CardJack(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -172,9 +217,14 @@ namespace Blackjack
         {
             return -1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardQueen : CardFace
+    class CardQueen : Card
     {
         public CardQueen(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -189,9 +239,14 @@ namespace Blackjack
         {
             return -1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardKing : CardFace
+    class CardKing : Card
     {
         public CardKing(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
@@ -206,9 +261,14 @@ namespace Blackjack
         {
             return -1;
         }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
+        }
     }
 
-    class CardAce : CardFace
+    class CardAce : Card
     {
         private bool aceIsOne;
 
@@ -216,6 +276,21 @@ namespace Blackjack
             : base(name, suit, color, colorOfConsole)
         {
             this.aceIsOne = aceIsOne;
+        }
+
+        public bool AceIsOne {
+            get { return aceIsOne; }
+            set
+            {
+                if (value==true || value == false)
+                {
+                    aceIsOne = value;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
         }
 
         public override int GetCardValue()
@@ -233,6 +308,11 @@ namespace Blackjack
         public override int GetCardCountValue()
         {
             return -1;
+        }
+
+        public override void Display()
+        {
+            Console.WriteLine(name);
         }
     }
 }
