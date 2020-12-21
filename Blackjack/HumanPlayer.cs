@@ -58,6 +58,10 @@ namespace Blackjack
                         choice = CHOICE_STAND;
                         isDouble = false;
                     }
+                    else if (hands[i].Count == 1) //automatic choice, you are always dealt a card do BOTH hands after splitting.
+                    {
+                        choice = CHOICE_HIT;
+                    }
                     else
                     {
                         choice = GetChoice();
@@ -72,8 +76,15 @@ namespace Blackjack
                             Split(hands[i]);
                             break;
                         case CHOICE_DOUBLE:
-                            Double(i);
-                            isDouble = true;
+                            if (hands[i].Count == 2)
+                            {
+                                Double(i);
+                                isDouble = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Cannot double");
+                            }                           
                             break;
                         case CHOICE_STAND:
                             Stand();
