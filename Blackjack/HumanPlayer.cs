@@ -7,9 +7,6 @@ namespace Blackjack
 {
     class HumanPlayer:Player
     {
-        private int chips;
-
-
         public HumanPlayer(string name, List<Card> hand) :
             base(name, hand)
         { }
@@ -123,9 +120,9 @@ namespace Blackjack
                     }
                 case 1:
                     if (hand.Count == 2 && (hand[0].GetCardValue() == hand[1].GetCardValue())
-                        && hands[2] == null)
+                        && (hands[2] == null || hands[3] == null))
                     {
-                        return 2;
+                        return hands[2] == null ? 2 : 3;
                     }
                     else
                     {
