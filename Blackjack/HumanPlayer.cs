@@ -7,8 +7,8 @@ namespace Blackjack
 {
     class HumanPlayer:Player
     {
-        public HumanPlayer(string name, List<Card> hand) :
-            base(name, hand)
+        public HumanPlayer(string name, List<Card> hand, int chips, Tuple<int,int> tableLimits) :
+            base(name, hand, chips, tableLimits)
         { }
 
         public override string GetChoice()
@@ -30,7 +30,8 @@ namespace Blackjack
 
         public override void TakeTurn(Dealer dealer)
         {
-            string choice = "";
+            string choice;
+            bool isDouble = false;
 
             for (int i = 0; i<hands.Length; i++)
             {
@@ -44,7 +45,23 @@ namespace Blackjack
                     DisplayHands();
                     Console.WriteLine("{0} or {1} (soft ace: {2})",
                         GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2, GetHandValue(hands[i]).Item3);
-                    choice = GetChoice();
+
+                    if (GetHandValue(hands[i]).Item1 >= 21 || GetHandValue(hands[i]).Item2 >= 21) //obvious choice; you always stand on 21 and you lose after going over 21.
+                    {
+                        choice = CHOICE_STAND;
+                    }
+                    else if (isDouble||(hands[i].Count==1)&&hands[i][0] is CardAce) //after doubling you only get 1 card. The same rule apply if you split AA.
+                    {
+                        Hit(dealer, i);
+                        DisplayHands();
+                        Console.WriteLine("Last card on hand {0}", i);
+                        choice = CHOICE_STAND;
+                        isDouble = false;
+                    }
+                    else
+                    {
+                        choice = GetChoice();
+                    }
 
                     switch (choice)
                     {
@@ -54,10 +71,17 @@ namespace Blackjack
                         case CHOICE_SPLIT:
                             Split(hands[i]);
                             break;
+                        case CHOICE_DOUBLE:
+                            Double(i);
+                            isDouble = true;
+                            break;
+                        case CHOICE_STAND:
+                            Stand();
+                            break;
                         default:
                             break;
                     }
-                } while (choice != "stand");
+                } while (choice != CHOICE_STAND);
             }
         }
 
@@ -81,9 +105,49 @@ namespace Blackjack
             Console.WriteLine("Human does this on his own");
         }
 
-        private void Hit(Dealer dealer, int hand)
+        public override void Bet(List<Card> hand)
         {
-            dealer.Deal(this, hand);
+            int bet;
+
+            do
+            {
+                Console.WriteLine("How much do you want to bet?\n" +
+                    "You have {0} chips, table limits are {1}-{2}", chips, tableLimits.Item1, tableLimits.Item2);
+            } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= tableLimits.Item2 && CheckBet(bet)));
+
+            bets[Array.IndexOf(hands, hand)] += bet;
+            chips -= bet;
+        }
+
+        public override void Bet(List<Card> hand, int bet)
+        {
+            if (CheckBet(bet))
+            {
+                bets[Array.IndexOf(hands, hand)] += bet;
+                chips -= bet;
+            }
+        }
+
+        public override bool CheckBet(int bet)
+        {
+            if (bet > chips||bet<tableLimits.Item1||bet>tableLimits.Item2)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public override int GetBet(int index)
+        {
+            return bets[index];
+        }
+
+        private void Hit(Dealer dealer, int handIndex)
+        {
+            dealer.Deal(this, handIndex);
         }
 
         private void Stand()
@@ -100,17 +164,34 @@ namespace Blackjack
                 hand.Remove(hand[1]);
                 hands[newHandIndex] = new List<Card>();
                 hands[newHandIndex].Add(temp);
+                Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)]);
             }
         }
 
-        //splitting is valid if and only if there are exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
+        private void Double(int index)
+        {
+            if (chips>=tableLimits.Item1)
+            {
+                int bet;
+
+                do
+                {
+                    Console.WriteLine("How much do you want to bet?\n" +
+                        "You have {0} chips, bet limits are {1}-{2}", chips, tableLimits.Item1, bets[index]);
+                } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= bets[index] && CheckBet(bet)));
+
+                Bet(hands[index], bet);
+            }
+        }
+
+        //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
         private int IsSplittingValid(List<Card> hand)
         {
             switch (Array.IndexOf(hands, hand))
             {
                 case 0:
                     if (hand.Count==2&&(hand[0].GetCardValue()==hand[1].GetCardValue())
-                        &&(hands[1]==null||hands[2]==null))
+                        &&(hands[1]==null||hands[2]==null)&&CheckBet(bets[0]))
                     {
                         return hands[1]==null? 1 : 2;
                     }
@@ -120,7 +201,7 @@ namespace Blackjack
                     }
                 case 1:
                     if (hand.Count == 2 && (hand[0].GetCardValue() == hand[1].GetCardValue())
-                        && (hands[2] == null || hands[3] == null))
+                        && (hands[2] == null || hands[3] == null) && CheckBet(bets[1]))
                     {
                         return hands[2] == null ? 2 : 3;
                     }
@@ -169,10 +250,12 @@ namespace Blackjack
         public override void ResetHands()
         {
             hands[0].Clear();
+            bets[0] = 0;
 
             for (int i = 1; i < hands.Length; i++)
             {
                 hands[i] = null;
+                bets[i] = 0;
             }
         }
     }

@@ -9,12 +9,40 @@ namespace Blackjack
         protected const string CHOICE_DOUBLE = "double";
         protected const string CHOICE_SPLIT = "split";
 
-        public Player(string name, List<Card> hand) :
+        protected int chips;
+
+        protected Tuple<int, int> tableLimits;
+        protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
+
+        public Player(string name, List<Card> hand, int chips, Tuple<int,int> tableLimits) :
             base(name, hand)
         {
+            this.chips = chips;
+            this.tableLimits = tableLimits;
+        }
+
+        public int Chips 
+        {
+            get
+            { return chips; }
+            set 
+            {
+                if (value<0)
+                {
+                    throw new ArgumentException();
+                }
+                else
+                {
+                    chips = value;
+                }
+            }
         }
 
         public abstract void TakeTurn(Dealer dealer);
+        public abstract void Bet(List<Card> hand);
+        public abstract void Bet(List<Card> hand, int bet);
+        public abstract bool CheckBet(int bet);
+        public abstract int GetBet(int index);
         public abstract void CountDealt();
         public abstract void UpdateRunningCount();
         public abstract void UpdateTrueCount();

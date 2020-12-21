@@ -8,12 +8,14 @@ namespace Blackjack
     class Game
     {
         Dealer dealer;
+        Tuple<int, int> tableLimits;
         Player[] players;
         Random random;
 
-        public Game(Dealer dealer, Player[] players, Random random)
+        public Game(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random)
         {
             this.dealer = dealer;
+            this.tableLimits = tableLimits;
             this.players = players;
             this.random = random;
         }
@@ -23,6 +25,11 @@ namespace Blackjack
             do
             {
                 Console.WriteLine("newRound");
+                foreach (Player p in players)
+                {
+                    p.Bet(p.hands[0]);
+                }
+                Console.WriteLine("-----");
                 //Deal
                 for (int i = 0; i < 2; i++)
                 {
@@ -68,9 +75,24 @@ namespace Blackjack
 
                 foreach (Player p in players)
                 {
-                    foreach (int i in p.GetHandValues())
+                    for(int i = 0; i < p.GetHandValues().Count; i++)
                     {
-                        Console.Write("player: {0} ", i);
+                        Console.WriteLine("player: {0} ", p.GetHandValues()[i]);
+                        if ((p.GetHandValues()[i] > dealer.GetHandValue(dealer.hand).Item2 
+                            || dealer.GetHandValue(dealer.hand).Item2 > 21)
+                            && p.GetHandValues()[i] <= 21)
+                        {
+                            Win(p, i);
+                        }
+                        else if (p.GetHandValues()[i] < dealer.GetHandValue(dealer.hand).Item2
+                            || p.GetHandValues()[i] > 21)
+                        {
+                            Lose(p, i);
+                        }
+                        else
+                        {
+                            Push(p, i);
+                        }
                     }
                     Console.WriteLine();
                 }
@@ -86,6 +108,23 @@ namespace Blackjack
 
                 dealer.ResetHand();
             } while (Console.ReadKey().KeyChar!='q');
+        }
+
+        private void Win(Player player, int handIndex)
+        {
+            player.Chips += player.GetBet(handIndex) * 2;
+            Console.WriteLine("You won {0} chips, you now have {1} chips.", player.GetBet(handIndex) * 2, player.Chips);
+        }
+
+        private void Lose(Player player, int handIndex)
+        {
+            Console.WriteLine("You lost, you now have {0} chips.", player.Chips);
+        }
+
+        private void Push(Player player, int handIndex)
+        {
+            player.Chips += player.GetBet(handIndex);
+            Console.WriteLine("Push, {0} chips returned, you now have {1} chips.", player.GetBet(handIndex), player.Chips);
         }
     }
 }

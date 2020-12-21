@@ -9,8 +9,8 @@ namespace Blackjack
         private int runningCount;
         private int trueCount;
 
-        public AI(string name, List<Card> hand) :
-            base(name, hand)
+        public AI(string name, List<Card> hand, int chips, Tuple<int, int> tableLimits) :
+            base(name, hand, chips, tableLimits)
         { }
 
         public override void TakeTurn(Dealer dealer)
@@ -42,6 +42,37 @@ namespace Blackjack
         {
             runningCount = 0;
             trueCount = 0;
+        }
+
+        public override void Bet(List<Card> hand)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Bet(List<Card> hand, int bet)
+        {
+            if (CheckBet(bet))
+            {
+                bets[Array.IndexOf(hands, hand)] += bet;
+                chips -= bet;
+            }
+        }
+
+        public override bool CheckBet(int bet)
+        {
+            if (bet > chips || bet < tableLimits.Item1 || bet > tableLimits.Item2)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public override int GetBet(int index)
+        {
+            return bets[index];
         }
 
         public override void DisplayHands()
