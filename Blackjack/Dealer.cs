@@ -29,8 +29,9 @@ namespace Blackjack
             shoe = new Card[52*deckAmount];
         }
 
-        public int DeckAmount { get; }
-        public int CardToDeal { get; }
+        public int DeckAmount { get { return deckAmount; } }
+        public int CardToDeal { get { return cardToDeal; } }
+        public int DeckPenetration { get { return deckPenetration; } }
 
         public void BuildShoe()
         {

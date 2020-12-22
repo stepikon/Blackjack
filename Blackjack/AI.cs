@@ -80,6 +80,14 @@ namespace Blackjack
             throw new NotImplementedException();
         }
 
+        public override void BetPair(Tuple<int, int> limits)
+        {
+            if (allowPairBets)
+            {
+                allowPairBets = false;
+            }
+        }
+
         public override void DisplayHands()
         {
             for (int i = 0; i < hands.Length; i++)

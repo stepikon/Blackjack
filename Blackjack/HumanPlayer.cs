@@ -187,6 +187,53 @@ namespace Blackjack
             }
         }
 
+        public override void BetPair(Tuple<int, int> limits)
+        {
+            if (allowPairBets)
+            {
+                int bet;
+
+                do
+                {
+                    Console.WriteLine("How much do you want to bet?\n" +
+                        "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
+                    Console.WriteLine("Bet 0 to skip this bet.");
+                } while (!((int.TryParse(Console.ReadLine(), out bet) && bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)) || bet==0));
+
+                if (bet==0)
+                {
+                    string choice;
+
+                    do
+                    {
+                        Console.WriteLine("Allow this side bet for future rounds? (Y/N)");
+                        switch (Console.ReadKey().KeyChar)
+                        {
+                            case 'y':
+                            case 'Y':
+                                choice = "yes";
+                                break;
+                            case 'n':
+                            case 'N':
+                                choice = "no";
+                                break;
+                            default:
+                                choice = "";
+                                break;
+                        }
+                    } while (!(choice == "yes" || choice == "no"));
+
+                    if (choice == "no")
+                    {
+                        allowPairBets = false;
+                    }
+                }
+
+                pairBet = bet;
+                chips -= bet;
+            }
+        }
+
         private void Hit(Dealer dealer, int handIndex)
         {
             dealer.Deal(this, handIndex);
@@ -311,6 +358,7 @@ namespace Blackjack
             }
 
             insurance = 0;
+            pairBet = 0;
             hasBlackjack = false;
         }
     }

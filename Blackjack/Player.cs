@@ -11,15 +11,19 @@ namespace Blackjack
 
         protected double chips;
         protected double insurance;
+        protected int pairBet;
+
+        protected bool allowPairBets;
 
         protected Tuple<int, int> tableLimits;
         protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
 
-        public Player(string name, List<Card> hand, double chips, Tuple<int,int> tableLimits) :
+        public Player(string name, List<Card> hand, double chips, Tuple<int,int> tableLimits, bool allowPairBets = true) :
             base(name, hand)
         {
             this.chips = chips;
             this.tableLimits = tableLimits;
+            this.allowPairBets = allowPairBets;
         }
 
         public double Chips 
@@ -45,12 +49,19 @@ namespace Blackjack
             { return insurance; }
         }
 
+        public int PairBet
+        {
+            get
+            { return pairBet; }
+        }
+
         public abstract void TakeTurn(Dealer dealer);
         public abstract void Bet(List<Card> hand, Tuple<int, int> limits);
         public abstract void Bet(List<Card> hand, int bet, Tuple<int, int> limits);
         public abstract bool CheckBet(double bet, Tuple<int, int> limits);
         public abstract int GetBet(int index);
         public abstract void BetInsurance();
+        public abstract void BetPair(Tuple<int, int> limits);
         public abstract void CountDealt();
         public abstract void UpdateRunningCount();
         public abstract void UpdateTrueCount();

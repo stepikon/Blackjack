@@ -22,18 +22,23 @@ namespace Blackjack
 
         public void Run()
         {
+            dealer.SetDeckPenetration();
             bool allPlayersHaveBlackJack;
+
             do
             {
                 allPlayersHaveBlackJack = true;
 
+                //Betting
                 Console.WriteLine("newRound");
                 foreach (Player p in players)
                 {
                     p.Bet(p.hands[0], tableLimits);
+                    p.BetPair(tableLimits);
                 }
                 Console.WriteLine("-----");
-                //Deal
+
+                //Dealing
                 for (int i = 0; i < 2; i++)
                 {
                     for (int j = 0; j < players.Length; j++)
@@ -51,12 +56,44 @@ namespace Blackjack
                     }
                 }
 
+                //Pair bonus gets paid always first
+                foreach (Player p in players)
+                {
+                    if (p.PairBet!=0)
+                    {
+                        if (p.hand[0].GetType() == p.hand[1].GetType()
+                            && p.hand[0].Color == p.hand[1].Color
+                            && p.hand[0].Suit == p.hand[1].Suit)
+                        {
+                            Console.WriteLine("Perfect pair.");
+                            p.Chips += p.PairBet * 26;
+                        }
+                        else if (p.hand[0].GetType() == p.hand[1].GetType()
+                            && p.hand[0].Color == p.hand[1].Color)
+                        {
+                            Console.WriteLine("Color pair.");
+                            p.Chips += p.PairBet * 13;
+                        }
+                        else if (p.hand[0].GetType() == p.hand[1].GetType())
+                        {
+                            Console.WriteLine("Pair.");
+                            p.Chips += p.PairBet * 7;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Not a pair.");
+                        }
+                    }
+                }
+
+                //checks blackjacks
                 foreach (Player p in players)
                 {
                     p.SetHasBlackjack();
                 }
                 dealer.SetHasBlackjack();
 
+                //Displays hands
                 foreach (Player p in players)
                 {
                     p.DisplayHands();
@@ -66,6 +103,7 @@ namespace Blackjack
 
                 Console.WriteLine("-----");
 
+                //offers insurance if dealer shows an Ace
                 if (dealer.hand[0] is CardAce)
                 {
                     foreach (Player p in players)
@@ -76,6 +114,7 @@ namespace Blackjack
 
                 Console.WriteLine("-----");
 
+                //players turns
                 if (!dealer.HasBlackjack)
                 {
                     if (dealer.hand[0] is CardAce)
@@ -91,17 +130,19 @@ namespace Blackjack
                     Console.WriteLine("-----");
                 }
 
-                Console.WriteLine();
+                //Dealer reveals his cards
                 dealer.RevealHidden();
                 dealer.DisplayHand();
 
                 Console.WriteLine("-----");
 
+                //checks if everyone has BJ
                 foreach (Player p in players)
                 {
                     allPlayersHaveBlackJack = allPlayersHaveBlackJack && p.HasBlackjack;
                 }
 
+                //Dealers turn
                 if (!allPlayersHaveBlackJack)
                 {
                     dealer.TakeTurn();
@@ -110,6 +151,7 @@ namespace Blackjack
 
                 Console.WriteLine("----");
 
+                //outcomes
                 foreach (Player p in players)
                 {
                     for(int i = 0; i < p.GetHandValues().Count; i++)
@@ -144,14 +186,21 @@ namespace Blackjack
 
                 Console.WriteLine(dealer.GetHandValue(dealer.hand).Item2);
                 Console.WriteLine("----");
-                //outcomes
 
+                //Reset
                 foreach (Player p in players)
                 {
                     p.ResetHands();
                 }
-
                 dealer.ResetHand();
+
+                //Shuffle if necessary
+                if (dealer.CardToDeal >= dealer.DeckPenetration)
+                {
+                    Console.WriteLine("Shuffling");
+                    dealer.Shuffle();
+                    dealer.SetDeckPenetration();
+                }
             } while (Console.ReadKey().KeyChar!='q');
         }
 
