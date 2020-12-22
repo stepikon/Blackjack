@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Blackjack
 {
@@ -28,7 +29,6 @@ namespace Blackjack
             shoe = new Card[52*deckAmount];
         }
 
-        public string Name { get; }
         public int DeckAmount { get; }
         public int CardToDeal { get; }
 
@@ -310,9 +310,36 @@ namespace Blackjack
             }
         }
 
+        public override void SetHasBlackjack()
+        {
+            if (hiddenCard!=null)
+            {
+                if (hand[0].GetCardValue()+hiddenCard.GetCardValue() == 21 && hand.Count == 1)
+                {
+                    hasBlackjack = true;
+                }
+                else
+                {
+                    hasBlackjack = false;
+                }
+            }
+            else
+            {
+                if (hand.Count == 2 && hand[0].GetCardValue() + hand[1].GetCardValue() == 21)
+                {
+                    hasBlackjack = true;
+                }
+                else
+                {
+                    hasBlackjack = false;
+                }
+            }
+        }
+
         public void ResetHand()
         {
             hand.Clear();
+            hasBlackjack = false;
         }
     }
 }

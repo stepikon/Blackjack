@@ -117,5 +117,20 @@ namespace Blackjack
                 }
             }
         }
+
+        public override void SetHasBlackjack()
+        {
+            if (hands[0].Count == 2 && (hands[1]==null && hands[2] == null && hands[3] == null)
+                && (hands[0][0].GetCardValue() + hands[0][1].GetCardValue() == 21))
+            {
+                Console.WriteLine("BJ");
+                hasBlackjack = true;
+            }
+            else
+            {
+                Console.WriteLine("no BJ");
+                hasBlackjack = false;
+            }
+        }
     }
 }

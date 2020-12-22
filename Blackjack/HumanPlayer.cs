@@ -46,7 +46,7 @@ namespace Blackjack
                     Console.WriteLine("{0} or {1} (soft ace: {2})",
                         GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2, GetHandValue(hands[i]).Item3);
 
-                    if (GetHandValue(hands[i]).Item1 >= 21 || GetHandValue(hands[i]).Item2 >= 21) //obvious choice; you always stand on 21 and you lose after going over 21.
+                    if (GetHandValue(hands[i]).Item1 >= 21 || GetHandValue(hands[i]).Item2 >= 21 || hasBlackjack) //obvious choice; you always stand on 21 and you lose after going over 21.
                     {
                         choice = CHOICE_STAND;
                     }
@@ -76,7 +76,7 @@ namespace Blackjack
                             Split(hands[i]);
                             break;
                         case CHOICE_DOUBLE:
-                            if (hands[i].Count == 2)
+                            if (hands[i].Count == 2 && chips >= tableLimits.Item1)
                             {
                                 Double(i);
                                 isDouble = true;
@@ -172,6 +172,16 @@ namespace Blackjack
             if (newHandIndex!=-1)
             {
                 Card temp = hand[1];
+
+                if (temp is CardAce)
+                {
+                    CardAce cA = (CardAce)temp;
+                    CardAce cA2 = (CardAce)hand[0];
+
+                    cA.AceIsOne = false;
+                    cA2.AceIsOne = false;
+                }
+
                 hand.Remove(hand[1]);
                 hands[newHandIndex] = new List<Card>();
                 hands[newHandIndex].Add(temp);
@@ -181,17 +191,40 @@ namespace Blackjack
 
         private void Double(int index)
         {
-            if (chips>=tableLimits.Item1)
+            if (chips > tableLimits.Item1)
             {
                 int bet;
 
-                do
+                if (bets[index] > tableLimits.Item1)
                 {
-                    Console.WriteLine("How much do you want to bet?\n" +
-                        "You have {0} chips, bet limits are {1}-{2}", chips, tableLimits.Item1, bets[index]);
-                } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= bets[index] && CheckBet(bet)));
+                    do
+                    {
+                        Console.WriteLine("How much do you want to bet?\n" +
+                            "You have {0} chips, bet limits are {1}-{2}", chips, tableLimits.Item1, bets[index]);
+                    } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= bets[index] && CheckBet(bet)));
+                }
+                else if (bets[index] == tableLimits.Item1)
+                {
+                    bet = tableLimits.Item1;
+                    Console.WriteLine("Doubled for {0}", tableLimits.Item1);
+                }
+                else
+                {
+                    Console.WriteLine("MISTAKE: BET < TABLELIMIT");
+                    throw new ArgumentException();
+                }
 
                 Bet(hands[index], bet);
+            }
+            else if (chips == tableLimits.Item1)
+            {
+                int bet = tableLimits.Item1;
+                Bet(hands[index], bet);
+            }
+            else
+            {
+                //never happens
+                Console.WriteLine("Cannot double");
             }
         }
 
@@ -201,8 +234,10 @@ namespace Blackjack
             switch (Array.IndexOf(hands, hand))
             {
                 case 0:
-                    if (hand.Count==2&&(hand[0].GetCardValue()==hand[1].GetCardValue())
-                        &&(hands[1]==null||hands[2]==null)&&CheckBet(bets[0]))
+                    if (hand.Count==2
+                        && ((hand[0].GetCardValue()==hand[1].GetCardValue()) || (hand[0].GetType()==hand[1].GetType())) //GetType for AA hands
+                        &&(hands[1]==null||hands[2]==null)
+                        &&CheckBet(bets[0]))
                     {
                         return hands[1]==null? 1 : 2;
                     }
@@ -211,8 +246,10 @@ namespace Blackjack
                         return -1;
                     }
                 case 1:
-                    if (hand.Count == 2 && (hand[0].GetCardValue() == hand[1].GetCardValue())
-                        && (hands[2] == null || hands[3] == null) && CheckBet(bets[1]))
+                    if (hand.Count == 2
+                        && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType()))
+                        && (hands[2] == null || hands[3] == null)
+                        && CheckBet(bets[1]))
                     {
                         return hands[2] == null ? 2 : 3;
                     }
@@ -268,6 +305,8 @@ namespace Blackjack
                 hands[i] = null;
                 bets[i] = 0;
             }
+
+            hasBlackjack = false;
         }
     }
 }

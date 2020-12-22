@@ -22,8 +22,11 @@ namespace Blackjack
 
         public void Run()
         {
+            bool allPlayersHaveBlackJack;
             do
             {
+                allPlayersHaveBlackJack = true;
+
                 Console.WriteLine("newRound");
                 foreach (Player p in players)
                 {
@@ -50,6 +53,12 @@ namespace Blackjack
 
                 foreach (Player p in players)
                 {
+                    p.SetHasBlackjack();
+                }
+                dealer.SetHasBlackjack();
+
+                foreach (Player p in players)
+                {
                     p.DisplayHands();
                 }
                 Console.WriteLine();
@@ -57,18 +66,30 @@ namespace Blackjack
 
                 Console.WriteLine("-----");
 
-                foreach (Player p in players)
+                if (!dealer.HasBlackjack)
                 {
-                    p.TakeTurn(dealer);
+                    foreach (Player p in players)
+                    {
+                        p.TakeTurn(dealer);
+                    }
                 }
-
+                
                 Console.WriteLine();
                 dealer.RevealHidden();
                 dealer.DisplayHand();
 
                 Console.WriteLine("-----");
 
-                dealer.TakeTurn();
+                foreach (Player p in players)
+                {
+                    allPlayersHaveBlackJack = allPlayersHaveBlackJack && p.HasBlackjack;
+                }
+
+                if (!allPlayersHaveBlackJack)
+                {
+                    dealer.TakeTurn();
+                }
+                Console.Write("{0} has ", dealer.Name);
                 dealer.DisplayHand();
 
                 Console.WriteLine("----");
@@ -79,13 +100,15 @@ namespace Blackjack
                     {
                         Console.WriteLine("player: {0} ", p.GetHandValues()[i]);
                         if ((p.GetHandValues()[i] > dealer.GetHandValue(dealer.hand).Item2 
-                            || dealer.GetHandValue(dealer.hand).Item2 > 21)
+                            || dealer.GetHandValue(dealer.hand).Item2 > 21
+                            || (p.HasBlackjack && !dealer.HasBlackjack))
                             && p.GetHandValues()[i] <= 21)
                         {
                             Win(p, i);
                         }
                         else if (p.GetHandValues()[i] < dealer.GetHandValue(dealer.hand).Item2
-                            || p.GetHandValues()[i] > 21)
+                            || p.GetHandValues()[i] > 21
+                            || (!p.HasBlackjack && dealer.HasBlackjack))
                         {
                             Lose(p, i);
                         }
@@ -112,12 +135,18 @@ namespace Blackjack
 
         private void Win(Player player, int handIndex)
         {
-            player.Chips += player.GetBet(handIndex) * 2;
-            Console.WriteLine("You won {0} chips, you now have {1} chips.", player.GetBet(handIndex) * 2, player.Chips);
+            player.Chips += player.HasBlackjack ? (int)(player.GetBet(handIndex) * 2.5) : player.GetBet(handIndex) * 2;
+            Console.WriteLine("You won {0} chips, you now have {1} chips.",
+                player.HasBlackjack ? (int)(player.GetBet(handIndex) * 2.5) : player.GetBet(handIndex) * 2, player.Chips);
         }
 
         private void Lose(Player player, int handIndex)
         {
+            if (dealer.HasBlackjack)
+            {
+                Console.WriteLine("DEBUG: Dealer has blackjack");
+            }
+
             Console.WriteLine("You lost, you now have {0} chips.", player.Chips);
         }
 
