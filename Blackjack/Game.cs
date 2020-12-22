@@ -30,7 +30,7 @@ namespace Blackjack
                 Console.WriteLine("newRound");
                 foreach (Player p in players)
                 {
-                    p.Bet(p.hands[0]);
+                    p.Bet(p.hands[0], tableLimits);
                 }
                 Console.WriteLine("-----");
                 //Deal
@@ -66,14 +66,31 @@ namespace Blackjack
 
                 Console.WriteLine("-----");
 
+                if (dealer.hand[0] is CardAce)
+                {
+                    foreach (Player p in players)
+                    {
+                        p.BetInsurance();
+                    }
+                }
+
+                Console.WriteLine("-----");
+
                 if (!dealer.HasBlackjack)
                 {
+                    if (dealer.hand[0] is CardAce)
+                    {
+                        Console.WriteLine("Nobody home");
+                    }
+
                     foreach (Player p in players)
                     {
                         p.TakeTurn(dealer);
                     }
+
+                    Console.WriteLine("-----");
                 }
-                
+
                 Console.WriteLine();
                 dealer.RevealHidden();
                 dealer.DisplayHand();
@@ -89,7 +106,6 @@ namespace Blackjack
                 {
                     dealer.TakeTurn();
                 }
-                Console.Write("{0} has ", dealer.Name);
                 dealer.DisplayHand();
 
                 Console.WriteLine("----");
@@ -117,6 +133,12 @@ namespace Blackjack
                             Push(p, i);
                         }
                     }
+
+                    if (dealer.HasBlackjack && p.Insurance != 0)
+                    {
+                        WinInsurance(p, p.Insurance);
+                    }
+
                     Console.WriteLine();
                 }
 
@@ -135,9 +157,10 @@ namespace Blackjack
 
         private void Win(Player player, int handIndex)
         {
-            player.Chips += player.HasBlackjack ? (int)(player.GetBet(handIndex) * 2.5) : player.GetBet(handIndex) * 2;
+            player.Chips += player.HasBlackjack ? player.GetBet(handIndex) * 2.5 : player.GetBet(handIndex) * 2;
             Console.WriteLine("You won {0} chips, you now have {1} chips.",
-                player.HasBlackjack ? (int)(player.GetBet(handIndex) * 2.5) : player.GetBet(handIndex) * 2, player.Chips);
+                player.HasBlackjack ? player.GetBet(handIndex) * 2.5 : player.GetBet(handIndex) * 2,
+                player.Chips);
         }
 
         private void Lose(Player player, int handIndex)
@@ -154,6 +177,12 @@ namespace Blackjack
         {
             player.Chips += player.GetBet(handIndex);
             Console.WriteLine("Push, {0} chips returned, you now have {1} chips.", player.GetBet(handIndex), player.Chips);
+        }
+
+        private void WinInsurance(Player player, double insurance)
+        {
+            Console.WriteLine("You get {0} chips from insurance", insurance * 3);
+            player.Chips += insurance * 3;
         }
     }
 }

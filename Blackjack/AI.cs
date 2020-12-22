@@ -44,23 +44,23 @@ namespace Blackjack
             trueCount = 0;
         }
 
-        public override void Bet(List<Card> hand)
+        public override void Bet(List<Card> hand, Tuple<int, int> limits)
         {
             throw new NotImplementedException();
         }
 
-        public override void Bet(List<Card> hand, int bet)
+        public override void Bet(List<Card> hand, int bet, Tuple<int, int> limits)
         {
-            if (CheckBet(bet))
+            if (CheckBet(bet, limits))
             {
                 bets[Array.IndexOf(hands, hand)] += bet;
                 chips -= bet;
             }
         }
 
-        public override bool CheckBet(int bet)
+        public override bool CheckBet(double bet, Tuple<int, int> limits)
         {
-            if (bet > chips || bet < tableLimits.Item1 || bet > tableLimits.Item2)
+            if (bet > chips || bet < limits.Item1 || bet > limits.Item2)
             {
                 return false;
             }
@@ -73,6 +73,11 @@ namespace Blackjack
         public override int GetBet(int index)
         {
             return bets[index];
+        }
+
+        public override void BetInsurance()
+        {
+            throw new NotImplementedException();
         }
 
         public override void DisplayHands()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Text;
 
@@ -76,9 +77,9 @@ namespace Blackjack
                             Split(hands[i]);
                             break;
                         case CHOICE_DOUBLE:
-                            if (hands[i].Count == 2 && chips >= tableLimits.Item1)
+                            if (hands[i].Count == 2 && chips >= 0)
                             {
-                                Double(i);
+                                Double(i, new Tuple<int, int>(0, bets[i]));
                                 isDouble = true;
                             }
                             else
@@ -116,32 +117,32 @@ namespace Blackjack
             Console.WriteLine("Human does this on his own");
         }
 
-        public override void Bet(List<Card> hand)
+        public override void Bet(List<Card> hand, Tuple<int, int> limits)
         {
             int bet;
 
             do
             {
                 Console.WriteLine("How much do you want to bet?\n" +
-                    "You have {0} chips, table limits are {1}-{2}", chips, tableLimits.Item1, tableLimits.Item2);
-            } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= tableLimits.Item2 && CheckBet(bet)));
+                    "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
+            } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)));
 
             bets[Array.IndexOf(hands, hand)] += bet;
             chips -= bet;
         }
 
-        public override void Bet(List<Card> hand, int bet)
+        public override void Bet(List<Card> hand, int bet, Tuple<int, int> limits)
         {
-            if (CheckBet(bet))
+            if (CheckBet(bet, limits))
             {
                 bets[Array.IndexOf(hands, hand)] += bet;
                 chips -= bet;
             }
         }
 
-        public override bool CheckBet(int bet)
+        public override bool CheckBet(double bet, Tuple<int, int> limits)
         {
-            if (bet > chips||bet<tableLimits.Item1||bet>tableLimits.Item2)
+            if (bet > chips || bet < limits.Item1 || bet > limits.Item2)
             {
                 return false;
             }
@@ -154,6 +155,36 @@ namespace Blackjack
         public override int GetBet(int index)
         {
             return bets[index];
+        }
+
+        public override void BetInsurance()
+        {
+            string choice;
+
+            do
+            {
+                Console.WriteLine("Insurance is open. Bet? (Y/N)");
+                switch (Console.ReadKey().KeyChar)
+                {
+                    case 'y':
+                    case 'Y':
+                        choice = "yes";
+                        break;
+                    case 'n':
+                    case 'N':
+                        choice = "no";
+                        break;
+                    default:
+                        choice = "";
+                        break;
+                }
+            } while (!(choice == "yes" || choice == "no"));
+
+            if (choice == "yes" && CheckBet(bets[0] * 0.5, new Tuple<int, int>(0, tableLimits.Item2)))
+            {
+                insurance = bets[0] * 0.5;
+                chips -= insurance;
+            }
         }
 
         private void Hit(Dealer dealer, int handIndex)
@@ -185,45 +216,18 @@ namespace Blackjack
                 hand.Remove(hand[1]);
                 hands[newHandIndex] = new List<Card>();
                 hands[newHandIndex].Add(temp);
-                Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)]);
+                Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
             }
         }
 
-        private void Double(int index)
+        private void Double(int index, Tuple<int, int> limits)
         {
-            if (chips > tableLimits.Item1)
+            if (chips >= limits.Item1)
             {
-                int bet;
-
-                if (bets[index] > tableLimits.Item1)
-                {
-                    do
-                    {
-                        Console.WriteLine("How much do you want to bet?\n" +
-                            "You have {0} chips, bet limits are {1}-{2}", chips, tableLimits.Item1, bets[index]);
-                    } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= tableLimits.Item1 && bet <= bets[index] && CheckBet(bet)));
-                }
-                else if (bets[index] == tableLimits.Item1)
-                {
-                    bet = tableLimits.Item1;
-                    Console.WriteLine("Doubled for {0}", tableLimits.Item1);
-                }
-                else
-                {
-                    Console.WriteLine("MISTAKE: BET < TABLELIMIT");
-                    throw new ArgumentException();
-                }
-
-                Bet(hands[index], bet);
-            }
-            else if (chips == tableLimits.Item1)
-            {
-                int bet = tableLimits.Item1;
-                Bet(hands[index], bet);
+                Bet(hands[index], limits);
             }
             else
             {
-                //never happens
                 Console.WriteLine("Cannot double");
             }
         }
@@ -237,7 +241,7 @@ namespace Blackjack
                     if (hand.Count==2
                         && ((hand[0].GetCardValue()==hand[1].GetCardValue()) || (hand[0].GetType()==hand[1].GetType())) //GetType for AA hands
                         &&(hands[1]==null||hands[2]==null)
-                        &&CheckBet(bets[0]))
+                        &&CheckBet(bets[0], tableLimits))
                     {
                         return hands[1]==null? 1 : 2;
                     }
@@ -249,7 +253,7 @@ namespace Blackjack
                     if (hand.Count == 2
                         && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType()))
                         && (hands[2] == null || hands[3] == null)
-                        && CheckBet(bets[1]))
+                        && CheckBet(bets[1], tableLimits))
                     {
                         return hands[2] == null ? 2 : 3;
                     }
@@ -306,6 +310,7 @@ namespace Blackjack
                 bets[i] = 0;
             }
 
+            insurance = 0;
             hasBlackjack = false;
         }
     }
