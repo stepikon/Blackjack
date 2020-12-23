@@ -142,8 +142,8 @@ namespace Blackjack
         }
 
         public void SetDeckPenetration() //deck penetration is 75%-85%
-        {
-            deckPenetration = random.Next((int)3/4*deckAmount*52, 17/20*deckAmount*52);
+        { 
+            deckPenetration = random.Next(deckAmount * 52 * 3 / 4, deckAmount * 52 * 17 / 20);
         }
 
         public void Shuffle()

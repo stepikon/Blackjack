@@ -13,17 +13,24 @@ namespace Blackjack
         protected double insurance;
         protected int pairBet;
 
+        private bool isRuined;
+        private bool isGone;
+
         protected bool allowPairBets;
 
         protected Tuple<int, int> tableLimits;
         protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
 
-        public Player(string name, List<Card> hand, double chips, Tuple<int,int> tableLimits, bool allowPairBets = true) :
+        public Player(string name, List<Card> hand, double chips, Tuple<int,int> tableLimits, 
+            bool allowPairBets = true, bool isRuined = false, bool isGone = false) :
             base(name, hand)
         {
             this.chips = chips;
             this.tableLimits = tableLimits;
             this.allowPairBets = allowPairBets;
+
+            this.isRuined = isRuined;
+            this.isGone = isGone;
         }
 
         public double Chips 
@@ -53,6 +60,40 @@ namespace Blackjack
         {
             get
             { return pairBet; }
+        }
+
+        public bool IsRuined
+        {
+            get 
+            { return isRuined; }
+            set
+            {
+                if (value==true||value==false)
+                {
+                    isRuined = value;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+        }
+
+        public bool IsGone
+        {
+            get
+            { return isGone; }
+            set
+            {
+                if (value == true || value == false)
+                {
+                    isGone = value;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
         }
 
         public abstract void TakeTurn(Dealer dealer);

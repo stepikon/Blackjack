@@ -125,10 +125,45 @@ namespace Blackjack
             {
                 Console.WriteLine("How much do you want to bet?\n" +
                     "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
-            } while (!(int.TryParse(Console.ReadLine(), out bet) && bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)));
+                Console.WriteLine("(Bet 0 to quit)");
+            } while (!(int.TryParse(Console.ReadLine(), out bet) && (bet == 0 || (bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)))));
 
-            bets[Array.IndexOf(hands, hand)] += bet;
-            chips -= bet;
+            if (bet == 0)
+            {
+                string choice;
+                do
+                {
+                    Console.WriteLine("Are you sure you want to quit? (Y/N)");
+                    switch (Console.ReadKey().KeyChar)
+                    {
+                        case 'y':
+                        case 'Y':
+                            choice = "yes";
+                            break;
+                        case 'n':
+                        case 'N':
+                            choice = "no";
+                            break;
+                        default:
+                            choice = "";
+                            break;
+                    }
+                } while (!(choice == "yes" || choice == "no"));
+
+                if (choice == "yes")
+                {
+                    IsGone = true;
+                }
+                else
+                {
+                    Bet(hand, limits);
+                }
+            }
+            else
+            {
+                bets[Array.IndexOf(hands, hand)] += bet;
+                chips -= bet;
+            }
         }
 
         public override void Bet(List<Card> hand, int bet, Tuple<int, int> limits)

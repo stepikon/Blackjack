@@ -7,7 +7,7 @@ namespace Blackjack
     {
         static void Main(string[] args)
         {
-            Dealer dealer = new Dealer("Dealer", new List<Card>(), 20, new Random());
+            Dealer dealer = new Dealer("Dealer", new List<Card>(), 6, new Random());
             dealer.BuildShoe();
             dealer.Shuffle();
 
