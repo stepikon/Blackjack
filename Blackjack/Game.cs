@@ -28,7 +28,10 @@ namespace Blackjack
             //initial check
             foreach (Player p in players)
             {
-                p.IsRuined = p.Chips < tableLimits.Item1;
+                if (p!=null)
+                {
+                    p.IsRuined = p.Chips < tableLimits.Item1;
+                }
             }
 
             do
@@ -39,7 +42,7 @@ namespace Blackjack
                 Console.WriteLine("newRound");
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         p.Bet(p.hands[0], tableLimits);
 
@@ -56,7 +59,7 @@ namespace Blackjack
                 {
                     for (int j = 0; j < players.Length; j++)
                     {
-                        if (!(players[j].IsRuined || players[j].IsGone))
+                        if (!(players[j] == null || players[j].IsRuined || players[j].IsGone))
                         {
                             dealer.Deal(players[j], 0);
                         }
@@ -75,7 +78,7 @@ namespace Blackjack
                 //Pair bonus gets paid always first
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         if (p.PairBet != 0)
                         {
@@ -108,7 +111,7 @@ namespace Blackjack
                 //checks blackjacks
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         p.SetHasBlackjack();
                     }
@@ -118,7 +121,7 @@ namespace Blackjack
                 //Displays hands
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         p.DisplayHands();
                     }
@@ -133,7 +136,7 @@ namespace Blackjack
                 {
                     foreach (Player p in players)
                     {
-                        if (!(p.IsRuined || p.IsGone))
+                        if (!(p == null || p.IsRuined || p.IsGone))
                         {
                             p.BetInsurance();
                         }
@@ -152,7 +155,7 @@ namespace Blackjack
 
                     foreach (Player p in players)
                     {
-                        if (!(p.IsRuined || p.IsGone))
+                        if (!(p == null || p.IsRuined || p.IsGone))
                         {
                             p.TakeTurn(dealer);
                         }
@@ -170,7 +173,7 @@ namespace Blackjack
                 //checks if everyone has BJ
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         allPlayersHaveBlackJack = allPlayersHaveBlackJack && p.HasBlackjack;
                     }
@@ -188,7 +191,7 @@ namespace Blackjack
                 //outcomes
                 foreach (Player p in players)
                 {
-                    if (!(p.IsRuined || p.IsGone))
+                    if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         for (int i = 0; i < p.GetHandValues().Count; i++)
                         {
@@ -227,23 +230,28 @@ namespace Blackjack
                 //Reset
                 foreach (Player p in players)
                 {
-                    p.ResetHands();
+                    if (p!=null)
+                    {
+                        p.ResetHands();
+                    }
                 }
                 dealer.ResetHand();
 
                 //checks if anyone is ruined
                 foreach (Player p in players)
                 {
-                    if (p.Chips < tableLimits.Item1)
+                    if (p!=null)
                     {
-                        p.IsRuined = true;
-                    }
+                        if (p.Chips < tableLimits.Item1)
+                        {
+                            p.IsRuined = true;
+                        }
+                    }                    
                 }
 
                 //Shuffle if necessary
                 if (dealer.CardToDeal >= dealer.DeckPenetration)
                 {
-                    Console.WriteLine("Shuffling" + dealer.CardToDeal + "  " + dealer.DeckPenetration);
                     dealer.Shuffle();
                     dealer.SetDeckPenetration();
                 }
@@ -286,7 +294,10 @@ namespace Blackjack
 
             foreach (Player p in players)
             {
-                existActivePlayers = existActivePlayers || !(p.IsRuined || p.IsGone);
+                if (p!=null)
+                {
+                    existActivePlayers = existActivePlayers || !(p.IsRuined || p.IsGone);
+                }
             }
 
             return existActivePlayers;

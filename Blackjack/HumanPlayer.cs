@@ -125,10 +125,14 @@ namespace Blackjack
             {
                 Console.WriteLine("How much do you want to bet?\n" +
                     "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
-                Console.WriteLine("(Bet 0 to quit)");
-            } while (!(int.TryParse(Console.ReadLine(), out bet) && (bet == 0 || (bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)))));
 
-            if (bet == 0)
+                if (bets[0] == 0)
+                {
+                    Console.WriteLine("(Bet (0) to quit)");
+                }
+            } while (!(int.TryParse(Console.ReadLine(), out bet) && ((bet == 0 && bets[0] == 0) || (bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)))));
+
+            if (bet == 0 && bets[0] == 0)
             {
                 string choice;
                 do

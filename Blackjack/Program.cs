@@ -13,7 +13,7 @@ namespace Blackjack
 
             Tuple<int, int> tableLimits = new Tuple<int, int>(5,500);
 
-            Player[] players = new Player[1];
+            Player[] players = new Player[2];
             players[0] = new HumanPlayer("human", new List<Card>(), 300, tableLimits);
 
             Game game = new Game(dealer, tableLimits, players, new Random());
