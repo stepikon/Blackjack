@@ -33,8 +33,7 @@ namespace Blackjack
         public bool HasBlackjack { get { return hasBlackjack; } }
 
         public abstract Tuple<int, int, bool> GetHandValue(List<Card>hand);
-        public abstract void SetSoftAceToHard();
-        public abstract string GetChoice();
+        public abstract void SetSoftAceToHard(List<Card> hand);
         public abstract void SetHasBlackjack();
     }
 }

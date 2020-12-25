@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 
@@ -7,9 +8,11 @@ namespace Blackjack
 {
     class Dealer:Character
     {
-        int deckAmount;
-        int deckPenetration;
-        int cardToDeal;
+        private int deckAmount;
+        private int deckPenetration;
+        private int cardToDeal;
+
+        private bool hitSoft17;
 
         string name;
 
@@ -19,12 +22,13 @@ namespace Blackjack
 
         Random random;
 
-        public Dealer(string name, List<Card> hand, int deckAmount, Random random)
+        public Dealer(string name, List<Card> hand, int deckAmount, Random random, bool hitSoft17)
             :base(name, hand)
         {
             this.name = name;
             this.deckAmount = deckAmount;
             this.random = random;
+            this.hitSoft17 = hitSoft17;
 
             shoe = new Card[52*deckAmount];
         }
@@ -32,6 +36,7 @@ namespace Blackjack
         public int DeckAmount { get { return deckAmount; } }
         public int CardToDeal { get { return cardToDeal; } }
         public int DeckPenetration { get { return deckPenetration; } }
+        public bool HitSoft17 { get { return hitSoft17; } }
 
         public void BuildShoe()
         {
@@ -202,7 +207,7 @@ namespace Blackjack
             } while (choice!=CHOICE_STAND);
         }
 
-        public override string GetChoice()
+        public string GetChoice()
         {
             if (GetHandValue(hand).Item2<17)
             {
@@ -210,7 +215,14 @@ namespace Blackjack
             }
             else if (GetHandValue(hand).Item2 == 17 && GetHandValue(hand).Item3)
             {
-                return CHOICE_HIT;
+                if (hitSoft17)
+                {
+                    return CHOICE_HIT;
+                }
+                else
+                {
+                    return CHOICE_STAND;
+                }
             }
             else
             {
@@ -243,7 +255,7 @@ namespace Blackjack
 
             if (handValue > 21 && hasSoftAce) //since 11+11=22, one hand can only contain 1 soft ace.
             {
-                SetSoftAceToHard();
+                SetSoftAceToHard(hand);
 
                 handValue = 0;
                 hasSoftAce = false;
@@ -269,7 +281,7 @@ namespace Blackjack
             return new Tuple<int, int, bool>(hasSoftAce ? handValue - 10 : handValue, handValue, hasSoftAce);
         }
 
-        public override void SetSoftAceToHard()
+        public override void SetSoftAceToHard(List<Card> hand)
         {
             foreach (Card c in hand)
             {
@@ -335,6 +347,28 @@ namespace Blackjack
                     hasBlackjack = false;
                 }
             }
+        }
+
+        public double GetDecksInDiscard()
+        {
+            int wholeDecks = cardToDeal / 52;
+            int rest = cardToDeal % 52;
+            double halfDecks;
+
+            if (rest < 13)
+            {
+                halfDecks = 0;
+            }
+            else if (rest >= 13 && rest < 39)
+            {
+                halfDecks = 1;
+            }
+            else
+            {
+                halfDecks = 2;
+            }
+
+            return wholeDecks + 0.5 * halfDecks;
         }
 
         public void ResetHand()

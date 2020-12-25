@@ -103,9 +103,10 @@ namespace Blackjack
         public abstract int GetBet(int index);
         public abstract void BetInsurance();
         public abstract void BetPair(Tuple<int, int> limits);
-        public abstract void CountDealt();
-        public abstract void UpdateRunningCount();
-        public abstract void UpdateTrueCount();
+        public abstract void CountDealt(Player[] players, List<Card> dealerHand, double remainingDecks);
+        public abstract void UpdateRunningCount(Player[] players, List<Card> dealerHand);
+        public abstract void UpdateTrueCount(int runningCount, double remainingDecks);
+        public abstract void UpdateTrueCount(double remainingDecks);
         public abstract void ResetCounts();
         public abstract void ResetHands();
         public abstract void DisplayHands();
@@ -136,7 +137,7 @@ namespace Blackjack
 
             if (handValue > 21 && hasSoftAce) //since 11+11=22, one hand can only contain 1 soft ace.
             {
-                SetSoftAceToHard();
+                SetSoftAceToHard(hand);
 
                 handValue = 0;
                 hasSoftAce = false;
@@ -162,10 +163,12 @@ namespace Blackjack
             return new Tuple<int, int, bool>(hasSoftAce ? handValue - 10 : handValue, handValue, hasSoftAce);
         }
 
-        public override void SetSoftAceToHard()
+        public override void SetSoftAceToHard(List<Card> hand)
         {
             foreach (Card c in hand)
             {
+                Console.WriteLine(c.Name);
+
                 if (c is CardAce)
                 {
                     CardAce cA = (CardAce)c;

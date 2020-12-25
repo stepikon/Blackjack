@@ -138,6 +138,7 @@ namespace Blackjack
                     {
                         if (!(p == null || p.IsRuined || p.IsGone))
                         {
+                            p.CountDealt(players, dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
                             p.BetInsurance();
                         }
                     }
@@ -157,6 +158,7 @@ namespace Blackjack
                     {
                         if (!(p == null || p.IsRuined || p.IsGone))
                         {
+                            p.CountDealt(players,dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
                             p.TakeTurn(dealer);
                         }
                     }
@@ -227,6 +229,16 @@ namespace Blackjack
                 Console.WriteLine(dealer.GetHandValue(dealer.hand).Item2);
                 Console.WriteLine("----");
 
+                //updates counts
+                foreach (Player p in players)
+                {
+                    if (p!=null)
+                    {
+                        p.UpdateRunningCount(players, dealer.hand);
+                        p.UpdateTrueCount(dealer.DeckAmount - dealer.GetDecksInDiscard());
+                    }
+                }
+
                 //Reset
                 foreach (Player p in players)
                 {
@@ -249,11 +261,21 @@ namespace Blackjack
                     }                    
                 }
 
+                Console.WriteLine("DEBUG DISCARD: " + dealer.GetDecksInDiscard());
+
                 //Shuffle if necessary
                 if (dealer.CardToDeal >= dealer.DeckPenetration)
                 {
                     dealer.Shuffle();
                     dealer.SetDeckPenetration();
+
+                    foreach (Player p in players)
+                    {
+                        if (p!=null)
+                        {
+                            p.ResetCounts();
+                        }
+                    }
                 }
             } while (ExistActivePlayers() && Console.ReadKey().KeyChar!='q');
         }

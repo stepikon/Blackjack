@@ -12,7 +12,7 @@ namespace Blackjack
             base(name, hand, chips, tableLimits)
         { }
 
-        public override string GetChoice()
+        public string GetChoice()
         {
             switch (Console.ReadLine().ToLower())
             {
@@ -51,7 +51,7 @@ namespace Blackjack
                     {
                         choice = CHOICE_STAND;
                     }
-                    else if (isDouble||(hands[i].Count==1)&&hands[i][0] is CardAce) //after doubling you only get 1 card. The same rule apply if you split AA.
+                    else if (isDouble||(hands[i].Count==1&&hands[i][0] is CardAce)) //after doubling you only get 1 card. The same rule apply if you split AA.
                     {
                         Hit(dealer, i);
                         DisplayHands();
@@ -97,17 +97,22 @@ namespace Blackjack
             }
         }
 
-        public override void CountDealt()
+        public override void CountDealt(Player[] players,List<Card> dealerHand, double remainingDecks)
         {
             Console.WriteLine("Human does this on his own");
         }
 
-        public override void UpdateRunningCount()
+        public override void UpdateRunningCount(Player[] players, List<Card> dealerHand)
         {
             Console.WriteLine("Human does this on his own");
         }
 
-        public override void UpdateTrueCount()
+        public override void UpdateTrueCount(int runningCount, double remainingDecks)
+        {
+            Console.WriteLine("Human does this on his own");
+        }
+
+        public override void UpdateTrueCount(double remainingDecks)
         {
             Console.WriteLine("Human does this on his own");
         }
