@@ -29,7 +29,7 @@ namespace Blackjack
             }
         }
 
-        public override void TakeTurn(Dealer dealer)
+        public override void TakeTurn(Player[] players, Dealer dealer)
         {
             string choice;
             bool isDouble = false;
@@ -382,10 +382,21 @@ namespace Blackjack
             {
                 if (hands[i]!=null)
                 {
+                    if (bets[i]>=1000000000)
+                    {
+                        Console.WriteLine("Billions");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bet: {0}", String.Format("${0:#,#,0.##}", bets[i]));
+                    }
+
+                    Console.Write("hand {0}: ", i + 1);
                     foreach (Card c in hands[i])
                     {
-                        Console.WriteLine("hand {0}: {1}",i, c.Name);
+                        Console.Write("{0} ", c.Name);
                     }
+                    Console.WriteLine();
                 }               
             }
         }

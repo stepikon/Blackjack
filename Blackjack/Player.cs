@@ -13,6 +13,9 @@ namespace Blackjack
         protected double insurance;
         protected int pairBet;
 
+        protected int runningCount;
+        protected double trueCount;
+
         private bool isRuined;
         private bool isGone;
 
@@ -62,6 +65,18 @@ namespace Blackjack
             { return pairBet; }
         }
 
+        public int RunningCount
+        {
+            get
+            { return runningCount; }
+        }
+
+        public double TrueCount
+        {
+            get
+            { return trueCount; }
+        }
+
         public bool IsRuined
         {
             get 
@@ -96,7 +111,7 @@ namespace Blackjack
             }
         }
 
-        public abstract void TakeTurn(Dealer dealer);
+        public abstract void TakeTurn(Player[] players, Dealer dealer);
         public abstract void Bet(List<Card> hand, Tuple<int, int> limits);
         public abstract void Bet(List<Card> hand, int bet, Tuple<int, int> limits);
         public abstract bool CheckBet(double bet, Tuple<int, int> limits);

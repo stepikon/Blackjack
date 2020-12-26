@@ -22,8 +22,9 @@ namespace Blackjack
 
         public void Run()
         {
-            dealer.SetDeckPenetration();
+            dealer.Reset();
             bool allPlayersHaveBlackJack;
+            bool allBusted;
 
             //initial check
             foreach (Player p in players)
@@ -37,9 +38,10 @@ namespace Blackjack
             do
             {
                 allPlayersHaveBlackJack = true;
+                allBusted = true;
+                Console.Clear();
 
                 //Betting
-                Console.WriteLine("newRound");
                 foreach (Player p in players)
                 {
                     if (!(p == null || p.IsRuined || p.IsGone))
@@ -159,7 +161,7 @@ namespace Blackjack
                         if (!(p == null || p.IsRuined || p.IsGone))
                         {
                             p.CountDealt(players,dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
-                            p.TakeTurn(dealer);
+                            p.TakeTurn(players, dealer);
                         }
                     }
 
@@ -181,8 +183,20 @@ namespace Blackjack
                     }
                 }
 
+                //checks if everyone has busted
+                foreach (Player p in players)
+                {
+                    if (!(p == null || p.IsRuined || p.IsGone))
+                    {
+                        foreach (int handValue in p.GetHandValues())
+                        {
+                            allBusted = allBusted && handValue > 21;
+                        }
+                    }
+                }
+
                 //Dealers turn
-                if (!allPlayersHaveBlackJack)
+                if (!(allPlayersHaveBlackJack||allBusted))
                 {
                     dealer.TakeTurn();
                 }
@@ -236,6 +250,8 @@ namespace Blackjack
                     {
                         p.UpdateRunningCount(players, dealer.hand);
                         p.UpdateTrueCount(dealer.DeckAmount - dealer.GetDecksInDiscard());
+
+                        Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
                     }
                 }
 
@@ -266,8 +282,7 @@ namespace Blackjack
                 //Shuffle if necessary
                 if (dealer.CardToDeal >= dealer.DeckPenetration)
                 {
-                    dealer.Shuffle();
-                    dealer.SetDeckPenetration();
+                    dealer.Reset();
 
                     foreach (Player p in players)
                     {
@@ -277,7 +292,7 @@ namespace Blackjack
                         }
                     }
                 }
-            } while (ExistActivePlayers() && Console.ReadKey().KeyChar!='q');
+            } while (ExistActivePlayers()&&Console.ReadKey().KeyChar!='q');
         }
 
         private void Win(Player player, int handIndex)
@@ -323,6 +338,11 @@ namespace Blackjack
             }
 
             return existActivePlayers;
+        }
+
+        private void DisplayDealerStatus()
+        { 
+        
         }
     }
 }

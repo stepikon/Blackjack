@@ -144,6 +144,15 @@ namespace Blackjack
             Shuffle();
             SetDeckPenetration();
             cardToDeal = 0;
+
+            foreach (Card c in shoe)
+            {
+                if (c is CardAce)
+                {
+                    CardAce cA = (CardAce)c;
+                    cA.AceIsOne = false;
+                }
+            }
         }
 
         public void SetDeckPenetration() //deck penetration is 75%-85%
@@ -164,6 +173,8 @@ namespace Blackjack
                 shoe[i] = shoe[index];
                 shoe[index] = temp;
             }
+
+            cardToDeal = 0;
         }
 
         public void Deal(Character character, int i)
@@ -309,10 +320,12 @@ namespace Blackjack
 
         public void DisplayHand()
         {
+            Console.Write("Hand: ");
             foreach (Card c in hand)
             {
-                Console.WriteLine(c.Name);
+                Console.Write("{0} ", c.Name);
             }
+            Console.WriteLine();
         }
 
         public void Display()

@@ -7,13 +7,10 @@ namespace Blackjack
 {
     class CardCountingAI:Player
     {
-        private int runningCount;
-        private int trueCount;
-
         private int betUnit;
 
         public CardCountingAI(string name, List<Card> hand, int chips, Tuple<int, int> tableLimits, int betUnit,
-            int runningCount = 0, int trueCount = 0) :
+            int runningCount = 0, double trueCount = 0) :
             base(name, hand, chips, tableLimits)
         {
             this.runningCount = runningCount;
@@ -21,7 +18,7 @@ namespace Blackjack
             this.betUnit = betUnit;
         }
 
-        public override void TakeTurn(Dealer dealer)
+        public override void TakeTurn(Player[] players, Dealer dealer)
         {
             string choice;
             bool isDouble = false;
@@ -57,7 +54,7 @@ namespace Blackjack
                     }
                     else
                     {
-                        choice = GetChoice(hands[i], dealer);
+                        choice = GetChoice(hands[i], tableLimits, players, dealer);
                     }
 
                     switch (choice)
@@ -92,8 +89,8 @@ namespace Blackjack
         }
 
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
-        //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/
-        public string GetChoice(List<Card> hand, Dealer dealer)
+        //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/
+        public string GetChoice(List<Card> hand, Tuple<int, int> limits, Player[] players, Dealer dealer)
         {
             if (hand != null && dealer.hand[0] != null)
             {
@@ -105,63 +102,76 @@ namespace Blackjack
                         case 2:
                         case 3:
                         case 7:
-                            if (dealer.hand[0].GetCardValue() > 1 && dealer.hand[0].GetCardValue() <= 7)
+                            if ((dealer.hand[0].GetCardValue() > 1 && dealer.hand[0].GetCardValue() <= 7)
+                                && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
                             {
                                 return CHOICE_SPLIT;
                             }
                             else
                             {
-                                return CHOICE_HIT;
+                                break;
                             }
                         case 4:
-                            if (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                            if ((dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                                && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
                             {
                                 return CHOICE_SPLIT;
                             }
                             else
                             {
-                                return CHOICE_HIT;
+                                break;
                             }
                         case 5:
-                            if (!(dealer.hand[0].GetCardValue() == 10 || dealer.hand[0] is CardAce))
-                            {
-                                return CHOICE_DOUBLE;
-                            }
-                            else
-                            {
-                                return CHOICE_HIT;
-                            }
+                            break;
                         case 6:
-                            if (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6)
+                            if (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6
+                                && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
                             {
                                 return CHOICE_SPLIT;
                             }
                             else
                             {
-                                return CHOICE_HIT;
+                                break;
                             }
                         case 8:
-                            return CHOICE_SPLIT;
-                        case 9:
-                            if (!(dealer.hand[0].GetCardValue() == 7 || dealer.hand[0].GetCardValue() == 10 || dealer.hand[0] is CardAce))
+                            if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
                             {
                                 return CHOICE_SPLIT;
                             }
                             else
                             {
-                                return CHOICE_STAND;
+                                break;
+                            }
+                        case 9:
+                            if (!(dealer.hand[0].GetCardValue() == 7 || dealer.hand[0].GetCardValue() == 10 || dealer.hand[0] is CardAce)
+                                && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                            {
+                                return CHOICE_SPLIT;
+                            }
+                            else
+                            {
+                                break;
                             }
                         case 10:
-                            if (trueCount >= 5 && (dealer.hand[0].GetCardCountValue() == 5 || dealer.hand[0].GetCardCountValue() == 6)) //deviation
+                            if ((trueCount >= 6 && dealer.hand[0].GetCardCountValue() == 4)
+                                ||(trueCount >= 5 && dealer.hand[0].GetCardCountValue() == 5)
+                                || (trueCount >= 4 && dealer.hand[0].GetCardCountValue() == 6)) //deviation
                             {
                                 return CHOICE_SPLIT;
                             }
                             else
                             {
-                                return CHOICE_STAND;
+                                break;
                             }
                         default:
-                            return CHOICE_SPLIT;
+                            if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                            {
+                                return CHOICE_SPLIT;
+                            }
+                            else
+                            {
+                                break;
+                            }
                     }
                 }
 
@@ -200,8 +210,33 @@ namespace Blackjack
                             Console.WriteLine("AI: DOUBLE");
                             return CHOICE_DOUBLE;
                         }
-                        else if ((GetHandValue(hand).Item2 == 19 && dealer.HitSoft17)
+                        else if ((GetHandValue(hand).Item2 == 19 && dealer.HitSoft17) 
                             && (dealer.hand[0].GetCardValue() == 6)
+                            && trueCount > 0 //deviation
+                            && chips >= 1)
+                        {
+                            Console.WriteLine("AI: DOUBLE");
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 17)//deviation
+                            && (dealer.hand[0].GetCardValue() == 2)
+                            && trueCount >= 1 
+                            && chips >= 1)
+                        {
+                            Console.WriteLine("AI: DOUBLE");
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 5)
+                            && trueCount >= 1 
+                            && chips >= 1)
+                        {
+                            Console.WriteLine("AI: DOUBLE");
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 4)
+                            && trueCount >= 3
                             && chips >= 1)
                         {
                             Console.WriteLine("AI: DOUBLE");
@@ -264,7 +299,15 @@ namespace Blackjack
                         }
                         else if ((GetHandValue(hand).Item2 == 9) //deviation
                             && dealer.hand[0].GetCardValue() == 7
-                            && trueCount >= 4
+                            && trueCount >= 3
+                            && chips >= 1)
+                        {
+                            Console.WriteLine("AI: DOUBLE");
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 8) //deviation
+                            && dealer.hand[0].GetCardValue() == 6
+                            && trueCount >= 2
                             && chips >= 1)
                         {
                             Console.WriteLine("AI: DOUBLE");
@@ -299,7 +342,7 @@ namespace Blackjack
                     else if ((GetHandValue(hand).Item2 == 12)
                            && !(dealer.hand[0].GetCardValue() >= 4 && dealer.hand[0].GetCardValue() <= 6))
                     {
-                        if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 2 && trueCount >= 4) //deviation
+                        if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 2 && trueCount >= 3) //deviation
                         {
                             return CHOICE_STAND;
                         }
@@ -314,12 +357,17 @@ namespace Blackjack
                     else if ((GetHandValue(hand).Item2 >= 13 && GetHandValue(hand).Item2 <= 16)
                            && !(dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6))
                     {
-                        if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 10 && trueCount >= 0) //deviation
+                        if (GetHandValue(hand).Item2 == 16 && dealer.hand[0] is CardAce && trueCount >= 3) //deviation
                         {
                             return CHOICE_STAND;
                         }
 
-                        if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 5) //deviation
+                        if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 10 && GetCurrentRunningCount(players, dealer.hand) > 0) //deviation
+                        {
+                            return CHOICE_STAND;
+                        }
+
+                        if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 4) //deviation
                         {
                             return CHOICE_STAND;
                         }
@@ -333,7 +381,7 @@ namespace Blackjack
                     }
                     else
                     {
-                        if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 2 && trueCount < -1) //deviation
+                        if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 2 && trueCount <= -1) //deviation
                         {
                             return CHOICE_HIT;
                         }
@@ -343,7 +391,7 @@ namespace Blackjack
                             return CHOICE_HIT;
                         }
 
-                        if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 4 && trueCount < 0) //deviation
+                        if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 4 && GetCurrentRunningCount(players, dealer.hand) < 0) //deviation
                         {
                             return CHOICE_HIT;
                         }
@@ -464,8 +512,6 @@ namespace Blackjack
         //does NOT change this.runningCount. Only counts cards on the table and updates this.trueCount
         public override void CountDealt(Player[] players, List<Card> dealerHand, double remainingDecks)
         {           
-            Console.WriteLine("AI DEBUG: current running count is " + GetCurrentRunningCount(players, dealerHand));
-
             UpdateTrueCount(GetCurrentRunningCount(players, dealerHand), remainingDecks);
         }
 
@@ -496,20 +542,58 @@ namespace Blackjack
                     runningCount += c.GetCardCountValue();
                 }
             }
-
-            Console.WriteLine("AI DEBUG: current running count is " + runningCount);
         }
 
         public override void UpdateTrueCount(int runningCount, double remainingDecks)
         {
-            trueCount = (int)(runningCount / (remainingDecks));
-            Console.WriteLine("AI DEBUG: current true count is " + trueCount);
+            int wholeTrueCount = (int)(runningCount / remainingDecks);
+            double halves;
+            trueCount = runningCount / remainingDecks;
+
+            if (trueCount - wholeTrueCount < -0.5)
+            {
+                halves = -2;
+            }
+            else if (trueCount - wholeTrueCount >= -0.5 && trueCount - wholeTrueCount < 0)
+            {
+                halves = -1;
+            }
+            else if (trueCount - wholeTrueCount >= 0 && trueCount - wholeTrueCount < 0.5)
+            {
+                halves = 0;
+            }
+            else 
+            {
+                halves = 1;
+            }
+
+            trueCount = wholeTrueCount + 0.5 * halves;
         }
 
         public override void UpdateTrueCount(double remainingDecks)
         {
-            trueCount = (int)(runningCount / (remainingDecks));
-            Console.WriteLine("AI DEBUG: current true count is " + trueCount);
+            int wholeTrueCount = (int)(runningCount / remainingDecks);
+            double halves;
+            trueCount = runningCount / remainingDecks;
+
+            if (trueCount - wholeTrueCount < -0.5)
+            {
+                halves = -2;
+            }
+            else if (trueCount - wholeTrueCount >= -0.5 && trueCount - wholeTrueCount < 0)
+            {
+                halves = -1;
+            }
+            else if (trueCount - wholeTrueCount >= 0 && trueCount - wholeTrueCount < 0.5)
+            {
+                halves = 0;
+            }
+            else
+            {
+                halves = 1;
+            }
+
+            trueCount = wholeTrueCount + 0.5 * halves;
         }
 
         public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
@@ -557,9 +641,9 @@ namespace Blackjack
                 if (chips >= limits.Item1)
                 {
                     int betMultiplier;
-                    for (betMultiplier = trueCount; betMultiplier > 0; betMultiplier--)
+                    for (betMultiplier = Math.Min((int)trueCount*2 - 1, 12); betMultiplier > 0; betMultiplier--)
                     {
-                        if (chips >= betUnit * betMultiplier)
+                        if (chips >= betUnit * betMultiplier && CheckBet(betUnit * betMultiplier, limits))
                         {
                             break;
                         }
@@ -616,10 +700,12 @@ namespace Blackjack
 
             if (trueCount >= 3 && CheckBet(bets[0] * 0.5, new Tuple<int, int>(0, tableLimits.Item2)))
             {
+                Console.WriteLine("DEBUG: Insurance");
                 bet = bets[0] * 0.5;
             }
             else
             {
+                Console.WriteLine("DEBUG: NoInsurance");
                 bet = 0;
             }
 
@@ -641,10 +727,21 @@ namespace Blackjack
             {
                 if (hands[i] != null)
                 {
+                    if (bets[i] >= 1000000000)
+                    {
+                        Console.WriteLine("Billions");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bet: {0}", String.Format("${0:#,#,0.##}", bets[i]));
+                    }
+
+                    Console.Write("hand {0}: ", i + 1);
                     foreach (Card c in hands[i])
                     {
-                        Console.WriteLine("hand {0}: {1}", i, c.Name);
+                        Console.Write("{0} ", c.Name);
                     }
+                    Console.WriteLine();
                 }
             }
         }
