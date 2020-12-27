@@ -22,8 +22,8 @@ namespace Blackjack
 
         Random random;
 
-        public Dealer(string name, List<Card> hand, int deckAmount, Random random, bool hitSoft17)
-            :base(name, hand)
+        public Dealer(string name, List<Card> hand, BetterUI betterUI, int deckAmount, Random random, bool hitSoft17)
+            :base(name, hand, betterUI)
         {
             this.name = name;
             this.deckAmount = deckAmount;
@@ -196,6 +196,11 @@ namespace Blackjack
             hiddenCard = null;
         }
 
+        public string GetHiddenCardName()
+        {
+            return hiddenCard == null ? "" : "?";
+        }
+
         public void TakeTurn()
         {
             string choice = "";
@@ -320,12 +325,19 @@ namespace Blackjack
 
         public void DisplayHand()
         {
-            Console.Write("Hand: ");
-            foreach (Card c in hand)
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
             {
-                Console.Write("{0} ", c.Name);
+                betterUI.DisplayDealerStatus(this);
             }
-            Console.WriteLine();
+            else
+            {
+                Console.Write("Hand: ");
+                foreach (Card c in hand)
+                {
+                    Console.Write("{0} ", c.Name);
+                }
+                Console.WriteLine();
+            }           
         }
 
         public void Display()

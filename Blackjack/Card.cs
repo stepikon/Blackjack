@@ -31,7 +31,7 @@ namespace Blackjack
             get { return suit; }
         }
 
-        public ConsoleColor C
+        public ConsoleColor ColorOfConsole
         {
             get { return colorOfConsole; }
         }

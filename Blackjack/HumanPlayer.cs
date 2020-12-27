@@ -8,23 +8,30 @@ namespace Blackjack
 {
     class HumanPlayer:Player
     {
-        public HumanPlayer(string name, List<Card> hand, int chips, Tuple<int,int> tableLimits) :
-            base(name, hand, chips, tableLimits)
-        { }
+
+        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int,int> tableLimits) :
+            base(name, hand, betterUI, chips, tableLimits)
+        {
+        }
 
         public string GetChoice()
         {
             switch (Console.ReadLine().ToLower())
             {
                 case "h":
+                case "hit":
                     return CHOICE_HIT;
                 case "s":
+                case "stand":
                     return CHOICE_STAND;
                 case "sp":
+                case "split":
                     return CHOICE_SPLIT;
-                case "do":
+                case "d":
+                case "double":
                     return CHOICE_DOUBLE;
                 default:
+                    Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
                     return "";
             }
         }
@@ -33,6 +40,15 @@ namespace Blackjack
         {
             string choice;
             bool isDouble = false;
+
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            {
+                betterUI.DisplayTurn(Name);
+            }
+            else
+            {
+                Console.WriteLine("It's {0}'s turn", Name);
+            }
 
             for (int i = 0; i<hands.Length; i++)
             {
@@ -43,19 +59,34 @@ namespace Blackjack
 
                 do
                 {
-                    DisplayHands();
-                    Console.WriteLine("{0} or {1} (soft ace: {2})",
-                        GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2, GetHandValue(hands[i]).Item3);
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    {
+                        betterUI.DisplayPlayersStatus(players);
+                    }
+                    else
+                    {
+                        DisplayHands();
+                    }
 
                     if (GetHandValue(hands[i]).Item1 >= 21 || GetHandValue(hands[i]).Item2 >= 21 || hasBlackjack) //obvious choice; you always stand on 21 and you lose after going over 21.
                     {
                         choice = CHOICE_STAND;
                     }
-                    else if (isDouble||(hands[i].Count==1&&hands[i][0] is CardAce)) //after doubling you only get 1 card. The same rule apply if you split AA.
+                    else if (isDouble || (hands[i].Count == 1 && hands[i][0] is CardAce)) //after doubling you only get 1 card. The same rule apply if you split AA.
                     {
                         Hit(dealer, i);
-                        DisplayHands();
-                        Console.WriteLine("Last card on hand {0}", i);
+
+                        if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                        {
+                            betterUI.DisplayPlayersStatus(players);
+                            betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                        }
+                        else
+                        {
+                            DisplayHands();
+                            Console.WriteLine("Last card on hand {0}", i);
+                        }
+
                         choice = CHOICE_STAND;
                         isDouble = false;
                     }
@@ -65,7 +96,20 @@ namespace Blackjack
                     }
                     else
                     {
-                        choice = GetChoice();
+                        if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                        {
+                            choice = betterUI.GetStringChoice(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
+                           String.Format("{0} or {1}", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                           : String.Format("{0}", GetHandValue(hands[i]).Item1),
+                           new string[] { CHOICE_HIT, CHOICE_STAND, CHOICE_SPLIT, CHOICE_DOUBLE });
+                        }
+                        else
+                        {
+                            Console.WriteLine(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
+                           String.Format("{0} or {1}", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                           : String.Format("{0}", GetHandValue(hands[i]).Item1));
+                            choice = GetChoice();
+                        }
                     }
 
                     switch (choice)
@@ -84,8 +128,15 @@ namespace Blackjack
                             }
                             else
                             {
-                                Console.WriteLine("Cannot double");
-                            }                           
+                                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                                {
+                                    betterUI.DisplayMessage("Cannot double");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Cannot double");
+                                }
+                            }
                             break;
                         case CHOICE_STAND:
                             Stand();
@@ -95,31 +146,36 @@ namespace Blackjack
                     }
                 } while (choice != CHOICE_STAND);
             }
+
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            {
+                betterUI.ClearMessages();
+            }
         }
 
         public override void CountDealt(Player[] players,List<Card> dealerHand, double remainingDecks)
         {
-            Console.WriteLine("Human does this on his own");
+            //Console.WriteLine("Human does this on his own");
         }
 
         public override void UpdateRunningCount(Player[] players, List<Card> dealerHand)
         {
-            Console.WriteLine("Human does this on his own");
+            //Console.WriteLine("Human does this on his own");
         }
 
         public override void UpdateTrueCount(int runningCount, double remainingDecks)
         {
-            Console.WriteLine("Human does this on his own");
+            //Console.WriteLine("Human does this on his own");
         }
 
         public override void UpdateTrueCount(double remainingDecks)
         {
-            Console.WriteLine("Human does this on his own");
+            //Console.WriteLine("Human does this on his own");
         }
 
         public override void ResetCounts()
         {
-            Console.WriteLine("Human does this on his own");
+            //Console.WriteLine("Human does this on his own");
         }
 
         public override void Bet(List<Card> hand, Tuple<int, int> limits)
@@ -128,38 +184,63 @@ namespace Blackjack
 
             do
             {
-                Console.WriteLine("How much do you want to bet?\n" +
-                    "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
-
-                if (bets[0] == 0)
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                 {
-                    Console.WriteLine("(Bet (0) to quit)");
+                    betterUI.DisplayTurn(Name);
+
+                    bet = betterUI.GetIntInput(new string[] { 
+                    "How much do you want to bet?",
+                    String.Format("You have {0}", chips),
+                    String.Format("Bet limits are {0}-{1}", limits.Item1, limits.Item2),
+                    bets[0] == 0 ? "(Bet 0 to quit)" : ""
+                    });
                 }
-            } while (!(int.TryParse(Console.ReadLine(), out bet) && ((bet == 0 && bets[0] == 0) || (bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)))));
+                else
+                {
+                    do
+                    {
+                        Console.WriteLine("{0}, how much do you want to bet?\n" +
+                            "You have {1} chips, bet limits are {2}-{3}", Name, chips, limits.Item1, limits.Item2);
+
+                        if (bets[0] == 0)
+                        {
+                            Console.WriteLine("(Bet 0 to quit)");
+                        }
+                    } while (!(int.TryParse(Console.ReadLine(), out bet)));
+                }               
+            } while (!((bet == 0 && bets[0] == 0) || (bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits))));
 
             if (bet == 0 && bets[0] == 0)
             {
                 string choice;
-                do
-                {
-                    Console.WriteLine("Are you sure you want to quit? (Y/N)");
-                    switch (Console.ReadKey().KeyChar)
-                    {
-                        case 'y':
-                        case 'Y':
-                            choice = "yes";
-                            break;
-                        case 'n':
-                        case 'N':
-                            choice = "no";
-                            break;
-                        default:
-                            choice = "";
-                            break;
-                    }
-                } while (!(choice == "yes" || choice == "no"));
 
-                if (choice == "yes")
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    choice = betterUI.GetStringChoice("Are you sure you want to quit?", new string[] { "yes", "no" });
+                }
+                else
+                {
+                    do
+                    {
+                        Console.WriteLine("Are you sure you want to quit? (Y/N)");
+                        switch (Console.ReadKey().KeyChar)
+                        {
+                            case 'y':
+                            case 'Y':
+                                choice = "yes";
+                                break;
+                            case 'n':
+                            case 'N':
+                                choice = "no";
+                                break;
+                            default:
+                                choice = "";
+                                break;
+                        }
+                    } while (!(choice == "yes" || choice == "no"));
+                }
+                
+                if (choice.ToLower() == "yes")
                 {
                     IsGone = true;
                 }
@@ -205,25 +286,32 @@ namespace Blackjack
         {
             string choice;
 
-            do
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
             {
-                Console.WriteLine("Insurance is open. Bet? (Y/N)");
-                switch (Console.ReadKey().KeyChar)
+                choice = betterUI.GetStringChoice("Insurance is open. Do you want to buy insurance?", new string[] { "yes", "no" });
+            }
+            else
+            {
+                do
                 {
-                    case 'y':
-                    case 'Y':
-                        choice = "yes";
-                        break;
-                    case 'n':
-                    case 'N':
-                        choice = "no";
-                        break;
-                    default:
-                        choice = "";
-                        break;
-                }
-            } while (!(choice == "yes" || choice == "no"));
-
+                    Console.WriteLine("Insurance is open. Do you want to buy insurance? (Y/N)");
+                    switch (Console.ReadKey().KeyChar)
+                    {
+                        case 'y':
+                        case 'Y':
+                            choice = "yes";
+                            break;
+                        case 'n':
+                        case 'N':
+                            choice = "no";
+                            break;
+                        default:
+                            choice = "";
+                            break;
+                    }
+                } while (!(choice == "yes" || choice == "no"));
+            }
+            
             if (choice == "yes" && CheckBet(bets[0] * 0.5, new Tuple<int, int>(0, tableLimits.Item2)))
             {
                 insurance = bets[0] * 0.5;
@@ -239,33 +327,57 @@ namespace Blackjack
 
                 do
                 {
-                    Console.WriteLine("How much do you want to bet?\n" +
-                        "You have {0} chips, bet limits are {1}-{2}", chips, limits.Item1, limits.Item2);
-                    Console.WriteLine("Bet 0 to skip this bet.");
-                } while (!((int.TryParse(Console.ReadLine(), out bet) && bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)) || bet==0));
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    {
+                        betterUI.DisplayTurn(Name);
 
-                if (bet==0)
+                        bet = betterUI.GetIntInput(new string[] {
+                    "How much do you want to bet on pairs?",
+                    String.Format("You have {0}", chips),
+                    String.Format("Bet limits are {0}-{1}", limits.Item1, limits.Item2),
+                    "Bet 0 to skip this bet."
+                    });
+                    }
+                    else
+                    {
+                        do
+                        {
+                            Console.WriteLine("{0}, how much do you want to bet on pairs?\n" +
+                                "You have {1} chips, bet limits are {2}-{3}",Name, chips, limits.Item1, limits.Item2);
+                            Console.WriteLine("Bet 0 to skip this bet.");
+                        } while (!int.TryParse(Console.ReadLine(), out bet));
+                    }                   
+                } while (!((bet >= limits.Item1 && bet <= limits.Item2 && CheckBet(bet, limits)) || bet == 0));
+
+                if (bet == 0)
                 {
                     string choice;
 
-                    do
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                     {
-                        Console.WriteLine("Allow this side bet for future rounds? (Y/N)");
-                        switch (Console.ReadKey().KeyChar)
+                        choice = betterUI.GetStringChoice("Allow this side bet for future rounds?", new string[] { "yes", "no" });
+                    }
+                    else
+                    {
+                        do
                         {
-                            case 'y':
-                            case 'Y':
-                                choice = "yes";
-                                break;
-                            case 'n':
-                            case 'N':
-                                choice = "no";
-                                break;
-                            default:
-                                choice = "";
-                                break;
-                        }
-                    } while (!(choice == "yes" || choice == "no"));
+                            Console.WriteLine("Allow this side bet for future rounds? (Y/N)");
+                            switch (Console.ReadKey().KeyChar)
+                            {
+                                case 'y':
+                                case 'Y':
+                                    choice = "yes";
+                                    break;
+                                case 'n':
+                                case 'N':
+                                    choice = "no";
+                                    break;
+                                default:
+                                    choice = "";
+                                    break;
+                            }
+                        } while (!(choice == "yes" || choice == "no"));
+                    }                    
 
                     if (choice == "no")
                     {
@@ -309,6 +421,17 @@ namespace Blackjack
                 hands[newHandIndex].Add(temp);
                 Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
             }
+            else
+            {
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    betterUI.DisplayMessage("Cannot split");
+                }
+                else
+                {
+                    Console.WriteLine("Cannot split");
+                }
+            }
         }
 
         private void Double(int index, Tuple<int, int> limits)
@@ -319,7 +442,14 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("Cannot double");
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    betterUI.DisplayMessage("Cannot split");
+                }
+                else
+                {
+                    Console.WriteLine("Cannot split");
+                }
             }
         }
 
@@ -394,7 +524,10 @@ namespace Blackjack
                     Console.Write("hand {0}: ", i + 1);
                     foreach (Card c in hands[i])
                     {
-                        Console.Write("{0} ", c.Name);
+                        if (c != null)
+                        {
+                            Console.Write("{0} ", c.Name);
+                        }
                     }
                     Console.WriteLine();
                 }               

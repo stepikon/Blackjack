@@ -6,6 +6,8 @@ namespace Blackjack
 {
     abstract class Character
     {
+        public const int MINIMUM_WINDIW_WIDTH = 7 * 25;
+        public const int MINIMUM_WINDIW_HEIGHT = 36;
 
         protected const string CHOICE_HIT = "hit";
         protected const string CHOICE_STAND = "stand";
@@ -19,10 +21,13 @@ namespace Blackjack
         //You can have up to 4 hands. https://doubledowncasino1.zendesk.com/hc/en-us/articles/204588494-Advanced-Blackjack-rules
         public List<Card>[] hands = new List<Card>[4];
 
-        public Character(string name, List<Card> hand, bool hasBlackjack = false)
+        protected BetterUI betterUI;
+
+        public Character(string name, List<Card> hand, BetterUI betterUI, bool hasBlackjack = false)
         { 
             this.name = name;
             this.hand = hand;
+            this.betterUI = betterUI;
             this.hasBlackjack = hasBlackjack;
 
             hands[0] = hand;

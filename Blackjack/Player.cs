@@ -24,9 +24,9 @@ namespace Blackjack
         protected Tuple<int, int> tableLimits;
         protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
 
-        public Player(string name, List<Card> hand, double chips, Tuple<int,int> tableLimits, 
+        public Player(string name, List<Card> hand, BetterUI betterUI, double chips, Tuple<int,int> tableLimits, 
             bool allowPairBets = true, bool isRuined = false, bool isGone = false) :
-            base(name, hand)
+            base(name, hand, betterUI)
         {
             this.chips = chips;
             this.tableLimits = tableLimits;
@@ -109,6 +109,11 @@ namespace Blackjack
                     throw new ArgumentException();
                 }
             }
+        }
+
+        public int[] Bets
+        { get
+            { return bets; } 
         }
 
         public abstract void TakeTurn(Player[] players, Dealer dealer);
@@ -201,12 +206,10 @@ namespace Blackjack
             if (hands[0].Count == 2 && (hands[1]==null && hands[2] == null && hands[3] == null)
                 && (hands[0][0].GetCardValue() + hands[0][1].GetCardValue() == 21))
             {
-                Console.WriteLine("BJ");
                 hasBlackjack = true;
             }
             else
             {
-                Console.WriteLine("no BJ");
                 hasBlackjack = false;
             }
         }
