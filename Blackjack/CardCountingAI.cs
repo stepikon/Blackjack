@@ -119,7 +119,7 @@ namespace Blackjack
         }
 
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
-        //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/
+        //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations
         public string GetChoice(List<Card> hand, Tuple<int, int> limits, Player[] players, Dealer dealer)
         {
             if (hand != null && dealer.hand[0] != null)

@@ -528,7 +528,7 @@ namespace Blackjack
                     Console.Write(prompt);
 
                     //gets the choice; help from https://stackoverflow.com/questions/4351258/c-sharp-arrow-key-input-for-a-console-app
-                    ch = Console.ReadKey(false).Key;
+                    ch = Console.ReadKey(true).Key;
                     switch (ch)
                     {
                         case ConsoleKey.DownArrow:

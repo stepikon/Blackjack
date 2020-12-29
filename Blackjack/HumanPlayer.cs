@@ -99,15 +99,15 @@ namespace Blackjack
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                         {
                             choice = betterUI.GetStringChoice(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
-                           String.Format("{0} or {1}", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
-                           : String.Format("{0}", GetHandValue(hands[i]).Item1),
+                           String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                           : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1),
                            new string[] { CHOICE_HIT, CHOICE_STAND, CHOICE_SPLIT, CHOICE_DOUBLE });
                         }
                         else
                         {
                             Console.WriteLine(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
-                           String.Format("{0} or {1}", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
-                           : String.Format("{0}", GetHandValue(hands[i]).Item1));
+                           String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                           : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1));
                             choice = GetChoice();
                         }
                     }

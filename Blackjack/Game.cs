@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Blackjack
 {
-    class Game
+    class Game : IPlayable
     {
         //to display everything in a more fancy way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
@@ -28,6 +28,8 @@ namespace Blackjack
 
         public void Run()
         {
+            dealer.BuildShoe();
+            dealer.Shuffle();
             dealer.Reset();
             bool allPlayersHaveBlackJack;
             bool allBusted;
