@@ -13,6 +13,8 @@ namespace Blackjack
         private int cardToDeal;
 
         private bool hitSoft17;
+        private bool wait;
+        private bool isVisible;
 
         string name;
 
@@ -22,13 +24,15 @@ namespace Blackjack
 
         Random random;
 
-        public Dealer(string name, List<Card> hand, BetterUI betterUI, int deckAmount, Random random, bool hitSoft17)
+        public Dealer(string name, List<Card> hand, BetterUI betterUI, int deckAmount, Random random, bool hitSoft17, bool wait, bool isVisible = true)
             :base(name, hand, betterUI)
         {
             this.name = name;
             this.deckAmount = deckAmount;
             this.random = random;
             this.hitSoft17 = hitSoft17;
+            this.wait = wait;
+            this.isVisible = isVisible;
 
             shoe = new Card[52*deckAmount];
         }
@@ -38,102 +42,61 @@ namespace Blackjack
         public int DeckPenetration { get { return deckPenetration; } }
         public bool HitSoft17 { get { return hitSoft17; } }
 
-        public void BuildShoe()
+        public void CreateShoe()
         {
-            string name = "", suit="", color = "";
+            string suit="", color = "";
             ConsoleColor consoleColor = 0;
+
+            CardCreator[] creators = new CardCreator[] {
+                new CardTwoCreator("2"),
+                new CardThreeCreator("3"),
+                new CardFourCreator("4"),
+                new CardFiveCreator("5"),
+                new CardSixCreator("6"),
+                new CardSevenCreator("7"),
+                new CardEightCreator("8"),
+                new CardNineCreator("9"),
+                new CardTenCreator("10"),
+                new CardJackCreator("J"),
+                new CardQueenCreator("K"),
+                new CardKingCreator("Q"),
+                new CardAceCreator("A", false),
+            };
 
             for (int i = 0; i < deckAmount; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
+                    switch (j)
+                    {
+                        case 0:
+                            suit = "Hearts";
+                            color = "Red";
+                            consoleColor = ConsoleColor.Red;
+                            break;
+                        case 1:
+                            suit = "Diamonds";
+                            color = "Red";
+                            consoleColor = ConsoleColor.Magenta;
+                            break;
+                        case 2:
+                            suit = "Clubs";
+                            color = "Black";
+                            consoleColor = ConsoleColor.DarkGray;
+                            break;
+                        case 3:
+                            suit = "Spades";
+                            color = "Black";
+                            consoleColor = ConsoleColor.Black;
+                            break;
+                        default:
+                            Console.WriteLine("Never Happens");
+                            break;
+                    }
+
                     for (int k = 0; k < 13; k++)
                     {
-                        switch (j)
-                        {
-                            case 0:
-                                suit = "Hearts";
-                                color = "Red";
-                                consoleColor = ConsoleColor.Red;
-                                break;
-                            case 1:
-                                suit = "Diamonds";
-                                color = "Red";
-                                consoleColor = ConsoleColor.Magenta;
-                                break;
-                            case 2:
-                                suit = "Clubs";
-                                color = "Black";
-                                consoleColor = ConsoleColor.DarkGray;
-                                break;
-                            case 3:
-                                suit = "Spades";
-                                color = "Black";
-                                consoleColor = ConsoleColor.Black;
-                                break;
-                            default:
-                                Console.WriteLine("Never Happens");
-                                break;
-                        }
-
-                        switch (k)
-                        {
-                            case 0:
-                                name = "K";
-                                shoe[i * 52 + j * 13 + k] = new CardKing(name, suit, color, consoleColor);
-                                break;
-                            case 1:
-                                name = "A";
-                                shoe[i * 52 + j * 13 + k] = new CardAce(name, suit, color, consoleColor, false);
-                                break;
-                            case 2:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardTwo(name, suit, color, consoleColor);
-                                break;
-                            case 3:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardThree(name, suit, color, consoleColor);
-                                break;
-                            case 4:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardFour(name, suit, color, consoleColor);
-                                break;
-                            case 5:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardFive(name, suit, color, consoleColor);
-                                break;
-                            case 6:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardSix(name, suit, color, consoleColor);
-                                break;
-                            case 7:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardSeven(name, suit, color, consoleColor);
-                                break;
-                            case 8:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardEight(name, suit, color, consoleColor);
-                                break;
-                            case 9:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardNine(name, suit, color, consoleColor);
-                                break;
-                            case 10:
-                                name = k.ToString();
-                                shoe[i * 52 + j * 13 + k] = new CardTen(name, suit, color, consoleColor);
-                                break;
-                            case 11:
-                                name = "J";
-                                shoe[i * 52 + j * 13 + k] = new CardJack(name, suit, color, consoleColor);
-                                break;
-                            case 12:
-                                name = "Q";
-                                shoe[i * 52 + j * 13 + k] = new CardQueen(name, suit, color, consoleColor);
-                                break;
-                            default:
-                                Console.WriteLine("Never Happens");
-                                break;
-                        }
+                        shoe[i * 52 + j * 13 + k] = creators[k].CreateCard(suit, color, consoleColor);
                     }
                 }
             }
@@ -213,9 +176,24 @@ namespace Blackjack
                 {
                     case CHOICE_HIT:
                         Hit();
+                        if (isVisible)
+                        {
+                            betterUI.DisplayDealerStatus(this);
+                            if (wait)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                        }
                         break;
                     case CHOICE_STAND:
                         Stand();
+                        if (isVisible)
+                        {
+                            if (wait)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -325,19 +303,22 @@ namespace Blackjack
 
         public void DisplayHand()
         {
-            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            if (isVisible)
             {
-                betterUI.DisplayDealerStatus(this);
-            }
-            else
-            {
-                Console.Write("Hand: ");
-                foreach (Card c in hand)
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                 {
-                    Console.Write("{0} ", c.Name);
+                    betterUI.DisplayDealerStatus(this);
                 }
-                Console.WriteLine();
-            }           
+                else
+                {
+                    Console.Write("Hand: ");
+                    foreach (Card c in hand)
+                    {
+                        Console.Write("{0} ", c.Name);
+                    }
+                    Console.WriteLine();
+                }
+            }        
         }
 
         public void Display()

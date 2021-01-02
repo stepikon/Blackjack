@@ -9,7 +9,7 @@ namespace Blackjack
     {
         //to display everything in a more fancy way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
-        private const int MINIMUM_WINDIW_HEIGHT = 36;
+        private const int MINIMUM_WINDIW_HEIGHT = 38;
 
         Dealer dealer;
         Tuple<int, int> tableLimits;
@@ -28,11 +28,10 @@ namespace Blackjack
 
         public void Run()
         {
-            dealer.BuildShoe();
+            dealer.CreateShoe();
             dealer.Shuffle();
             dealer.Reset();
-            bool allPlayersHaveBlackJack;
-            bool allBusted;
+            bool dealerSkips; //skips dealer turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
 
             //initial check
             foreach (Player p in players)
@@ -45,8 +44,7 @@ namespace Blackjack
 
             do
             {
-                allPlayersHaveBlackJack = true;
-                allBusted = true;
+                dealerSkips = true;
                 betterUI.ClearAll();
 
                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
@@ -114,11 +112,11 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                                 {
-                                    betterUI.DisplayMessage("Perfect pair.");
+                                    betterUI.DisplayPairs(players, p, "Perfect pair.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Perfect pair.");
+                                    Console.WriteLine("{0}: Perfect pair.", p.Name);
                                 }
                                 p.Chips += p.PairBet * 26;
                             }
@@ -127,11 +125,11 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                                 {
-                                    betterUI.DisplayMessage("Color pair.");
+                                    betterUI.DisplayPairs(players, p, "Color pair.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Color pair.");
+                                    Console.WriteLine("{0}: Color pair.", p.Name);
                                 }
                                 p.Chips += p.PairBet * 13;
                             }
@@ -139,11 +137,11 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                                 {
-                                    betterUI.DisplayMessage("Pair.");
+                                    betterUI.DisplayPairs(players, p, "Pair.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Pair.");
+                                    Console.WriteLine("{0}: Pair.", p.Name);
                                 }
                                 p.Chips += p.PairBet * 7;
                             }
@@ -151,11 +149,11 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                                 {
-                                    betterUI.DisplayMessage("Not a pair.");
+                                    betterUI.DisplayPairs(players, p, "Not a pair.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Not a pair.");
+                                    Console.WriteLine("{0}: Not a pair.", p.Name);
                                 }
                             }
                         }
@@ -240,6 +238,12 @@ namespace Blackjack
                         if (!(p == null || p.IsRuined || p.IsGone))
                         {
                             p.CountDealt(players,dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
+
+                            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                            {
+                                betterUI.ClearMessages();
+                            }
+
                             p.TakeTurn(players, dealer);
                         }
 
@@ -262,30 +266,30 @@ namespace Blackjack
                     Console.WriteLine("-----");
                 }
 
-                //checks if everyone has BJ
-                foreach (Player p in players)
-                {
-                    if (!(p == null || p.IsRuined || p.IsGone))
-                    {
-                        allPlayersHaveBlackJack = allPlayersHaveBlackJack && p.HasBlackjack;
-                    }
-                }
-
-                //checks if everyone has busted
+                //checks if dealer may take his turn
                 foreach (Player p in players)
                 {
                     if (!(p == null || p.IsRuined || p.IsGone))
                     {
                         foreach (int handValue in p.GetHandValues())
                         {
-                            allBusted = allBusted && handValue > 21;
+                            dealerSkips = dealerSkips && (p.HasBlackjack || handValue > 21 || p.Surrender);
                         }
                     }
                 }
 
                 //Dealers turn
-                if (!(allPlayersHaveBlackJack||allBusted))
+                if (!dealerSkips)
                 {
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    {
+                        betterUI.DisplayTurn(dealer.Name);
+                    }
+                    else
+                    {
+                        Console.WriteLine("It's {0}'s turn.", dealer.Name);
+                    }
+
                     dealer.TakeTurn();
                 }
 
@@ -313,7 +317,11 @@ namespace Blackjack
                     {
                         for (int i = 0; i < p.GetHandValues().Count; i++)
                         {
-                            if ((p.GetHandValues()[i] > dealer.GetHandValue(dealer.hand).Item2
+                            if (p.Surrender)
+                            {
+                                Surrender(p, i);
+                            }
+                            else if ((p.GetHandValues()[i] > dealer.GetHandValue(dealer.hand).Item2
                                 || dealer.GetHandValue(dealer.hand).Item2 > 21
                                 || (p.HasBlackjack && !dealer.HasBlackjack))
                                 && p.GetHandValues()[i] <= 21)
@@ -413,7 +421,7 @@ namespace Blackjack
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(0,38);
+                    Console.SetCursorPosition(0,37);
                     Console.WriteLine("Press any key to continue. Press q to quit");
                 }
                 else
@@ -422,6 +430,21 @@ namespace Blackjack
                 }
 
             } while (ExistActivePlayers()&&Console.ReadKey().KeyChar!='q');
+        }
+
+        private void Surrender(Player player, int handIndex)
+        {
+            player.Chips += 0.5 * player.GetBet(handIndex);
+
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            {
+                betterUI.DisplayOutcomes("SURRENDER", handIndex, player.GetHandValues()[handIndex], players, player);
+            }
+            else
+            {
+                Console.WriteLine("You surrender, returning {0} chips, you now have {1} chips.",
+                0.5 * player.GetBet(handIndex), player.Chips);
+            }
         }
 
         private void Win(Player player, int handIndex)

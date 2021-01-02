@@ -8,6 +8,11 @@ namespace Blackjack
     {
         protected const string CHOICE_DOUBLE = "double";
         protected const string CHOICE_SPLIT = "split";
+        protected const string CHOICE_SURRENDER = "surrender";
+
+        protected bool isSurrenderAllowed;
+        protected bool isDASAllowed; //double after split
+        protected bool isResplitAllowed; //split up to 4 hands
 
         protected double chips;
         protected double insurance;
@@ -15,6 +20,8 @@ namespace Blackjack
 
         protected int runningCount;
         protected double trueCount;
+
+        protected bool surrender;
 
         private bool isRuined;
         private bool isGone;
@@ -24,13 +31,18 @@ namespace Blackjack
         protected Tuple<int, int> tableLimits;
         protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
 
-        public Player(string name, List<Card> hand, BetterUI betterUI, double chips, Tuple<int,int> tableLimits, 
+        public Player(string name, List<Card> hand, BetterUI betterUI, double chips, Tuple<int,int> tableLimits,
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed,
             bool allowPairBets = true, bool isRuined = false, bool isGone = false) :
             base(name, hand, betterUI)
         {
             this.chips = chips;
             this.tableLimits = tableLimits;
             this.allowPairBets = allowPairBets;
+
+            this.isSurrenderAllowed = isSurrenderAllowed;
+            this.isDASAllowed = isDASAllowed;
+            this.isResplitAllowed = isResplitAllowed;
 
             this.isRuined = isRuined;
             this.isGone = isGone;
@@ -111,6 +123,11 @@ namespace Blackjack
             }
         }
 
+        public bool Surrender
+        {
+            get { return surrender; }
+        }
+
         public int[] Bets
         { get
             { return bets; } 
@@ -187,8 +204,6 @@ namespace Blackjack
         {
             foreach (Card c in hand)
             {
-                Console.WriteLine(c.Name);
-
                 if (c is CardAce)
                 {
                     CardAce cA = (CardAce)c;

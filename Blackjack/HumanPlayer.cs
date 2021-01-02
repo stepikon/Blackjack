@@ -9,13 +9,23 @@ namespace Blackjack
     class HumanPlayer:Player
     {
 
-        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int,int> tableLimits) :
-            base(name, hand, betterUI, chips, tableLimits)
+        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int,int> tableLimits,
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed) :
+            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed)
         {
         }
 
         public string GetChoice()
         {
+            if (isSurrenderAllowed)
+            {
+                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
+            }
+            else
+            {
+                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, or (d)ouble");
+            }
+
             switch (Console.ReadLine().ToLower())
             {
                 case "h":
@@ -30,8 +40,27 @@ namespace Blackjack
                 case "d":
                 case "double":
                     return CHOICE_DOUBLE;
+                case "su":
+                case "surrender":
+                    if (isSurrenderAllowed)
+                    {
+                        return CHOICE_SURRENDER;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
+                        return "";
+                    }
                 default:
-                    Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
+                    if (isSurrenderAllowed)
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
+                    }
+
                     return "";
             }
         }
@@ -98,10 +127,20 @@ namespace Blackjack
                     {
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                         {
-                            choice = betterUI.GetStringChoice(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
-                           String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
-                           : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1),
-                           new string[] { CHOICE_HIT, CHOICE_STAND, CHOICE_SPLIT, CHOICE_DOUBLE });
+                            if (isSurrenderAllowed)
+                            {
+                                choice = betterUI.GetStringChoice(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
+                                    String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                                    : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1),
+                                    new string[] { CHOICE_HIT, CHOICE_STAND, CHOICE_SPLIT, CHOICE_DOUBLE, CHOICE_SURRENDER });
+                            }
+                            else
+                            {
+                                choice = betterUI.GetStringChoice(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
+                                    String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                                    : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1),
+                                    new string[] { CHOICE_HIT, CHOICE_STAND, CHOICE_SPLIT, CHOICE_DOUBLE });
+                            }
                         }
                         else
                         {
@@ -121,7 +160,7 @@ namespace Blackjack
                             Split(hands[i]);
                             break;
                         case CHOICE_DOUBLE:
-                            if (hands[i].Count == 2 && chips >= 0)
+                            if (hands[i].Count == 2 && chips >= 0 && (isDASAllowed || (hands[1] == null && hands[2] == null && hands[3] == null)))
                             {
                                 Double(i, new Tuple<int, int>(0, bets[i]));
                                 isDouble = true;
@@ -141,15 +180,34 @@ namespace Blackjack
                         case CHOICE_STAND:
                             Stand();
                             break;
+                        case CHOICE_SURRENDER:
+                            if (i == 0 && hands[i].Count == 2 && hands[1] == null && hands[2] == null && hands[3] == null)
+                            {
+                                SetSurrender();
+                            }
+                            else
+                            {
+                                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                                {
+                                    betterUI.DisplayMessage("Cannot surrender");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Cannot surrender");
+                                }
+
+                                choice = "";
+                            }
+                            break;
                         default:
                             break;
                     }
-                } while (choice != CHOICE_STAND);
-            }
+                } while (!(choice == CHOICE_STAND || choice == CHOICE_SURRENDER));
 
-            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
-            {
-                betterUI.ClearMessages();
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    betterUI.ClearMessages();
+                }
             }
         }
 
@@ -284,6 +342,15 @@ namespace Blackjack
 
         public override void BetInsurance()
         {
+            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            {
+                betterUI.DisplayTurn(Name);
+            }
+            else
+            {
+                Console.WriteLine("It's {0}'s turn.", Name);
+            }
+
             string choice;
 
             if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
@@ -462,7 +529,8 @@ namespace Blackjack
                     if (hand.Count==2
                         && ((hand[0].GetCardValue()==hand[1].GetCardValue()) || (hand[0].GetType()==hand[1].GetType())) //GetType for AA hands
                         &&(hands[1]==null||hands[2]==null)
-                        &&CheckBet(bets[0], tableLimits))
+                        &&CheckBet(bets[0], tableLimits)
+                        && (isResplitAllowed || hands[1] == null))
                     {
                         return hands[1]==null? 1 : 2;
                     }
@@ -474,7 +542,8 @@ namespace Blackjack
                     if (hand.Count == 2
                         && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType()))
                         && (hands[2] == null || hands[3] == null)
-                        && CheckBet(bets[1], tableLimits))
+                        && CheckBet(bets[1], tableLimits)
+                        && isResplitAllowed)
                     {
                         return hands[2] == null ? 2 : 3;
                     }
@@ -489,6 +558,11 @@ namespace Blackjack
                 default:
                     return -1;
             }
+        }
+
+        public void SetSurrender()
+        {
+            surrender = true;
         }
 
         public override List<int> GetHandValues()
@@ -548,6 +622,7 @@ namespace Blackjack
             insurance = 0;
             pairBet = 0;
             hasBlackjack = false;
+            surrender = false;
         }
     }
 }

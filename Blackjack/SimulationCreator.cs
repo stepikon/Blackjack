@@ -4,29 +4,27 @@ using System.Text;
 
 namespace Blackjack
 {
-    class GameCreator : GameModeCreator
+    class SimulationCreator : GameModeCreator
     {
-        string[] stringOptions = new string[] { 
+        string[] stringOptions = new string[] {
         "Number of decks: ",
         "Dealer hits soft 17: ",
         "Allow surrender: ",
         "Allow double after split: ",
         "Allow resplit: ",
-        "Dealer and AIs wait when drawing: ",
-        "Number of human players: ",
-        "Number of AIs: "};
+        "Number of AIs: ",
+        "Make dealer and AIs visible: "};
 
         int[] numberOfDecks = new int[] { 4, 5, 6, 7, 8 };
         string[] dealerHitsSoft17 = new string[] { "yes", "no" };
         string[] allowSurrender = new string[] { "yes", "no" };
         string[] allowDAS = new string[] { "yes", "no" };
         string[] allowResplit = new string[] { "yes", "no" };
-        string[] waiting = new string[] { "yes", "no" };
-        int[] numberOfPlayers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
-        int[] numberOfAIs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+        int[] numberOfAIs = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+        string[] isVisible = new string[] { "yes", "no" };
 
-        public GameCreator(BetterUI betterUI, Random random)
-            : base (betterUI, random)
+        public SimulationCreator(BetterUI betterUI, Random random)
+            : base(betterUI, random)
         { }
 
         public override IPlayable CreateGameMode()
@@ -38,17 +36,19 @@ namespace Blackjack
             int indexSurrender = 0;
             int indexDAS = 0;
             int indexResplit = 0;
-            int indexWaiting = 0;
-            int indexNumberOfPlayers = 0;
             int indexNumberOfAIs = 0;
+            int indexIsVisible = 0;
             int tableMin;
             int tableMax;
+            int handsPerCycle;
+            int repetitions;
+            int betSpreadMultiplier;
 
             //initial display
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
-            Console.WriteLine("Use arrows to customize your game or press enter to move on");
+            Console.WriteLine("Use arrows to set up your simulation or press enter to move on");
             for (int i = 0; i < stringOptions.Length; i++)
             {
                 if (i == optionSelected)
@@ -80,13 +80,10 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                         break;
                     case 6:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
-                        break;
-                    case 7:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
                         Console.WriteLine(stringOptions[i]);
@@ -99,6 +96,12 @@ namespace Blackjack
             Console.WriteLine("Table minimum: ");
             Console.WriteLine();
             Console.WriteLine("Table maximum: ");
+            Console.WriteLine();
+            Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+            Console.WriteLine();
+            Console.WriteLine("Repetitions: ");
+            Console.WriteLine();
+            Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
 
@@ -131,16 +134,12 @@ namespace Blackjack
                                 indexResplit = indexResplit < 0 ? indexResplit + allowResplit.Length : indexResplit;
                                 break;
                             case 5:
-                                indexWaiting--;
-                                indexWaiting = indexWaiting < 0 ? indexWaiting + waiting.Length : indexWaiting;
-                                break;
-                            case 6:
-                                indexNumberOfPlayers--;
-                                indexNumberOfPlayers = indexNumberOfPlayers < 0 ? indexNumberOfPlayers + numberOfPlayers.Length : indexNumberOfPlayers;
-                                break;
-                            case 7:
                                 indexNumberOfAIs--;
                                 indexNumberOfAIs = indexNumberOfAIs < 0 ? indexNumberOfAIs + numberOfAIs.Length : indexNumberOfAIs;
+                                break;
+                            case 6:
+                                indexIsVisible--;
+                                indexIsVisible = indexIsVisible < 0 ? indexIsVisible + isVisible.Length : indexIsVisible;
                                 break;
                             default:
                                 break;
@@ -174,16 +173,12 @@ namespace Blackjack
                                 indexResplit %= dealerHitsSoft17.Length;
                                 break;
                             case 5:
-                                indexWaiting++;
-                                indexWaiting %= dealerHitsSoft17.Length;
-                                break;
-                            case 6:
-                                indexNumberOfPlayers++;
-                                indexNumberOfPlayers %= numberOfPlayers.Length;
-                                break;
-                            case 7:
                                 indexNumberOfAIs++;
                                 indexNumberOfAIs %= numberOfAIs.Length;
+                                break;
+                            case 6:
+                                indexIsVisible++;
+                                indexIsVisible %= isVisible.Length;
                                 break;
                             default:
                                 break;
@@ -233,13 +228,10 @@ namespace Blackjack
                             Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                             break;
                         case 5:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                             break;
                         case 6:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
-                            break;
-                        case 7:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                            Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                             break;
                         default:
                             Console.WriteLine(stringOptions[i]);
@@ -253,8 +245,14 @@ namespace Blackjack
                 Console.WriteLine();
                 Console.WriteLine("Table maximum: ");
                 Console.WriteLine();
+                Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+                Console.WriteLine();
+                Console.WriteLine("Repetitions: ");
+                Console.WriteLine();
+                Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
+                Console.WriteLine();
                 Console.WriteLine(new String('=', 10));
-            } while (k != ConsoleKey.Enter || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] == 0 || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] >= 7);
+            } while (k != ConsoleKey.Enter);
 
             //Final Display
             Console.BackgroundColor = ConsoleColor.Black;
@@ -281,13 +279,10 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                         break;
                     case 6:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
-                        break;
-                    case 7:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
                         Console.WriteLine(stringOptions[i]);
@@ -301,23 +296,53 @@ namespace Blackjack
             Console.WriteLine();
             Console.WriteLine("Table maximum: ");
             Console.WriteLine();
+            Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+            Console.WriteLine();
+            Console.WriteLine("Repetitions: ");
+            Console.WriteLine();
+            Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
+            Console.WriteLine();
             Console.WriteLine(new String('=', 10));
 
             //table minimum
             do
             {
-                Console.SetCursorPosition(0,11);
+                Console.SetCursorPosition(0, 10);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 11);
+                Console.SetCursorPosition(0, 10);
             } while (!(int.TryParse(Console.ReadLine(), out tableMin) && tableMin > 0));
 
             //table maximum
             do
             {
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 12);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 12);
             } while (!(int.TryParse(Console.ReadLine(), out tableMax) && tableMax >= tableMin));
+
+            //hands per cycle
+            do
+            {
+                Console.SetCursorPosition(0, 14);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 14);
+            } while (!(int.TryParse(Console.ReadLine(), out handsPerCycle) && handsPerCycle > 0));
+
+            //repetitions
+            do
+            {
+                Console.SetCursorPosition(0, 16);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 16);
+            } while (!(int.TryParse(Console.ReadLine(), out repetitions) && repetitions > 0));
+
+            //bet spread multiplier
+            do
+            {
+                Console.SetCursorPosition(0, 18);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 18);
+            } while (!(int.TryParse(Console.ReadLine(), out betSpreadMultiplier) && betSpreadMultiplier > 0));
 
             //players and AIs construction
             Console.BackgroundColor = ConsoleColor.Black;
@@ -328,64 +353,35 @@ namespace Blackjack
             int[] chips = new int[7];
             Tuple<int, int> tableLimits = new Tuple<int, int>(tableMin, tableMax);
 
-            for (int i = 0; i < numberOfPlayers[indexNumberOfPlayers]; i++)
-            {                
-                do
-                {
-                    Console.WriteLine("Enter player {0}'s name (1-25 characters)", i + 1);
-                    names[i] = Console.ReadLine();
-                } while (names[i].Length > 25|| names[i].Length < 1);
-
-                do
-                {
-                    Console.WriteLine("Enter player {0}'s chips", i + 1);
-                } while (!(int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0));
-
-                betterUI.ClearAll();
-            }
-
-            for (int i = numberOfPlayers[indexNumberOfPlayers]; i < numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs]; i++)
+            for (int i = 0; i < numberOfAIs[indexNumberOfAIs]; i++)
             {
                 do
                 {
-                    Console.WriteLine("Enter AI{0}'s name (1-25 characters)", i + 1 - numberOfPlayers[indexNumberOfPlayers]);
+                    Console.WriteLine("Enter AI{0}'s name (1-25 characters)", i + 1);
                     names[i] = Console.ReadLine();
                 } while (names[i].Length > 25 || names[i].Length < 1);
 
                 do
                 {
-                    Console.WriteLine("Enter player AI{0}'s chips", i + 1 - numberOfPlayers[indexNumberOfPlayers]);
+                    Console.WriteLine("Enter player AI{0}'s chips", i + 1);
                 } while (!int.TryParse(Console.ReadLine(), out chips[i]));
 
                 betterUI.ClearAll();
             }
 
-            for (int i = 0; i < 7; i++)
-            {
-                if (i<numberOfPlayers[indexNumberOfPlayers])
-                {
-                    players[i] = new HumanPlayer(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes");
-                }
-                else if (i < numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs])
-                {
-                    players[i] = new CardCountingAI(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", 
-                        Math.Max(tableMin, chips[i]/1000), 2, waiting[indexWaiting] == "yes");
-                }
-            }
-
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
-            return new Game(
-                new Dealer("Dealer", new List<Card>(), betterUI, numberOfDecks[indexNumberOfDecks], random, dealerHitsSoft17[indexDealerHits] == "yes", waiting[indexWaiting] == "yes"),
+            return new Simulation(
+                new Dealer("Dealer", new List<Card>(), betterUI, numberOfDecks[indexNumberOfDecks], random, dealerHitsSoft17[indexDealerHits] == "yes", false, isVisible[indexIsVisible] == "yes"),
                 tableLimits,
                 players,
                 random,
-                betterUI);
+                betterUI,
+                numberOfAIs[indexNumberOfAIs], handsPerCycle, repetitions, new List<double>[numberOfAIs[indexNumberOfAIs]], isVisible[indexIsVisible] == "yes",
+                names, chips, allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes",
+                allowResplit[indexResplit] == "yes", betSpreadMultiplier, false
+                );
         }
-
-
     }
 }

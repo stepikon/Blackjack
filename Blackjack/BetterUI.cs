@@ -88,11 +88,11 @@ namespace Blackjack
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 18); //player order is from right to left in blackjack; from dealer's POV it's from left to right
+                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 19); //player order is from right to left in blackjack; from dealer's POV it's from left to right
                     Console.Write(players[i].Name);
-                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 19);
-                    Console.Write(players[i].IsRuined || players[i].IsGone ? "Wiped out" : "In game");
                     Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 20);
+                    Console.Write(players[i].IsRuined || players[i].IsGone ? "Wiped out" : "In game");
+                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 21);
                     Console.Write("Chips: ${0}", players[i].Chips >= 1000000000 ? "billions" : String.Format("{0:#,#,0.00}", players[i].Chips));
 
                     for (int j = 0; j < players[i].hands.Length; j++)
@@ -101,16 +101,16 @@ namespace Blackjack
                         {
                             if (players[i].Bets[j] >= 1000000000)
                             {
-                                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 22 + j * 2);
+                                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 23 + j * 2);
                                 Console.Write("Bet: billions");
                             }
                             else
                             {
-                                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 22 + j * 2);
+                                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 23 + j * 2);
                                 Console.Write("Bet: {0}", String.Format("${0:#,#,0.##}", players[i].Bets[j]));
                             }
 
-                            Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 22 + j * 2 + 1);
+                            Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 23 + j * 2 + 1);
                             Console.Write("hand {0}: ", j + 1);
                             foreach (Card c in players[i].hands[j])
                             {
@@ -132,7 +132,7 @@ namespace Blackjack
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 18);
+                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 19);
                     Console.Write("Empty spot");
                 }
             }
@@ -150,7 +150,7 @@ namespace Blackjack
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 24);
+                    Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 25);
                     Console.Write(players[i].HasBlackjack ? "BLACKJACK" : "");
                 }
             }
@@ -164,7 +164,7 @@ namespace Blackjack
 
             if (message.Length > 3 * Console.WindowWidth)
             {
-                Console.SetCursorPosition(0, 32);
+                Console.SetCursorPosition(0, 37);
                 Console.WriteLine(message);
             }
             else if (message.Length > 2 * Console.WindowWidth)
@@ -198,7 +198,7 @@ namespace Blackjack
         {
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(0,30);
+            Console.SetCursorPosition(0,32);
             Console.Write("Table limits: {0}-{1}", tablelimits.Item1, tablelimits.Item2);
         }
 
@@ -207,21 +207,21 @@ namespace Blackjack
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.SetCursorPosition((int)((Console.WindowWidth - BLACKJACK_PAYOUT.Length) / 2), 14);
+            Console.SetCursorPosition((int)((Console.WindowWidth - BLACKJACK_PAYOUT.Length) / 2), 15);
             Console.Write(BLACKJACK_PAYOUT);
 
             if (hit17)
             {
-                Console.SetCursorPosition((int)((Console.WindowWidth - DEALER_RULES_HIT_SOFT17.Length) / 2), 15);
+                Console.SetCursorPosition((int)((Console.WindowWidth - DEALER_RULES_HIT_SOFT17.Length) / 2), 16);
                 Console.Write(DEALER_RULES_HIT_SOFT17);
             }
             else
             {
-                Console.SetCursorPosition((int)((Console.WindowWidth - DEALER_RULES_STAND_SOFT17.Length) / 2), 15);
+                Console.SetCursorPosition((int)((Console.WindowWidth - DEALER_RULES_STAND_SOFT17.Length) / 2), 16);
                 Console.Write(DEALER_RULES_STAND_SOFT17);
             }
 
-            Console.SetCursorPosition((int)((Console.WindowWidth - INSURANCE_PAYOUT.Length) / 2), 16);
+            Console.SetCursorPosition((int)((Console.WindowWidth - INSURANCE_PAYOUT.Length) / 2), 17);
             Console.Write(INSURANCE_PAYOUT);
         }
 
@@ -231,8 +231,18 @@ namespace Blackjack
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(Console.WindowWidth - (spacing * (Array.IndexOf(players, player) + 1)), 32 + handIndex);
+            Console.SetCursorPosition(Console.WindowWidth - (spacing * (Array.IndexOf(players, player) + 1)), 33 + handIndex);
             Console.Write("Hand {0}: {1} ({2})", handIndex + 1, outcome, handValue);
+        }
+
+        public void DisplayPairs(Player[] players, Player player, string outcome)
+        {
+            int spacing = (int)(Console.WindowWidth / MAX_PLAYERS);
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.SetCursorPosition(Console.WindowWidth - (spacing * (Array.IndexOf(players, player) + 1)), 31);
+            Console.Write(outcome);
         }
 
         //CLEAR FUNCTIONS
@@ -258,9 +268,9 @@ namespace Blackjack
         public void ClearPlayersStatus()
         {
             Console.BackgroundColor = ConsoleColor.Black;
-            for (int i = 18; i <= 29; i++)
+            for (int i = 19; i <= 30; i++)
             {
-                if (i==24)
+                if (i==25)
                 {
                     continue;
                 }
@@ -278,7 +288,7 @@ namespace Blackjack
             {
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 24);
+                Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 25);
                 Console.Write(new String(' ', "BLACKJACK".Length));
             }
         }
@@ -287,7 +297,7 @@ namespace Blackjack
         {
             Console.BackgroundColor = ConsoleColor.Black;
 
-            for (int i = 8; i <= 12; i++)
+            for (int i = 8; i <= 13; i++)
             {
                 Console.SetCursorPosition(0, i);
                 Console.Write(new String(' ', Console.WindowWidth));
@@ -304,7 +314,7 @@ namespace Blackjack
                 Console.Write(new String(' ', Console.WindowWidth));
             }
 
-            for (int i = 32; i < Console.WindowHeight; i++)
+            for (int i = 37; i < Console.WindowHeight; i++)
             {
                 Console.SetCursorPosition(0, i);
                 Console.Write(new String(' ', Console.WindowWidth));
@@ -322,7 +332,7 @@ namespace Blackjack
         public void ClearLimits()
         {
             Console.BackgroundColor = ConsoleColor.Black;
-            Console.SetCursorPosition(0, 30);
+            Console.SetCursorPosition(0, 32);
             Console.Write(new String(' ', Console.WindowWidth));
         }
 
@@ -478,6 +488,7 @@ namespace Blackjack
                     }
                 } while (ch != ConsoleKey.Enter);
 
+                ClearOptionsSpace();
                 return options[chosenOption];
             }
             catch (ArgumentException)
@@ -572,6 +583,7 @@ namespace Blackjack
                     }
                 } while (ch != ConsoleKey.Enter);
 
+                ClearOptionsSpace();
                 return chosenOption == 0; //I want to put options like "yes" or "confirm" on the 0th index
             }
             catch (ArgumentException)

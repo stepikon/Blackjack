@@ -34,9 +34,10 @@ namespace Blackjack
         {
             GameModeCreator[] creators = new GameModeCreator[] { 
                 new GameCreator(betterUI, random),
-                new PracticeCreator(betterUI, random)};
+                new PracticeCreator(betterUI, random), 
+                new SimulationCreator(betterUI, random)};
 
-            string[] options = new string[] { "game", "practice"};
+            string[] options = new string[] { "game", "practice", "simulation"};
 
             int chosenOption = 0;
             ConsoleKey k;
