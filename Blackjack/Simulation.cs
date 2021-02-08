@@ -88,7 +88,7 @@ namespace Blackjack
                     {
                         players[i] = new CardCountingAI(name[i], new List<Card>(), betterUI, chips[i], tableLimits,
                             isSurrenderAllowed, isDASAllowed, isResplitAllowed,
-                            Math.Max(tableLimits.Item1, chips[i] / 2000), betSpreadMultiplier, wait,
+                            Math.Max(tableLimits.Item1, chips[i] / 1000), betSpreadMultiplier, wait,
                             runningCount, trueCount, isVisible);
                     }
 
@@ -110,7 +110,7 @@ namespace Blackjack
                         {
                             betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);
-                            Console.SetCursorPosition(0, 1);
+                            Console.SetCursorPosition(0, 0);
                             Console.WriteLine("repetition: " + repetion);
                         }
 
@@ -528,7 +528,7 @@ namespace Blackjack
                         {
                             /*betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);*/
-                            Console.SetCursorPosition(0, 1);
+                            Console.SetCursorPosition(0, 0);
                             Console.WriteLine("repetition: " + repetion);
                         }
 
@@ -856,7 +856,7 @@ namespace Blackjack
                                 p.UpdateTrueCount(dealer.DeckAmount - dealer.GetDecksInDiscard());
 
                                 Console.SetCursorPosition(0, 0);
-                                Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                                //Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
                             }
                         }
 
@@ -902,7 +902,7 @@ namespace Blackjack
                         }
                     }
 
-                    betterUI.ClearAll();
+                    //betterUI.ClearAll();
 
                     for (int i = 0; i < AIsAmount; i++)
                     {
@@ -918,6 +918,8 @@ namespace Blackjack
 
             for (int i = 0; i < 7; i++)
             {
+                int brokeCounter = 0;
+
                 if (players[i] != null && finalChips[i] != null)
                 {
                     double sum = 0;
@@ -926,17 +928,21 @@ namespace Blackjack
                     for (int j = 0; j < finalChips[i].Count; j++)
                     {
                         sum += finalChips[i][j];
+
+                        if (finalChips[i][j]<tableLimits.Item1)
+                        {
+                            brokeCounter++;
+                        }
                     }
 
                     average = sum / finalChips[i].Count;
 
-                    Console.WriteLine("AI {0} was starting on {1} chips and ended on {2} chips in average.", players[i].Name, chips[i], average);
+                    Console.WriteLine("AI {0} was starting on {1} chips and ended on {2} chips in average. Gone broke {3} times", players[i].Name, chips[i], average, brokeCounter);
                 }
             }
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
-
         }
 
         private void Surrender(Player player, int handIndex)

@@ -73,7 +73,7 @@ namespace Blackjack
                     {
                         choice = CHOICE_STAND;
                     }
-                    else if (isDouble || (hands[i].Count == 1 && hands[i][0] is CardAce)) //after doubling you only get 1 card. The same rule apply if you split AA.
+                    else if (isDouble) //after doubling you only get 1 card.
                     {
                         Hit(dealer, i);
 
@@ -94,7 +94,49 @@ namespace Blackjack
                         choice = CHOICE_STAND;
                         isDouble = false;
                     }
-                    else if (hands[i].Count == 1) //automatic choice, you are always dealt a card do BOTH hands after splitting.
+                    else if (hands[i].Count == 1 && hands[i][0] is CardAce) //after splitting aces you only get 1 card. If its an ace and splitting is a valid choice, you can split.
+                    {
+                        Hit(dealer, i);
+
+                        if (!(hands[i][1] is CardAce))
+                        {
+                            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                            {
+                                if (isVisible)
+                                {
+                                    betterUI.DisplayPlayersStatus(players);
+                                    betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                                }
+                                choice = CHOICE_STAND;
+                            }
+                            else
+                            {
+                                if (isVisible)
+                                {
+                                    DisplayHands();
+                                    Console.WriteLine("Last card on hand {0}", i);
+                                }
+                                choice = CHOICE_STAND;
+                            }
+                        }
+                        else
+                        {
+                            if (IsSplittingValid(hands[i]) != -1)
+                            {
+                                choice = CHOICE_SPLIT;
+                            }
+                            else
+                            {
+                                if (isVisible)
+                                {
+                                    DisplayHands();
+                                    Console.WriteLine("Last card on hand {0}", i);
+                                }
+                                choice = CHOICE_STAND;
+                            }
+                        }
+                    }
+                    else if (hands[i].Count == 1) //automatic choice, you are always dealt a card on BOTH hands after splitting.
                     {
                         choice = CHOICE_HIT;
                     }

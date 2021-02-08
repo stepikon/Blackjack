@@ -101,7 +101,7 @@ namespace Blackjack
                     {
                         choice = CHOICE_STAND;
                     }
-                    else if (isDouble || (hands[i].Count == 1 && hands[i][0] is CardAce)) //after doubling you only get 1 card. The same rule apply if you split AA.
+                    else if (isDouble) //after doubling you only get 1 card. The same rule apply if you split AA.
                     {
                         Hit(dealer, i);
 
@@ -118,6 +118,17 @@ namespace Blackjack
 
                         choice = CHOICE_STAND;
                         isDouble = false;
+                    }
+                    else if (hands[i].Count == 1 && hands[i][0] is CardAce)
+                    {
+                        if (IsSplittingValid(hands[i])!=-1)
+                        {
+                            choice = betterUI.GetStringChoice("Do you want to split again?", new string[] { CHOICE_STAND, CHOICE_SPLIT});
+                        }
+                        else
+                        {
+                            choice = CHOICE_STAND;
+                        }
                     }
                     else if (hands[i].Count == 1) //automatic choice, you are always dealt a card do BOTH hands after splitting.
                     {
