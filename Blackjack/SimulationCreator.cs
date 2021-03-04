@@ -12,6 +12,7 @@ namespace Blackjack
         "Allow surrender: ",
         "Allow double after split: ",
         "Allow resplit: ",
+        "--Allow resplit aces: ",
         "Number of AIs: ",
         "Make dealer and AIs visible: "};
 
@@ -20,6 +21,7 @@ namespace Blackjack
         string[] allowSurrender = new string[] { "yes", "no" };
         string[] allowDAS = new string[] { "yes", "no" };
         string[] allowResplit = new string[] { "yes", "no" };
+        string[] allowResplitAces = new string[] { "yes", "no" };
         int[] numberOfAIs = new int[] { 1, 2, 3, 4, 5, 6, 7 };
         string[] isVisible = new string[] { "yes", "no" };
 
@@ -36,13 +38,13 @@ namespace Blackjack
             int indexSurrender = 0;
             int indexDAS = 0;
             int indexResplit = 0;
+            int indexResplitAces = 0;
             int indexNumberOfAIs = 0;
             int indexIsVisible = 0;
             int tableMin;
             int tableMax;
             int handsPerCycle;
             int repetitions;
-            int betSpreadMultiplier;
 
             //initial display
             Console.BackgroundColor = ConsoleColor.Black;
@@ -80,9 +82,12 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]); //resplit must be allowed in order to resplit aces
                         break;
                     case 6:
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        break;
+                    case 7:
                         Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
@@ -100,8 +105,6 @@ namespace Blackjack
             Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
             Console.WriteLine();
             Console.WriteLine("Repetitions: ");
-            Console.WriteLine();
-            Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
 
@@ -134,10 +137,14 @@ namespace Blackjack
                                 indexResplit = indexResplit < 0 ? indexResplit + allowResplit.Length : indexResplit;
                                 break;
                             case 5:
+                                indexResplitAces--;
+                                indexResplitAces = indexResplitAces < 0 ? indexResplitAces + allowResplitAces.Length : indexResplitAces;
+                                break;
+                            case 6:
                                 indexNumberOfAIs--;
                                 indexNumberOfAIs = indexNumberOfAIs < 0 ? indexNumberOfAIs + numberOfAIs.Length : indexNumberOfAIs;
                                 break;
-                            case 6:
+                            case 7:
                                 indexIsVisible--;
                                 indexIsVisible = indexIsVisible < 0 ? indexIsVisible + isVisible.Length : indexIsVisible;
                                 break;
@@ -162,21 +169,25 @@ namespace Blackjack
                                 break;
                             case 2:
                                 indexSurrender++;
-                                indexSurrender %= dealerHitsSoft17.Length;
+                                indexSurrender %= allowSurrender.Length;
                                 break;
                             case 3:
                                 indexDAS++;
-                                indexDAS %= dealerHitsSoft17.Length;
+                                indexDAS %= allowDAS.Length;
                                 break;
                             case 4:
                                 indexResplit++;
-                                indexResplit %= dealerHitsSoft17.Length;
+                                indexResplit %= allowResplit.Length;
                                 break;
                             case 5:
+                                indexResplitAces++;
+                                indexResplitAces %= allowResplitAces.Length;
+                                break;
+                            case 6:
                                 indexNumberOfAIs++;
                                 indexNumberOfAIs %= numberOfAIs.Length;
                                 break;
-                            case 6:
+                            case 7:
                                 indexIsVisible++;
                                 indexIsVisible %= isVisible.Length;
                                 break;
@@ -228,9 +239,12 @@ namespace Blackjack
                             Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                             break;
                         case 5:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                            Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]);
                             break;
                         case 6:
+                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                            break;
+                        case 7:
                             Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                             break;
                         default:
@@ -248,8 +262,6 @@ namespace Blackjack
                 Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
                 Console.WriteLine();
                 Console.WriteLine("Repetitions: ");
-                Console.WriteLine();
-                Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
                 Console.WriteLine();
                 Console.WriteLine(new String('=', 10));
             } while (k != ConsoleKey.Enter);
@@ -279,9 +291,12 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]);
                         break;
                     case 6:
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
+                        break;
+                    case 7:
                         Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
@@ -300,49 +315,39 @@ namespace Blackjack
             Console.WriteLine();
             Console.WriteLine("Repetitions: ");
             Console.WriteLine();
-            Console.WriteLine("Bet spread multiplier (widens the bet spread): ");
-            Console.WriteLine();
             Console.WriteLine(new String('=', 10));
 
             //table minimum
             do
             {
-                Console.SetCursorPosition(0, 10);
+                Console.SetCursorPosition(0, 11);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 10);
+                Console.SetCursorPosition(0, 11);
             } while (!(int.TryParse(Console.ReadLine(), out tableMin) && tableMin > 0));
 
             //table maximum
             do
             {
-                Console.SetCursorPosition(0, 12);
+                Console.SetCursorPosition(0, 13);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 12);
+                Console.SetCursorPosition(0, 13);
             } while (!(int.TryParse(Console.ReadLine(), out tableMax) && tableMax >= tableMin));
 
             //hands per cycle
             do
             {
-                Console.SetCursorPosition(0, 14);
+                Console.SetCursorPosition(0, 15);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 14);
+                Console.SetCursorPosition(0, 15);
             } while (!(int.TryParse(Console.ReadLine(), out handsPerCycle) && handsPerCycle > 0));
 
             //repetitions
             do
             {
-                Console.SetCursorPosition(0, 16);
+                Console.SetCursorPosition(0, 17);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 16);
+                Console.SetCursorPosition(0, 17);
             } while (!(int.TryParse(Console.ReadLine(), out repetitions) && repetitions > 0));
-
-            //bet spread multiplier
-            do
-            {
-                Console.SetCursorPosition(0, 18);
-                Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 18);
-            } while (!(int.TryParse(Console.ReadLine(), out betSpreadMultiplier) && betSpreadMultiplier > 0));
 
             //players and AIs construction
             Console.BackgroundColor = ConsoleColor.Black;
@@ -351,6 +356,8 @@ namespace Blackjack
             Player[] players = new Player[7];
             string[] names = new string[7];
             int[] chips = new int[7];
+            int[] betUnits = new int[7];
+            int[] betSpreadMultipliers = new int[7];
             Tuple<int, int> tableLimits = new Tuple<int, int>(tableMin, tableMax);
 
             for (int i = 0; i < numberOfAIs[indexNumberOfAIs]; i++)
@@ -363,8 +370,19 @@ namespace Blackjack
 
                 do
                 {
-                    Console.WriteLine("Enter player AI{0}'s chips", i + 1);
+                    Console.WriteLine("Enter AI{0}'s chips", i + 1);
                 } while (!int.TryParse(Console.ReadLine(), out chips[i]));
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s bet unit. Value must fall within the table limits.", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out betUnits[i]) && betUnits[i] >= tableLimits.Item1 && betUnits[i] <= tableLimits.Item2));
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s bet spread multiplier \n" +
+                        "(bet spread will be 6*multiplier). Expecting integer from <1;5>", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out betSpreadMultipliers[i]) && betSpreadMultipliers[i] >= 1 && betSpreadMultipliers[i] <= 5));
 
                 betterUI.ClearAll();
             }
@@ -380,7 +398,7 @@ namespace Blackjack
                 betterUI,
                 numberOfAIs[indexNumberOfAIs], handsPerCycle, repetitions, new List<double>[numberOfAIs[indexNumberOfAIs]], isVisible[indexIsVisible] == "yes",
                 names, chips, allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes",
-                allowResplit[indexResplit] == "yes", betSpreadMultiplier, false
+                allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes", betUnits, betSpreadMultipliers, false
                 );
         }
     }

@@ -13,6 +13,7 @@ namespace Blackjack
         protected bool isSurrenderAllowed;
         protected bool isDASAllowed; //double after split
         protected bool isResplitAllowed; //split up to 4 hands
+        protected bool isResplitAcesAllowed; //split aces up to 4 hands
 
         protected double chips;
         protected double insurance;
@@ -32,7 +33,7 @@ namespace Blackjack
         protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
 
         public Player(string name, List<Card> hand, BetterUI betterUI, double chips, Tuple<int,int> tableLimits,
-            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed,
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed,
             bool allowPairBets = true, bool isRuined = false, bool isGone = false) :
             base(name, hand, betterUI)
         {
@@ -43,6 +44,7 @@ namespace Blackjack
             this.isSurrenderAllowed = isSurrenderAllowed;
             this.isDASAllowed = isDASAllowed;
             this.isResplitAllowed = isResplitAllowed;
+            this.isResplitAcesAllowed = isResplitAcesAllowed;
 
             this.isRuined = isRuined;
             this.isGone = isGone;

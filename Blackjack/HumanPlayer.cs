@@ -10,8 +10,8 @@ namespace Blackjack
     {
 
         public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int,int> tableLimits,
-            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed) :
-            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed)
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed) :
+            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
         {
         }
 
@@ -121,7 +121,9 @@ namespace Blackjack
                     }
                     else if (hands[i].Count == 1 && hands[i][0] is CardAce)
                     {
-                        if (IsSplittingValid(hands[i])!=-1)
+                        Hit(dealer, i);
+
+                        if (IsSplittingValid(hands[i])!=-1 && isResplitAcesAllowed)
                         {
                             choice = betterUI.GetStringChoice("Do you want to split again?", new string[] { CHOICE_STAND, CHOICE_SPLIT});
                         }

@@ -30,14 +30,16 @@ namespace Blackjack
         bool isSurrenderAllowed;
         bool isDASAllowed;
         bool isResplitAllowed;
-        int betSpreadMultiplier;
+        bool isResplitAcesAllowed;
+        int[] betUnit;
+        int[] betSpreadMultiplier;
         bool wait;
         int runningCount;
         double trueCount;
 
         public Simulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
 /*simulation*/int AIsAmount, int handsPerCycle, int repetions, List<double>[] finalChips, bool isVisible,
-     /*AI:*/string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, int betSpreadMultiplier, bool wait,
+     /*AI:*/string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int[] betUnit, int[] betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0)
         {
             this.dealer = dealer;
@@ -59,6 +61,8 @@ namespace Blackjack
             this.isSurrenderAllowed = isSurrenderAllowed;
             this.isDASAllowed = isDASAllowed;
             this.isResplitAllowed = isResplitAllowed;
+            this.isResplitAcesAllowed = isResplitAcesAllowed;
+            this.betUnit = betUnit;
             this.betSpreadMultiplier = betSpreadMultiplier;
             this.wait = wait;
             this.runningCount = runningCount;
@@ -87,9 +91,9 @@ namespace Blackjack
                     for (int i = 0; i < AIsAmount; i++)
                     {
                         players[i] = new CardCountingAI(name[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                            isSurrenderAllowed, isDASAllowed, isResplitAllowed,
-                            Math.Max(tableLimits.Item1, chips[i] / 1000), betSpreadMultiplier, wait,
-                            runningCount, trueCount, isVisible);
+                            isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed,
+                            betUnit[i], betSpreadMultiplier[i], wait,
+                            runningCount, trueCount, isVisible) ;
                     }
 
                     //initial check
@@ -505,8 +509,8 @@ namespace Blackjack
                     for (int i = 0; i < AIsAmount; i++)
                     {
                         players[i] = new CardCountingAI(name[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                            isSurrenderAllowed, isDASAllowed, isResplitAllowed,
-                            Math.Max(tableLimits.Item1, chips[i] / 1000), betSpreadMultiplier, wait,
+                            isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed,
+                            betUnit[i], betSpreadMultiplier[i], wait,
                             runningCount, trueCount, isVisible);
                     }
 

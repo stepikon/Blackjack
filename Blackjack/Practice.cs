@@ -15,7 +15,7 @@ namespace Blackjack
         private const string BASIC_STRATEGY = "Basic strategy";
 
         protected BetterUI betterUI;
-        protected Random random;        
+        protected Random random;
 
         public Practice(BetterUI betterUI, Random random)
         {
@@ -26,6 +26,7 @@ namespace Blackjack
         public virtual void Run()
         {
             GameMode gm;
+
             string[] practiceOptions = new string[]
             {
             TRUE_COUNT_CONVERSION,

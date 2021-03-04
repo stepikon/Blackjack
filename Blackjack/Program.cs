@@ -18,12 +18,13 @@ namespace Blackjack
 
             Random random = new Random();
             BetterUI betterUI = new BetterUI();
+            GameMode gm = new GameMode();
 
             betterUI.ClearAll();
 
             do
             {
-                GameMode gm = new GameMode(ChooseGamemode(betterUI, random));
+                gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
                 Console.WriteLine("Game over.\n" +
                     "Press any key to play a new game. Press q to quit");

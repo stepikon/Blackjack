@@ -15,9 +15,9 @@ namespace Blackjack
         bool isVisible;
 
         public CardCountingAI(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int, int> tableLimits,
-            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, int betUnit, int betSpreadMultiplier, bool wait,
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int betUnit, int betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0, bool isVisible = true) :
-            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed)
+            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
         {
             this.runningCount = runningCount;
             this.trueCount = trueCount;
@@ -121,16 +121,27 @@ namespace Blackjack
                         }
                         else
                         {
-                            if (IsSplittingValid(hands[i]) != -1)
+                            if (IsSplittingValid(hands[i]) != -1 && isResplitAcesAllowed)
                             {
                                 choice = CHOICE_SPLIT;
                             }
                             else
                             {
-                                if (isVisible)
+                                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                                 {
-                                    DisplayHands();
-                                    Console.WriteLine("Last card on hand {0}", i);
+                                    if (isVisible)
+                                    {
+                                        betterUI.DisplayPlayersStatus(players);
+                                        betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                                    }
+                                }
+                                else
+                                {
+                                    if (isVisible)
+                                    {
+                                        DisplayHands();
+                                        Console.WriteLine("Last card on hand {0}", i);
+                                    }
                                 }
                                 choice = CHOICE_STAND;
                             }

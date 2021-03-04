@@ -12,6 +12,7 @@ namespace Blackjack
         "Allow surrender: ",
         "Allow double after split: ",
         "Allow resplit: ",
+        "--Allow resplit aces: ",
         "Dealer and AIs wait when drawing: ",
         "Number of human players: ",
         "Number of AIs: "};
@@ -21,6 +22,7 @@ namespace Blackjack
         string[] allowSurrender = new string[] { "yes", "no" };
         string[] allowDAS = new string[] { "yes", "no" };
         string[] allowResplit = new string[] { "yes", "no" };
+        string[] allowResplitAces = new string[] { "yes", "no" };
         string[] waiting = new string[] { "yes", "no" };
         int[] numberOfPlayers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
         int[] numberOfAIs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -38,6 +40,7 @@ namespace Blackjack
             int indexSurrender = 0;
             int indexDAS = 0;
             int indexResplit = 0;
+            int indexResplitAces = 0;
             int indexWaiting = 0;
             int indexNumberOfPlayers = 0;
             int indexNumberOfAIs = 0;
@@ -80,12 +83,15 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]); //if resplit is not allowed, you cannot resplit aces.
                         break;
                     case 6:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
                         break;
                     case 7:
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                        break;
+                    case 8:
                         Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                         break;
                     default:
@@ -131,14 +137,18 @@ namespace Blackjack
                                 indexResplit = indexResplit < 0 ? indexResplit + allowResplit.Length : indexResplit;
                                 break;
                             case 5:
+                                indexResplitAces--;
+                                indexResplitAces = indexResplitAces < 0 ? indexResplitAces + allowResplitAces.Length : indexResplitAces;
+                                break;
+                            case 6:
                                 indexWaiting--;
                                 indexWaiting = indexWaiting < 0 ? indexWaiting + waiting.Length : indexWaiting;
                                 break;
-                            case 6:
+                            case 7:
                                 indexNumberOfPlayers--;
                                 indexNumberOfPlayers = indexNumberOfPlayers < 0 ? indexNumberOfPlayers + numberOfPlayers.Length : indexNumberOfPlayers;
                                 break;
-                            case 7:
+                            case 8:
                                 indexNumberOfAIs--;
                                 indexNumberOfAIs = indexNumberOfAIs < 0 ? indexNumberOfAIs + numberOfAIs.Length : indexNumberOfAIs;
                                 break;
@@ -163,25 +173,29 @@ namespace Blackjack
                                 break;
                             case 2:
                                 indexSurrender++;
-                                indexSurrender %= dealerHitsSoft17.Length;
+                                indexSurrender %= allowSurrender.Length;
                                 break;
                             case 3:
                                 indexDAS++;
-                                indexDAS %= dealerHitsSoft17.Length;
+                                indexDAS %= allowDAS.Length;
                                 break;
                             case 4:
                                 indexResplit++;
-                                indexResplit %= dealerHitsSoft17.Length;
+                                indexResplit %= allowResplit.Length;
                                 break;
                             case 5:
-                                indexWaiting++;
-                                indexWaiting %= dealerHitsSoft17.Length;
+                                indexResplitAces++;
+                                indexResplitAces %= allowResplitAces.Length;
                                 break;
                             case 6:
+                                indexWaiting++;
+                                indexWaiting %= waiting.Length;
+                                break;
+                            case 7:
                                 indexNumberOfPlayers++;
                                 indexNumberOfPlayers %= numberOfPlayers.Length;
                                 break;
-                            case 7:
+                            case 8:
                                 indexNumberOfAIs++;
                                 indexNumberOfAIs %= numberOfAIs.Length;
                                 break;
@@ -233,12 +247,15 @@ namespace Blackjack
                             Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                             break;
                         case 5:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                            Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]);
                             break;
                         case 6:
-                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                            Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
                             break;
                         case 7:
+                            Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                            break;
+                        case 8:
                             Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                             break;
                         default:
@@ -254,7 +271,7 @@ namespace Blackjack
                 Console.WriteLine("Table maximum: ");
                 Console.WriteLine();
                 Console.WriteLine(new String('=', 10));
-            } while (k != ConsoleKey.Enter || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] == 0 || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] >= 7);
+            } while (k != ConsoleKey.Enter || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] == 0 || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] > 7);
 
             //Final Display
             Console.BackgroundColor = ConsoleColor.Black;
@@ -281,12 +298,15 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", allowResplit[indexResplit]);
                         break;
                     case 5:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", allowResplitAces[Math.Max(indexResplit, indexResplitAces)]);
                         break;
                     case 6:
-                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                        Console.WriteLine(stringOptions[i] + "<{0}>", waiting[indexWaiting]);
                         break;
                     case 7:
+                        Console.WriteLine(stringOptions[i] + "<{0}>", numberOfPlayers[indexNumberOfPlayers]);
+                        break;
+                    case 8:
                         Console.WriteLine(stringOptions[i] + "<{0}>", numberOfAIs[indexNumberOfAIs]);
                         break;
                     default:
@@ -306,17 +326,17 @@ namespace Blackjack
             //table minimum
             do
             {
-                Console.SetCursorPosition(0,11);
+                Console.SetCursorPosition(0,12);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 11);
+                Console.SetCursorPosition(0, 12);
             } while (!(int.TryParse(Console.ReadLine(), out tableMin) && tableMin > 0));
 
             //table maximum
             do
             {
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 14);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 14);
             } while (!(int.TryParse(Console.ReadLine(), out tableMax) && tableMax >= tableMin));
 
             //players and AIs construction
@@ -354,7 +374,7 @@ namespace Blackjack
 
                 do
                 {
-                    Console.WriteLine("Enter player AI{0}'s chips", i + 1 - numberOfPlayers[indexNumberOfPlayers]);
+                    Console.WriteLine("Enter AI{0}'s chips", i + 1 - numberOfPlayers[indexNumberOfPlayers]);
                 } while (!int.TryParse(Console.ReadLine(), out chips[i]));
 
                 betterUI.ClearAll();
@@ -365,12 +385,12 @@ namespace Blackjack
                 if (i<numberOfPlayers[indexNumberOfPlayers])
                 {
                     players[i] = new HumanPlayer(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes");
+                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes");
                 }
                 else if (i < numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs])
                 {
                     players[i] = new CardCountingAI(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", 
+                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes",
                         Math.Max(tableMin, chips[i]/1000), 2, waiting[indexWaiting] == "yes");
                 }
             }
@@ -385,7 +405,5 @@ namespace Blackjack
                 random,
                 betterUI);
         }
-
-
     }
 }
