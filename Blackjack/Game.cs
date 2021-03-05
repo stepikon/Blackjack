@@ -453,8 +453,8 @@ namespace Blackjack
                 {
                     if (p is HumanPlayer)
                     {
-                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\TotalChipAmount.txt", p.Name, p.Chips);
-                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\ChipRatio.txt", p.Name, (double)p.Chips / p.OriginalChips);
+                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\AbsoluteChipAmount.txt", p.Name, p.Chips);
+                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\RelativeChipAmount.txt", p.Name, (double)p.Chips / p.OriginalChips);
                     }
                 }
             }

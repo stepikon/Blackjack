@@ -10,9 +10,18 @@ namespace Blackjack
 {
     class PracticeBasicStrategy : Practice
     {
-        public PracticeBasicStrategy(BetterUI betterUI, Random random)
+        private bool hit17;
+        private bool surrenderAllowed;
+        private bool doubleAllowed;
+        private bool DASAllowed;
+
+        public PracticeBasicStrategy(BetterUI betterUI, Random random, bool hit17, bool surrenderAllowed, bool doubleAllowed, bool DASAllowed)
             : base (betterUI, random)
         {
+            this.hit17 = hit17;
+            this.surrenderAllowed = surrenderAllowed;
+            this.doubleAllowed = doubleAllowed;
+            this.DASAllowed = DASAllowed;
         }
 
         public override void Run()
@@ -20,7 +29,9 @@ namespace Blackjack
             betterUI.ClearAll();
             Console.Write("Enter the correct decision based on basic strategy.\n" +
                 "Each correct answer is worth a point, the game ends after a wrong answer.\n" +
+                "You will be told if you have a pair \n " + 
                 "Press any key to start. Press q to quit.");
+
             if (Console.ReadKey().KeyChar == 'q')
             {
                 return;
@@ -44,19 +55,16 @@ namespace Blackjack
             new Tuple<string, int>("A", 11)
             };
 
-            const string HIT17 = "hit 17";
-            const string STAND17 = "stand 17";
             const string HIT = "hit";
             const string STAND = "stand";
             const string DOUBLE = "double";
             const string SPLIT = "split";
+            const string SURRENDER = "surrender";
 
             string correctChoice;
             string playerChoice;
             Tuple<Tuple<string, int>, Tuple<string, int>> playerHand;
             Tuple<string, int> dealerCard;
-            bool hit17 = GetChoice("Do you want to practice basic strategy for hit 17 game or for stand 17 game?",
-                new string[] { HIT17, STAND17 }).Equals(HIT17);
             bool softTotal;
             bool isCorrect;
             int score = 0;
@@ -67,8 +75,9 @@ namespace Blackjack
                 dealerCard = cards[random.Next(13)];
                 softTotal = playerHand.Item1.Item2 == 11 || playerHand.Item2.Item2 == 11;
 
-                //normal thought process is: 1) Can I split? Yes or step 2. 2) Can I double? Yes or step 3. 3)Hit/Stand.
-                //here the code goes "backwards", so hit/stand options may be overwritten by double or split.
+                //normal thought process is: 1] Can I surrender? yes or 2 2) Can I split? Yes or step 3. 3) Can I double? Yes or step 4. 4)Hit/Stand.
+                //here the code goes "backwards", so hit/stand options may be overwritten by double or split or surrender.
+                //basic strategy from https://wizardofodds.com/games/blackjack/strategy/4-decks/ (it's actually 4-8 decks)
 
                 if (hit17)
                 {
@@ -86,18 +95,21 @@ namespace Blackjack
                         }
 
                         //double
-                        if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 19 && dealerCard.Item2 == 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 18 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 17 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 14 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 13 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6))
+                        if (doubleAllowed)
                         {
-                            correctChoice = DOUBLE;
+                            if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 19 && dealerCard.Item2 == 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 18 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 17 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 14 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 13 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6))
+                            {
+                                correctChoice = DOUBLE;
+                            }
                         }
 
-                        //split, since hand contains A, you can olny split if hand is AA
+                        //split, since hand contains A, you can olny split if hand is AA and you always split AA
                         if (playerHand.Item1.Item2 == playerHand.Item2.Item2)
                         {
                             correctChoice = SPLIT;
@@ -121,25 +133,63 @@ namespace Blackjack
                         }
 
                         //double
-                        if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 9 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 10 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 9)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 11))
+                        if (doubleAllowed)
                         {
-                            correctChoice = DOUBLE;
+                            if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 9 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 10 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 9)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 11))
+                            {
+                                correctChoice = DOUBLE;
+                            }
                         }
 
                         //split
                         if (playerHand.Item1.Item2 == playerHand.Item2.Item2)
                         {
-                            if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 4 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
-                                || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
-                                || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 8)
-                                || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                            if (DASAllowed)
                             {
-                                correctChoice = SPLIT;
+                                if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 4 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 8)
+                                    || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                                {
+                                    correctChoice = SPLIT;
+                                }
+                            }
+                            else
+                            {
+                                if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 8)
+                                    || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                                {
+                                    correctChoice = SPLIT;
+                                }
+                            }
+                        }
+
+                        //surrender
+                        if (surrenderAllowed)
+                        {
+                            if (!softTotal)
+                            {
+                                if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 >= 10 && dealerCard.Item2 <= 11)
+                                    || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 9 && dealerCard.Item2 <= 11)
+                                    || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 17 && dealerCard.Item2 == 11)
+                                    || (playerHand.Item1.Item2 == 8 && playerHand.Item2.Item2 == 8 && dealerCard.Item2 == 11)) //88 vs A
+                                {
+                                    correctChoice = SURRENDER;
+
+                                    if (playerHand.Item1.Item2 == 8 && playerHand.Item2.Item2 == 8 && dealerCard.Item2 != 11)
+                                    {
+                                        correctChoice = SPLIT;
+                                    }
+                                }
                             }
                         }
                     }
@@ -160,17 +210,20 @@ namespace Blackjack
                         }
 
                         //double
-                        if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 18 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 17 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 14 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 13 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6))
+                        if (doubleAllowed)
                         {
-                            correctChoice = DOUBLE;
+                            if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 18 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 17 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 14 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 13 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6))
+                            {
+                                correctChoice = DOUBLE;
+                            }
                         }
 
-                        //split, since hand contains A, you can olny split if hand is AA
+                        //split, since hand contains A, you can olny split if hand is AA, which you always split
                         if (playerHand.Item1.Item2 == playerHand.Item2.Item2)
                         {
                             correctChoice = SPLIT;
@@ -194,25 +247,61 @@ namespace Blackjack
                         }
 
                         //double
-                        if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 9 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 10 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 9)
-                            || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 11 && dealerCard.Item2 != 11))
+                        if (doubleAllowed)
                         {
-                            correctChoice = DOUBLE;
+                            if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 9 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 10 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 9)
+                                || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 11 && dealerCard.Item2 != 11))
+                            {
+                                correctChoice = DOUBLE;
+                            }
                         }
 
                         //split
                         if (playerHand.Item1.Item2 == playerHand.Item2.Item2)
                         {
-                            if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 4 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
-                                || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
-                                || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
-                                || (playerHand.Item1.Item2 == 8)
-                                || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                            if (DASAllowed)
                             {
-                                correctChoice = SPLIT;
+                                if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 4 && dealerCard.Item2 >= 5 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 8)
+                                    || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                                {
+                                    correctChoice = SPLIT;
+                                }
+                            }
+                            else
+                            {
+                                if ((playerHand.Item1.Item2 == 2 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 3 && dealerCard.Item2 >= 4 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 6 && dealerCard.Item2 >= 3 && dealerCard.Item2 <= 6)
+                                    || (playerHand.Item1.Item2 == 7 && dealerCard.Item2 >= 2 && dealerCard.Item2 <= 7)
+                                    || (playerHand.Item1.Item2 == 8)
+                                    || (playerHand.Item1.Item2 == 9 && dealerCard.Item2 != 7 && dealerCard.Item2 != 10 && dealerCard.Item2 != 11))
+                                {
+                                    correctChoice = SPLIT;
+                                }
+                            }
+                        }
+
+                        //surrender
+                        if (surrenderAllowed)
+                        {
+                            if (!softTotal)
+                            {
+                                if ((playerHand.Item1.Item2 + playerHand.Item2.Item2 == 15 && dealerCard.Item2 == 10)
+                                    || (playerHand.Item1.Item2 + playerHand.Item2.Item2 == 16 && dealerCard.Item2 >= 9 && dealerCard.Item2 <= 11))
+                                {
+                                    correctChoice = SURRENDER;
+
+                                    if (playerHand.Item1.Item2 == 8 && playerHand.Item2.Item2 == 8)
+                                    {
+                                        correctChoice = SPLIT;
+                                    }
+                                }
                             }
                         }
                     }
@@ -222,34 +311,155 @@ namespace Blackjack
                 {
                     if (playerHand.Item1.Item2 == playerHand.Item2.Item2) //only AA pairs. Soft total of AA is 12
                     {
-                        playerChoice = GetChoice(
-                            String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
-                            12, playerHand.Item1.Item1, dealerCard.Item1),
-                            new string[] { HIT, STAND, DOUBLE, SPLIT });
+                        if (surrenderAllowed)
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    12, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    12, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT, SURRENDER });
+                            }
+                        }
+                        else
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    12, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    12, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT });
+                            }
+                        }                       
                     }
                     else
                     {
-                        playerChoice = GetChoice(
-                            String.Format("Soft total: {0}, dealer shows: {1}",
-                            playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                            new string[] { HIT, STAND, DOUBLE });
+                        if (surrenderAllowed)
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SURRENDER });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SURRENDER });
+                            }
+                        }
+                        else
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE });
+
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Soft total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND });
+                            }
+                        }
                     }
                 }
                 else
                 {
                     if (playerHand.Item1.Item2 == playerHand.Item2.Item2)
                     {
-                        playerChoice = GetChoice(
-                            String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
-                            playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
-                            new string[] { HIT, STAND, DOUBLE, SPLIT });
+                        if (surrenderAllowed)
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT, SURRENDER });
+                            }
+                        }
+                        else
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT });
+                            }
+                        }
                     }
                     else
                     {
-                        playerChoice = GetChoice(
-                            String.Format("Hard total: {0}, dealer shows: {1}",
-                            playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                            new string[] { HIT, STAND, DOUBLE });
+                        if (surrenderAllowed)
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SURRENDER });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SURRENDER });
+                            }
+                        }
+                        else
+                        {
+                            if (doubleAllowed)
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE });
+                            }
+                            else
+                            {
+                                playerChoice = GetChoice(
+                                    String.Format("Hard total: {0}, dealer shows: {1}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
+                                    new string[] { HIT, STAND });
+                            }
+                        }
                     }
                 }
 
