@@ -9,9 +9,9 @@ namespace Blackjack
     class HumanPlayer:Player
     {
 
-        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int,int> tableLimits,
+        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int originalChips, Tuple<int,int> tableLimits,
             bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed) :
-            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
+            base(name, hand, betterUI, originalChips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
         {
         }
 

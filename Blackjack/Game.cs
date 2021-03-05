@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using System.IO;
 
 namespace Blackjack
 {
@@ -430,6 +431,33 @@ namespace Blackjack
                 }
 
             } while (ExistActivePlayers()&&Console.ReadKey().KeyChar!='q');
+
+            //scores
+            Console.Clear();
+            Console.SetCursorPosition(0,0);
+            Console.WriteLine("GAME OVER");
+
+            foreach (Player p in players)
+            {
+                if (p!=null)
+                {
+                    Console.WriteLine("{0} went from {1} chips and ended with {2} chips (with {3} % of original chips)"
+                        , p.Name, p.OriginalChips, p.Chips, (double)100 * p.Chips / p.OriginalChips);
+                }               
+            }
+
+            //highscores
+            foreach (Player p in players)
+            {
+                if (p!=null)
+                {
+                    if (p is HumanPlayer)
+                    {
+                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\TotalChipAmount.txt", p.Name, p.Chips);
+                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\ChipRatio.txt", p.Name, (double)p.Chips / p.OriginalChips);
+                    }
+                }
+            }
         }
 
         private void Surrender(Player player, int handIndex)
@@ -524,6 +552,124 @@ namespace Blackjack
             }
 
             return existActivePlayers;
+        }
+
+        public void AddToHighscores(string path, string name, double score)
+        {
+            if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\Highscores"))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Highscores");
+            }
+
+            if (!File.Exists(path))
+            {
+                using (File.Create(path)) { }
+                using (StreamWriter streamWriter = new StreamWriter(path, false))
+                {
+                    Console.WriteLine("{0} achieved a new highscore ({1})", name, score);
+                    streamWriter.WriteLine(name);
+                    streamWriter.WriteLine(score);
+                }
+            }
+            else
+            {
+                try
+                {
+                    bool highscore = false;
+                    bool nameDoesNotExist = true;
+
+                    using (StreamReader streamReader = new StreamReader(path))
+                    {
+                        string line = streamReader.ReadLine();
+
+                        //lists through all the names in highscores file. If a player already has a highscore, checks its value
+                        while (line!=null)
+                        {
+                            if (line == name)
+                            {
+                                nameDoesNotExist = false;
+
+                                if (double.Parse(streamReader.ReadLine()) < score)
+                                {
+                                    Console.WriteLine("{0} achieved a new highscore ({1})", name, score);
+                                    highscore = true;
+                                }
+                            }
+                            else
+                            {
+                                streamReader.ReadLine();
+                            }
+
+                            line = streamReader.ReadLine();
+                        }
+                    }
+
+                    if (nameDoesNotExist)
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter(path, true))
+                        {
+                            Console.WriteLine("{0} achieved a new highscore ({1})", name, score);
+                            streamWriter.WriteLine(name);
+                            streamWriter.WriteLine(score);
+                        }
+                    }
+
+                    if (highscore)
+                    {
+                        //creates a list from a file
+                        List<(string, double)> values = new List<(string, double)>();
+                        using (StreamReader streamReader = new StreamReader(path))
+                        {
+                            string line;
+                            while ((line = streamReader.ReadLine()) != null)
+                            {
+                                values.Add((line, double.Parse(streamReader.ReadLine())));
+                            }
+                        }
+
+                        //checks for duplicit names
+                        for (int i = 0; i < values.Count - 1; i++)
+                        {
+                            for (int j = i + 1; j < values.Count; j++)
+                            {
+                                if (values[i].Item1 == values[j].Item1)
+                                {
+                                    throw new ArgumentException("Duplicit names");
+                                }
+                            }
+                        }
+
+                        //sets new highscore into the list
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            if (values[i].Item1 == name)
+                            {
+                                values[i] = (name, score);
+                            }
+                        }
+
+                        //writes modified list into the file
+                        using (StreamWriter streamWriter = new StreamWriter(path, false))
+                        {
+                            for (int i = 0; i < values.Count; i++)
+                            {
+                                streamWriter.WriteLine(values[i].Item1);
+                                streamWriter.WriteLine(values[i].Item2);
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(path, false))
+                    {
+                        Console.WriteLine("Unexpected exception led to loss of information in file {0}", path);
+                        Console.WriteLine("{0} achieved a new highscore ({1})", name, score);
+                        streamWriter.WriteLine(name);
+                        streamWriter.WriteLine(score);
+                    }
+                }
+            }
         }
     }
 }

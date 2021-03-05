@@ -14,10 +14,10 @@ namespace Blackjack
         bool wait;
         bool isVisible;
 
-        public CardCountingAI(string name, List<Card> hand, BetterUI betterUI, int chips, Tuple<int, int> tableLimits,
+        public CardCountingAI(string name, List<Card> hand, BetterUI betterUI, int originalChips, Tuple<int, int> tableLimits,
             bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int betUnit, int betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0, bool isVisible = true) :
-            base(name, hand, betterUI, chips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
+            base(name, hand, betterUI, originalChips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
         {
             this.runningCount = runningCount;
             this.trueCount = trueCount;

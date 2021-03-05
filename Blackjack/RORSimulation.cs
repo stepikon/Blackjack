@@ -82,7 +82,7 @@ namespace Blackjack
             //I only want this expression to be evaluated once.
             if (isVisible)
             {
-                for (int repetion = 0; repetion < repetitions; repetion++)
+                for (int repetition = 0; repetition < repetitions; repetition++)
                 {
                     int roundsPlayed = 0;
                     dealer.CreateShoe();
@@ -118,7 +118,7 @@ namespace Blackjack
                             betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);
                             Console.SetCursorPosition(0, 0);
-                            Console.WriteLine("repetition: " + repetion);
+                            Console.WriteLine("repetition: " + repetition);
                         }
 
                         //Betting
@@ -510,7 +510,7 @@ namespace Blackjack
             }
             else //the same simulation, but invisible.
             {
-                for (int repetion = 0; repetion < repetitions; repetion++)
+                for (int repetition = 0; repetition < repetitions; repetition++)
                 {
                     int roundsPlayed = 0;
                     dealer.CreateShoe();
@@ -546,7 +546,7 @@ namespace Blackjack
                             /*betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);*/
                             Console.SetCursorPosition(0, 0);
-                            Console.WriteLine("repetition: " + repetion);
+                            Console.WriteLine("repetition: " + repetition);
                         }
 
                         //Betting
