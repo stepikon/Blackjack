@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blackjack
 {
-    class Simulation : IPlayable
+    class RORSimulation : IPlayable
     {
         //to display everything in a more fancy way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
@@ -19,8 +19,8 @@ namespace Blackjack
 
         //Simulation setup
         int AIsAmount;
-        int handsPerCycle;
         int repetitions;
+        List<int>[] roundsToDouble;
         List<double>[] finalChips;
         bool isVisible; //makes the simulation visible
 
@@ -37,8 +37,8 @@ namespace Blackjack
         int runningCount;
         double trueCount;
 
-        public Simulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
-/*simulation*/int AIsAmount, int handsPerCycle, int repetitions, List<double>[] finalChips, bool isVisible,
+        public RORSimulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
+/*simulation*/int AIsAmount, int repetitions, List<int>[] roundsToDouble, List<double>[] finalChips, bool isVisible,
      /*AI:*/string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int[] betUnit, int[] betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0)
         {
@@ -50,8 +50,8 @@ namespace Blackjack
 
             //Simulation
             this.AIsAmount = AIsAmount; //user is allowed to enter a number 1-7
-            this.handsPerCycle = handsPerCycle;
             this.repetitions = repetitions;
+            this.roundsToDouble = roundsToDouble;
             this.finalChips = finalChips;
             this.isVisible = isVisible;
 
@@ -73,16 +73,18 @@ namespace Blackjack
         {
             for (int i = 0; i < AIsAmount; i++)
             {
+                roundsToDouble[i] = new List<int>();
                 finalChips[i] = new List<double>();
             }
 
             //simulation with display. If isVisible = false, then the same simulation will be run, 
             //but it will be invisible. This adds so many lines of code, but for performance reasons 
             //I only want this expression to be evaluated once.
-            if (isVisible) 
+            if (isVisible)
             {
-                for (int repetition = 0; repetition < repetitions; repetition++)
+                for (int repetion = 0; repetion < repetitions; repetion++)
                 {
+                    int roundsPlayed = 0;
                     dealer.CreateShoe();
                     dealer.Shuffle();
                     dealer.Reset();
@@ -93,7 +95,7 @@ namespace Blackjack
                         players[i] = new CardCountingAI(name[i], new List<Card>(), betterUI, chips[i], tableLimits,
                             isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed,
                             betUnit[i], betSpreadMultiplier[i], wait,
-                            runningCount, trueCount, isVisible) ;
+                            runningCount, trueCount, isVisible);
                     }
 
                     //initial check
@@ -105,8 +107,9 @@ namespace Blackjack
                         }
                     }
 
-                    for (int currentHand = 0; currentHand < handsPerCycle; currentHand++)
+                    do
                     {
+                        roundsPlayed++;
                         dealerSkips = true;
                         betterUI.ClearAll();
 
@@ -115,7 +118,7 @@ namespace Blackjack
                             betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);
                             Console.SetCursorPosition(0, 0);
-                            Console.WriteLine("repetition: " + repetition);
+                            Console.WriteLine("repetition: " + repetion);
                         }
 
                         //Betting
@@ -468,6 +471,19 @@ namespace Blackjack
                             }
                         }
 
+                        //checks if anyone has doubled their chips
+                        for (int i = 0; i < players.Length; i++)
+                        {
+                            if (players[i] != null)
+                            {
+                                if (players[i].Chips >= chips[i]*2)
+                                {
+                                    players[i].IsGone = true;
+                                    roundsToDouble[i].Add(roundsPlayed);
+                                }
+                            }
+                        }
+
                         //Shuffle if necessary
                         if (dealer.CardToDeal >= dealer.DeckPenetration)
                         {
@@ -481,12 +497,7 @@ namespace Blackjack
                                 }
                             }
                         }
-
-                        if (!ExistActivePlayers())
-                        {
-                            break;
-                        }
-                    }
+                    } while (ExistActivePlayers());
 
                     for (int i = 0; i < AIsAmount; i++)
                     {
@@ -499,8 +510,9 @@ namespace Blackjack
             }
             else //the same simulation, but invisible.
             {
-                for (int repetition = 0; repetition < repetitions; repetition++)
+                for (int repetion = 0; repetion < repetitions; repetion++)
                 {
+                    int roundsPlayed = 0;
                     dealer.CreateShoe();
                     dealer.Shuffle();
                     dealer.Reset();
@@ -523,8 +535,9 @@ namespace Blackjack
                         }
                     }
 
-                    for (int currentHand = 0; currentHand < handsPerCycle; currentHand++)
+                    do
                     {
+                        roundsPlayed++;
                         dealerSkips = true;
                         /*betterUI.ClearAll();*/
 
@@ -533,7 +546,7 @@ namespace Blackjack
                             /*betterUI.DisplayTableRules(dealer.HitSoft17);
                             betterUI.DisplayLimits(tableLimits);*/
                             Console.SetCursorPosition(0, 0);
-                            Console.WriteLine("repetition: " + repetition);
+                            Console.WriteLine("repetition: " + repetion);
                         }
 
                         //Betting
@@ -886,6 +899,19 @@ namespace Blackjack
                             }
                         }
 
+                        //checks if anyone has doubled their chips
+                        for (int i = 0; i < players.Length; i++)
+                        {
+                            if (players[i] != null)
+                            {
+                                if (players[i].Chips >= chips[i] * 2)
+                                {
+                                    players[i].IsGone = true;
+                                    roundsToDouble[i].Add(roundsPlayed);
+                                }
+                            }
+                        }
+
                         //Shuffle if necessary
                         if (dealer.CardToDeal >= dealer.DeckPenetration)
                         {
@@ -899,12 +925,7 @@ namespace Blackjack
                                 }
                             }
                         }
-
-                        if (!ExistActivePlayers())
-                        {
-                            break;
-                        }
-                    }
+                    } while (ExistActivePlayers());
 
                     //betterUI.ClearAll();
 
@@ -920,28 +941,37 @@ namespace Blackjack
 
             betterUI.ClearAll();
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < players.Length; i++)
             {
-                int brokeCounter = 0;
+                int ruinCounter = 0;
 
-                if (players[i] != null && finalChips[i] != null)
+                if (players[i] != null && roundsToDouble[i] != null)
                 {
-                    double sum = 0;
-                    double average;
+                    /*DEBUG
+                    for (int j = 0; j < finalChips[i].Count; j++)
+                    {
+                        Console.WriteLine(finalChips[i][j]);
+                    }*/
 
                     for (int j = 0; j < finalChips[i].Count; j++)
                     {
-                        sum += finalChips[i][j];
-
-                        if (finalChips[i][j]<tableLimits.Item1)
+                        if (finalChips[i][j] < tableLimits.Item1)
                         {
-                            brokeCounter++;
+                            ruinCounter++;
                         }
                     }
 
-                    average = sum / finalChips[i].Count;
+                    double sum = 0;
+                    double average;
 
-                    Console.WriteLine("AI {0} was starting on {1} chips and ended on {2} chips in average. Gone broke {3} times", players[i].Name, chips[i], average, brokeCounter);
+                    for (int j = 0; j < roundsToDouble[i].Count; j++)
+                    {
+                        sum += roundsToDouble[i][j];
+                    }
+
+                    average = sum / roundsToDouble[i].Count;
+
+                    Console.WriteLine("AI {0} \n Risk of ruin: {1}% \n rounds to double: {2}", players[i].Name, 100*ruinCounter/repetitions, average);
                 }
             }
 
