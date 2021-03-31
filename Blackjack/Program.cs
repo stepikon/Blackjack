@@ -100,6 +100,9 @@ namespace Blackjack
 
                     Console.WriteLine(options[i]);
                 }
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
             } while (k != ConsoleKey.Enter);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;

@@ -107,6 +107,8 @@ namespace Blackjack
             Console.WriteLine("Table maximum: ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
 
             do
             {
@@ -271,6 +273,8 @@ namespace Blackjack
                 Console.WriteLine("Table maximum: ");
                 Console.WriteLine();
                 Console.WriteLine(new String('=', 10));
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
             } while (k != ConsoleKey.Enter || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] == 0 || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] > 7);
 
             //Final Display
@@ -322,6 +326,8 @@ namespace Blackjack
             Console.WriteLine("Table maximum: ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
 
             //table minimum
             do

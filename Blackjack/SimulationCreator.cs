@@ -107,6 +107,8 @@ namespace Blackjack
             Console.WriteLine("Repetitions: ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
 
             do
             {
@@ -264,6 +266,8 @@ namespace Blackjack
                 Console.WriteLine("Repetitions: ");
                 Console.WriteLine();
                 Console.WriteLine(new String('=', 10));
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
             } while (k != ConsoleKey.Enter);
 
             //Final Display
@@ -316,6 +320,8 @@ namespace Blackjack
             Console.WriteLine("Repetitions: ");
             Console.WriteLine();
             Console.WriteLine(new String('=', 10));
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
 
             //table minimum
             do

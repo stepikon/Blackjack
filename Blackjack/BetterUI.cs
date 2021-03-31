@@ -435,6 +435,8 @@ namespace Blackjack
                         Console.WriteLine(options[i]);
                     }
                 }
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
 
                 do
                 {
@@ -486,6 +488,8 @@ namespace Blackjack
                             Console.WriteLine(options[i]);
                         }
                     }
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                 } while (ch != ConsoleKey.Enter);
 
                 ClearOptionsSpace();
@@ -530,6 +534,8 @@ namespace Blackjack
                         Console.WriteLine(options[i]);
                     }
                 }
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
 
                 do
                 {
@@ -581,6 +587,8 @@ namespace Blackjack
                             Console.WriteLine(options[i]);
                         }
                     }
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                 } while (ch != ConsoleKey.Enter);
 
                 ClearOptionsSpace();

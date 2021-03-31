@@ -172,10 +172,8 @@ namespace Blackjack
                             break;
                     }
                 }
-
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
-
             } while (k != ConsoleKey.Enter);
         
             return new PracticeBasicStrategy(betterUI, random,

@@ -192,6 +192,8 @@ namespace Blackjack
                         Console.WriteLine(options[i]);
                     }
                 }
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
 
                 //gets the choice; help from https://stackoverflow.com/questions/4351258/c-sharp-arrow-key-input-for-a-console-app
                 ch = Console.ReadKey(true).Key;
@@ -216,7 +218,9 @@ namespace Blackjack
                     default:
                         prompt = prompt.Contains(" (use up and down arrows or W and S keys)") ? prompt : prompt + " (use up and down arrows or W and S keys)";
                         break;
-                }               
+                }
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
             } while (ch != ConsoleKey.Enter);
 
             betterUI.ClearAll();
