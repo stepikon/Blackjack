@@ -422,7 +422,7 @@ namespace Blackjack
                         }
                     }
 
-                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT || Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                     {
                         Console.BackgroundColor = ConsoleColor.Black;
                         Console.ForegroundColor = ConsoleColor.White;
@@ -435,7 +435,7 @@ namespace Blackjack
                     }
                 }
 
-                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT || Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;

@@ -64,43 +64,52 @@ namespace Blackjack
 
         public void DisplayShoe(Dealer dealer)
         {
-            Console.SetCursorPosition(Console.WindowWidth - 25, 0);
-            Console.Write("Shoe: ");           
-            for (int i = 0; i < dealer.DeckAmount * 2; i++)
+            try
             {
-                Console.SetCursorPosition(Console.WindowWidth - 25 + i, 1);
-                if (i == dealer.DeckAmount * 2 - Math.Ceiling((double)dealer.DeckPenetration * 2 / 52))
+                Console.SetCursorPosition(Console.WindowWidth - 25, 0);
+                Console.Write("Shoe: ");
+                for (int i = 0; i < dealer.DeckAmount * 2; i++)
                 {
-                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.SetCursorPosition(Console.WindowWidth - 25 + i, 1);
+                    if (i == dealer.DeckAmount * 2 - Math.Ceiling((double)dealer.DeckPenetration * 2 / 52))
+                    {
+                        Console.BackgroundColor = ConsoleColor.Yellow;
+                    }
+                    else if (i < dealer.DeckAmount * 2 - dealer.GetDecksInDiscard() * 2)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                    }
+                    Console.Write(' ');
                 }
-                else if (i < dealer.DeckAmount * 2 - dealer.GetDecksInDiscard() * 2)
-                {
-                    Console.BackgroundColor = ConsoleColor.Green;
-                }
-                else
-                {
-                    Console.BackgroundColor = ConsoleColor.Red;
-                }
-                Console.Write(' ');
-            }
-            Console.BackgroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.Black;
 
-            Console.SetCursorPosition(Console.WindowWidth - 25, 2);
-            Console.Write("Discard tray: ");
-            for (int i = 0; i < dealer.DeckAmount * 2; i++)
-            {
-                Console.SetCursorPosition(Console.WindowWidth - 25 + i, 3);
-                if (i < dealer.GetDecksInDiscard() * 2)
+                Console.SetCursorPosition(Console.WindowWidth - 25, 2);
+                Console.Write("Discard tray: ");
+                for (int i = 0; i < dealer.DeckAmount * 2; i++)
                 {
-                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.SetCursorPosition(Console.WindowWidth - 25 + i, 3);
+                    if (i < dealer.GetDecksInDiscard() * 2)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                    }
+                    Console.Write(' ');
                 }
-                else
-                {
-                    Console.BackgroundColor = ConsoleColor.Red;
-                }
-                Console.Write(' ');
+                Console.BackgroundColor = ConsoleColor.Black;
             }
-            Console.BackgroundColor = ConsoleColor.Black;
+            catch (ArgumentException e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Fatal error has occured. Please don't change the window size during the round.");
+            }
         }
 
         public void DisplayDealerBlackjack(Dealer dealer)
