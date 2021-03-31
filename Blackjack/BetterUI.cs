@@ -58,6 +58,49 @@ namespace Blackjack
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+
+            DisplayShoe(dealer);
+        }
+
+        public void DisplayShoe(Dealer dealer)
+        {
+            Console.SetCursorPosition(Console.WindowWidth - 25, 0);
+            Console.Write("Shoe: ");           
+            for (int i = 0; i < dealer.DeckAmount * 2; i++)
+            {
+                Console.SetCursorPosition(Console.WindowWidth - 25 + i, 1);
+                if (i == dealer.DeckAmount * 2 - Math.Ceiling((double)dealer.DeckPenetration * 2 / 52))
+                {
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                }
+                else if (i < dealer.DeckAmount * 2 - dealer.GetDecksInDiscard() * 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                }
+                Console.Write(' ');
+            }
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            Console.SetCursorPosition(Console.WindowWidth - 25, 2);
+            Console.Write("Discard tray: ");
+            for (int i = 0; i < dealer.DeckAmount * 2; i++)
+            {
+                Console.SetCursorPosition(Console.WindowWidth - 25 + i, 3);
+                if (i < dealer.GetDecksInDiscard() * 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                }
+                Console.Write(' ');
+            }
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
         public void DisplayDealerBlackjack(Dealer dealer)
@@ -401,6 +444,87 @@ namespace Blackjack
             } while (!int.TryParse(input, out i));
 
             return i;
+        }
+
+        public string GetStringChoiceTopRight(string prompt, string[] options) 
+        {
+            if (options == null || options[0] == "")
+            {
+                throw new ArgumentException();
+            }
+
+            int chosenOption = 0;
+            ConsoleKey k;
+
+            //initial display
+            ClearAll();
+            Console.WriteLine(prompt);
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == chosenOption)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                Console.WriteLine(options[i]);
+            }
+
+            do
+            {
+                k = Console.ReadKey().Key;
+
+                switch (k)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.W:
+                        chosenOption--;
+                        chosenOption = chosenOption < 0 ? chosenOption + options.Length : chosenOption;
+                        break;
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.S:
+                        chosenOption++;
+                        chosenOption %= options.Length;
+                        break;
+                    default:
+                        prompt = prompt.Contains(" (use up and down arrows or W and S keys)") ? prompt : prompt + " (use up and down arrows or W and S keys)";
+                        break;
+                }
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+
+                //Display current choice
+                ClearAll();
+                Console.WriteLine(prompt);
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == chosenOption)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.WriteLine(options[i]);
+                }
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+            } while (k != ConsoleKey.Enter);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            return options[chosenOption];
         }
 
         public string GetStringChoice(string prompt, string[] options)

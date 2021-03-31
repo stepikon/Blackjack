@@ -34,7 +34,7 @@ namespace Blackjack
         public static IPlayable ChooseGamemode(BetterUI betterUI, Random random)
         {
             GameModeCreator[] creators = new GameModeCreator[] { 
-                new GameCreator(betterUI, random),
+                new GameCreator(betterUI, random, false),
                 new PracticeCreator(betterUI, random), 
                 new SimulationCreator(betterUI, random),
                 new RORSimulationCreator(betterUI, random)
@@ -42,72 +42,7 @@ namespace Blackjack
 
             string[] options = new string[] { "game", "practice", "EV simulation", "Risk of ruin simulation"};
 
-            int chosenOption = 0;
-            ConsoleKey k;
-            //initial display
-            betterUI.ClearAll();
-            Console.WriteLine("Choose gamemode (use arrows)");
-            for (int i = 0; i < options.Length; i++)
-            {
-                if (i==chosenOption)
-                {
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                }
-                else
-                {
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-
-                Console.WriteLine(options[i]);
-            }
-
-            do
-            {
-                k = Console.ReadKey().Key;
-
-                switch (k)
-                {
-                    case ConsoleKey.UpArrow:
-                        chosenOption--;
-                        chosenOption = chosenOption < 0 ? chosenOption + options.Length : chosenOption;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        chosenOption++;
-                        chosenOption %= options.Length;
-                        break;
-                    default:
-                        break;
-                }
-
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = ConsoleColor.White;
-                betterUI.ClearAll();
-                Console.WriteLine("Choose gamemode (use arrows)");
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == chosenOption)
-                    {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                    }
-                    else
-                    {
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-
-                    Console.WriteLine(options[i]);
-                }
-
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = ConsoleColor.White;
-            } while (k != ConsoleKey.Enter);
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
-
-            return creators[chosenOption].CreateGameMode();
+            return creators[Array.IndexOf(options, betterUI.GetStringChoiceTopRight("Choose gamemode:", options))].CreateGameMode();
         }
     }
 }

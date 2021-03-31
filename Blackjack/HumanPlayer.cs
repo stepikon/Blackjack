@@ -8,62 +8,16 @@ namespace Blackjack
 {
     class HumanPlayer:Player
     {
+        private bool practice;
 
-        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int originalChips, Tuple<int,int> tableLimits,
-            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed) :
+        public HumanPlayer(string name, List<Card> hand, BetterUI betterUI, int originalChips, Tuple<int, int> tableLimits,
+            bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, bool practice, int runningCount = 0, int trueCount = 0) :
             base(name, hand, betterUI, originalChips, tableLimits, isSurrenderAllowed, isDASAllowed, isResplitAllowed, isResplitAcesAllowed)
         {
-        }
-
-        public string GetChoice()
-        {
-            if (isSurrenderAllowed)
-            {
-                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
-            }
-            else
-            {
-                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, or (d)ouble");
-            }
-
-            switch (Console.ReadLine().ToLower())
-            {
-                case "h":
-                case "hit":
-                    return CHOICE_HIT;
-                case "s":
-                case "stand":
-                    return CHOICE_STAND;
-                case "sp":
-                case "split":
-                    return CHOICE_SPLIT;
-                case "d":
-                case "double":
-                    return CHOICE_DOUBLE;
-                case "su":
-                case "surrender":
-                    if (isSurrenderAllowed)
-                    {
-                        return CHOICE_SURRENDER;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
-                        return "";
-                    }
-                default:
-                    if (isSurrenderAllowed)
-                    {
-                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
-                    }
-
-                    return "";
-            }
-        }
+            this.practice = practice;
+            this.runningCount = runningCount;
+            this.trueCount = trueCount;
+        }        
 
         public override void TakeTurn(Player[] players, Dealer dealer)
         {
@@ -162,6 +116,38 @@ namespace Blackjack
                            : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1));
                             choice = GetChoice();
                         }
+
+                        if (practice)
+                        {
+                            CountDealt(players, dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
+                            string correctChoice = GetCorrectChoice(hands[i], tableLimits, players, dealer);
+                            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.SetCursorPosition(0,2);
+                                Console.Write(new String(' ', 35));
+
+                                Console.SetCursorPosition(0,2);
+                                if (choice == correctChoice)
+                                {
+                                    Console.Write("Your choice is correct");
+                                }
+                                else
+                                {
+                                    Console.Write("Correct choice was " + correctChoice);
+                                }
+                            }
+                            else
+                            {
+                                if (choice == correctChoice)
+                                {
+                                    Console.WriteLine("Your choice is correct");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Correct choice was " + correctChoice);
+                                }
+                            }
+                        }
                     }
 
                     switch (choice)
@@ -224,29 +210,212 @@ namespace Blackjack
             }
         }
 
+        public string GetChoice()
+        {
+            if (isSurrenderAllowed)
+            {
+                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
+            }
+            else
+            {
+                Console.WriteLine("Enter(h)it, (s)tand, (sp)lit, or (d)ouble");
+            }
+
+            switch (Console.ReadLine().ToLower())
+            {
+                case "h":
+                case "hit":
+                    return CHOICE_HIT;
+                case "s":
+                case "stand":
+                    return CHOICE_STAND;
+                case "sp":
+                case "split":
+                    return CHOICE_SPLIT;
+                case "d":
+                case "double":
+                    return CHOICE_DOUBLE;
+                case "su":
+                case "surrender":
+                    if (isSurrenderAllowed)
+                    {
+                        return CHOICE_SURRENDER;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
+                        return "";
+                    }
+                default:
+                    if (isSurrenderAllowed)
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit, (d)ouble or (su)rrender");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option! Enter (h)it, (s)tand, (sp)lit or (d)ouble");
+                    }
+
+                    return "";
+            }
+        }
+
         public override void CountDealt(Player[] players,List<Card> dealerHand, double remainingDecks)
         {
-            //Console.WriteLine("Human does this on his own");
+            if (practice)
+            {
+                UpdateTrueCount(GetCurrentRunningCount(players, dealerHand), remainingDecks);
+            }
+            else
+            {
+                //Console.WriteLine("Human does this on his own");
+            }
         }
 
         public override void UpdateRunningCount(Player[] players, List<Card> dealerHand)
         {
-            //Console.WriteLine("Human does this on his own");
+            if (practice)
+            {
+                foreach (Player p in players)
+                {
+                    if (!(p == null || p.IsRuined || p.IsGone))
+                    {
+                        foreach (List<Card> h in p.hands)
+                        {
+                            if (h != null)
+                            {
+                                foreach (Card c in h)
+                                {
+                                    runningCount += c.GetCardCountValue();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach (Card c in dealerHand)
+                {
+                    if (c != null)
+                    {
+                        runningCount += c.GetCardCountValue();
+                    }
+                }
+            }
+            else
+            {
+                //Console.WriteLine("Human does this on his own");
+            }
         }
 
         public override void UpdateTrueCount(int runningCount, double remainingDecks)
         {
-            //Console.WriteLine("Human does this on his own");
+            if (practice)
+            {
+                int wholeTrueCount = (int)(runningCount / remainingDecks);
+                double halves;
+                trueCount = runningCount / remainingDecks;
+
+                if (trueCount - wholeTrueCount < -0.5)
+                {
+                    halves = -2;
+                }
+                else if (trueCount - wholeTrueCount >= -0.5 && trueCount - wholeTrueCount < 0)
+                {
+                    halves = -1;
+                }
+                else if (trueCount - wholeTrueCount >= 0 && trueCount - wholeTrueCount < 0.5)
+                {
+                    halves = 0;
+                }
+                else
+                {
+                    halves = 1;
+                }
+
+                trueCount = wholeTrueCount + 0.5 * halves;
+            }
+            else
+            {
+                //Console.WriteLine("Human does this on his own");
+            }
         }
 
         public override void UpdateTrueCount(double remainingDecks)
         {
-            //Console.WriteLine("Human does this on his own");
+            if (practice)
+            {
+                int wholeTrueCount = (int)(runningCount / remainingDecks);
+                double halves;
+                trueCount = runningCount / remainingDecks;
+
+                if (trueCount - wholeTrueCount < -0.5)
+                {
+                    halves = -2;
+                }
+                else if (trueCount - wholeTrueCount >= -0.5 && trueCount - wholeTrueCount < 0)
+                {
+                    halves = -1;
+                }
+                else if (trueCount - wholeTrueCount >= 0 && trueCount - wholeTrueCount < 0.5)
+                {
+                    halves = 0;
+                }
+                else
+                {
+                    halves = 1;
+                }
+
+                trueCount = wholeTrueCount + 0.5 * halves;
+            }
+            else
+            {
+                //Console.WriteLine("Human does this on his own");
+            }
+        }
+
+        public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
+        {
+            int count = 0;
+
+            foreach (Player p in players)
+            {
+                if (!(p == null || p.IsRuined || p.IsGone))
+                {
+                    foreach (List<Card> h in p.hands)
+                    {
+                        if (h != null)
+                        {
+                            foreach (Card c in h)
+                            {
+                                count += c.GetCardCountValue();
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (Card c in dealerHand)
+            {
+                if (c != null)
+                {
+                    count += c.GetCardCountValue();
+                }
+            }
+
+            return runningCount + count;
         }
 
         public override void ResetCounts()
         {
-            //Console.WriteLine("Human does this on his own");
+            if (practice)
+            {
+                runningCount = 0;
+                trueCount = 0;
+            }
+            else
+            {
+                //Console.WriteLine("Human does this on his own");
+            }
         }
 
         public override void Bet(List<Card> hand, Tuple<int, int> limits)
@@ -636,6 +805,843 @@ namespace Blackjack
             pairBet = 0;
             hasBlackjack = false;
             surrender = false;
+        }
+
+        //Returns the best choice. For practice reasons.
+        //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
+        //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations, 
+        //best deviations data https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1528&context=gradreports, https://www.blackjacktheforum.com/showthread.php?17600-H17-Deviations-Correct-Expert-OpinionS
+        public string GetCorrectChoice(List<Card> hand, Tuple<int, int> limits, Player[] players, Dealer dealer)
+        {
+            if (dealer.HitSoft17) //Hit 17 decision-making
+            {
+                if (hand != null && dealer.hand[0] != null)
+                {
+                    if (GetHandValue(hand).Item3) //soft total
+                    {
+                        //check for split. in soft total, only possible pair is AA, which you always split
+                        if (hand.Count == 2 && IsSplittingValid(hand) != -1 && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                        {
+                            return CHOICE_SPLIT;
+                        }
+
+                        //double
+                        if (GetHandValue(hand).Item2 == 12
+                            && dealer.hand[0].GetCardValue() == 6
+                            && chips >= 1)//not > 0 - could be in theory 0.5 and I only allow whole-number bets
+                        {
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 13 || GetHandValue(hand).Item2 == 14)
+                                && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                                && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 15 || GetHandValue(hand).Item2 == 16)
+                            && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 17 || GetHandValue(hand).Item2 == 18)
+                            && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 18)
+                            && (dealer.hand[0].GetCardValue() == 2)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)
+                            && (dealer.hand[0].GetCardValue() == 6)
+                            && trueCount >= 0 //deviation
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 17)//deviation
+                            && (dealer.hand[0].GetCardValue() == 2)
+                            && trueCount >= 1
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 5)
+                            && trueCount >= 1
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 4)
+                            && trueCount >= 3
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+
+                        //soft total - other
+                        if (GetHandValue(hand).Item2 <= 17)
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 18)
+                                && !(dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 8))
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else
+                        {
+                            return CHOICE_STAND;
+                        }
+                    }
+                    else //hard total
+                    {
+                        //check surrender first
+                        if (isSurrenderAllowed && hand.Count == 2 && Array.IndexOf(hands, hand) == 0
+                            && hands[1] == null && hands[2] == null && hands[3] == null) //in order to surrender: surrender must be allowed and it MUST be your first move - before doubling down or splitting
+                        {
+                            if (GetHandValue(hand).Item2 == 17 && dealer.hand[0] is CardAce)
+                            {
+                                return CHOICE_SURRENDER;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 16 &&
+                                ((dealer.hand[0] is CardAce || dealer.hand[0].GetCardValue() == 10)
+                                || (dealer.hand[0].GetCardValue() == 9 && trueCount >= -1)
+                                || (dealer.hand[0].GetCardValue() == 8 && trueCount >= 4)))
+                            {
+                                if (hand[0].GetCardValue() == hand[1].GetCardValue() && IsSplittingValid(hand) != -1 && !(dealer.hand[0] is CardAce)) //pair of 8s
+                                {
+                                    return CHOICE_SPLIT;
+                                }
+                                else
+                                {
+                                    return CHOICE_SURRENDER;
+                                }
+                            }
+
+                            if (GetHandValue(hand).Item2 == 15 &&
+                                ((dealer.hand[0] is CardAce && trueCount >= -1)
+                                || (dealer.hand[0].GetCardValue() == 10 && trueCount >= 0) //deviation
+                                || (dealer.hand[0].GetCardValue() == 9 && trueCount >= 2))) //deviation
+                            {
+                                return CHOICE_SURRENDER;
+                            }
+                        }
+
+                        //check for split opportunity
+                        if (IsSplittingValid(hand) != -1)
+                        {
+                            switch (hand[0].GetCardValue())
+                            {
+                                case 2:
+                                case 3:
+                                    if ((dealer.hand[0].GetCardValue() >= 4 && dealer.hand[0].GetCardValue() <= 7)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else if ((dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 3)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits)
+                                        && isDASAllowed)
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 7:
+                                    if ((dealer.hand[0].GetCardValue() > 1 && dealer.hand[0].GetCardValue() <= 7)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 4:
+                                    if ((dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits)
+                                        && isDASAllowed)
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 5:
+                                    break;
+                                case 6:
+                                    if (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 8:
+                                    if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 9:
+                                    if (!(dealer.hand[0].GetCardValue() == 7 || dealer.hand[0].GetCardValue() == 10 || dealer.hand[0] is CardAce)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 10:
+                                    if ((trueCount >= 6 && dealer.hand[0].GetCardCountValue() == 4)
+                                        || (trueCount >= 5 && dealer.hand[0].GetCardCountValue() == 5)
+                                        || (trueCount >= 4 && dealer.hand[0].GetCardCountValue() == 6)) //deviation
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                default:
+                                    if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                            }
+                        }
+
+                        //check for double opportunity
+                        if (hand.Count == 2 && ((hands[1] == null && hands[2] == null && hands[3] == null) || isDASAllowed))
+                        {
+                            if ((GetHandValue(hand).Item2 == 9)
+                                && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10)
+                                && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 11)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10) //deviation
+                                && dealer.hand[0].GetCardValue() == 10
+                                && trueCount >= 4
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10) //deviation
+                                && dealer.hand[0] is CardAce
+                                && trueCount >= 3
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 9) //deviation
+                                && dealer.hand[0].GetCardValue() == 2
+                                && trueCount >= 1
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 9) //deviation
+                                && dealer.hand[0].GetCardValue() == 7
+                                && trueCount >= 3
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 8) //deviation
+                                && dealer.hand[0].GetCardValue() == 6
+                                && trueCount >= 2
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                        }
+
+                        //if split and double are unavailable
+                        if (GetHandValue(hand).Item2 <= 11)
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 12)
+                               && !(dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 2 && trueCount >= 3) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 3 && trueCount >= 2) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 4 && trueCount >= 0) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else if (GetHandValue(hand).Item2 == 13 && !(dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 2 && trueCount >= -1)
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 >= 14 && GetHandValue(hand).Item2 <= 16)
+                               && !(dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0] is CardAce && trueCount >= 3) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 10 && GetCurrentRunningCount(players, dealer.hand) > 0) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 4) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 15 && dealer.hand[0].GetCardValue() == 10 && trueCount >= 4) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 15 && dealer.hand[0] is CardAce && trueCount >= 5) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else
+                        {
+                            return CHOICE_STAND;
+                        }
+                    }
+                }
+                else
+                {
+                    return CHOICE_STAND;
+                }
+            }
+            else //Stand 17 decision making
+            {
+                if (hand != null && dealer.hand[0] != null)
+                {
+                    if (GetHandValue(hand).Item3) //soft total
+                    {
+                        //check for split. in soft total, only possible pair is AA, which you always split
+                        if (hand.Count == 2 && IsSplittingValid(hand) != -1 && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                        {
+                            return CHOICE_SPLIT;
+                        }
+
+                        //double
+                        if (GetHandValue(hand).Item2 == 12
+                            && dealer.hand[0].GetCardValue() == 6
+                            && chips >= 1)//not > 0 - could be in theory 0.5 and I only allow whole-number bets
+                        {
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 13 || GetHandValue(hand).Item2 == 14)
+                                && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                                && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 15 || GetHandValue(hand).Item2 == 16)
+                            && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 17 || GetHandValue(hand).Item2 == 18)
+                            && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 18)
+                            && (dealer.hand[0].GetCardValue() == 2)
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)
+                            && (dealer.hand[0].GetCardValue() == 6)
+                            && trueCount >= 1 //deviation
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 17)//deviation
+                            && (dealer.hand[0].GetCardValue() == 2)
+                            && trueCount >= 1
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 5)
+                            && trueCount >= 1
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 19)//deviation
+                            && (dealer.hand[0].GetCardValue() == 4)
+                            && trueCount >= 3
+                            && chips >= 1)
+                        {
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.WriteLine("AI: DOUBLE");
+                            }
+                            return CHOICE_DOUBLE;
+                        }
+
+                        //soft total - other
+                        if (GetHandValue(hand).Item2 <= 17)
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 18)
+                                && !(dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 8))
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else
+                        {
+                            return CHOICE_STAND;
+                        }
+                    }
+                    else //hard total
+                    {
+                        //check surrender first
+                        if (isSurrenderAllowed && hand.Count == 2 && Array.IndexOf(hands, hand) == 0
+                            && hands[1] == null && hands[2] == null && hands[3] == null) //in order to surrender: surrender must be allowed and it MUST be your first move - before doubling down or splitting
+                        {
+                            if (GetHandValue(hand).Item2 == 16 &&
+                                ((dealer.hand[0] is CardAce || dealer.hand[0].GetCardValue() == 10)
+                                || (dealer.hand[0].GetCardValue() == 9 && trueCount >= -1)
+                                || (dealer.hand[0].GetCardValue() == 8 && trueCount >= 4)))
+                            {
+                                if (hand[0].GetCardValue() == hand[1].GetCardValue() && IsSplittingValid(hand) != -1) //pair of 8s
+                                {
+                                    return CHOICE_SPLIT;
+                                }
+                                else
+                                {
+                                    return CHOICE_SURRENDER;
+                                }
+                            }
+
+                            if (GetHandValue(hand).Item2 == 15 &&
+                                ((dealer.hand[0] is CardAce && trueCount >= 2)
+                                || (dealer.hand[0].GetCardValue() == 10 && trueCount >= 0) //deviation
+                                || (dealer.hand[0].GetCardValue() == 9 && trueCount >= 2))) //deviation
+                            {
+                                return CHOICE_SURRENDER;
+                            }
+                        }
+
+                        //check for split opportunity
+                        if (IsSplittingValid(hand) != -1)
+                        {
+                            switch (hand[0].GetCardValue())
+                            {
+                                case 2:
+                                case 3:
+                                    if ((dealer.hand[0].GetCardValue() >= 4 && dealer.hand[0].GetCardValue() <= 7)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else if ((dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 3)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits)
+                                        && isDASAllowed)
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 7:
+                                    if ((dealer.hand[0].GetCardValue() > 1 && dealer.hand[0].GetCardValue() <= 7)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 4:
+                                    if ((dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits)
+                                        && isDASAllowed)
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 5:
+                                    break;
+                                case 6:
+                                    if (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else if (dealer.hand[0].GetCardValue() == 2 && isDASAllowed
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 8:
+                                    if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 9:
+                                    if (!(dealer.hand[0].GetCardValue() == 7 || dealer.hand[0].GetCardValue() == 10 || dealer.hand[0] is CardAce)
+                                        && CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                case 10:
+                                    if ((trueCount >= 6 && dealer.hand[0].GetCardCountValue() == 4)
+                                        || (trueCount >= 5 && dealer.hand[0].GetCardCountValue() == 5)
+                                        || (trueCount >= 4 && dealer.hand[0].GetCardCountValue() == 6)) //deviation
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                default:
+                                    if (CheckBet(bets[Array.IndexOf(hands, hand)], limits))
+                                    {
+                                        return CHOICE_SPLIT;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                            }
+                        }
+
+                        //check for double opportunity
+                        if (hand.Count == 2 && ((hands[1] == null && hands[2] == null && hands[3] == null) || isDASAllowed))
+                        {
+                            if ((GetHandValue(hand).Item2 == 9)
+                                && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10)
+                                && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 11)
+                                && !(dealer.hand[0] is CardAce)
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 11)
+                                && (dealer.hand[0] is CardAce)
+                                && trueCount >= 1
+                                && chips >= 1)
+                            {
+
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10) //deviation
+                                && dealer.hand[0].GetCardValue() == 10
+                                && trueCount >= 4
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 10) //deviation
+                                && dealer.hand[0] is CardAce
+                                && trueCount >= 3
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 9) //deviation
+                                && dealer.hand[0].GetCardValue() == 2
+                                && trueCount >= 1
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 9) //deviation
+                                && dealer.hand[0].GetCardValue() == 7
+                                && trueCount >= 3
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                            else if ((GetHandValue(hand).Item2 == 8) //deviation
+                                && dealer.hand[0].GetCardValue() == 6
+                                && trueCount >= 2
+                                && chips >= 1)
+                            {
+                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                {
+                                    Console.WriteLine("AI: DOUBLE");
+                                }
+                                return CHOICE_DOUBLE;
+                            }
+                        }
+
+                        //if split and double are unavailable
+                        if (GetHandValue(hand).Item2 <= 11)
+                        {
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 == 12)
+                               && !(dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 2 && trueCount >= 3) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 3 && trueCount >= 2) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 4 && trueCount >= 0) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else if (GetHandValue(hand).Item2 == 13 && !(dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 2 && trueCount >= -1)
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else if ((GetHandValue(hand).Item2 >= 14 && GetHandValue(hand).Item2 <= 16)
+                               && !(dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 6))
+                        {
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 10 && GetCurrentRunningCount(players, dealer.hand) > 0) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 4) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 15 && dealer.hand[0].GetCardValue() == 10 && trueCount >= 3) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            return CHOICE_HIT;
+                        }
+                        else
+                        {
+                            return CHOICE_STAND;
+                        }
+                    }
+                }
+                else
+                {
+                    return CHOICE_STAND;
+                }
+            }
+
         }
     }
 }

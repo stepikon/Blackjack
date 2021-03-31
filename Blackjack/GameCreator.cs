@@ -27,9 +27,13 @@ namespace Blackjack
         int[] numberOfPlayers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
         int[] numberOfAIs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
 
-        public GameCreator(BetterUI betterUI, Random random)
+        bool practice;
+
+        public GameCreator(BetterUI betterUI, Random random, bool practice)
             : base (betterUI, random)
-        { }
+        {
+            this.practice = practice;
+        }
 
         public override IPlayable CreateGameMode()
         {
@@ -391,7 +395,7 @@ namespace Blackjack
                 if (i<numberOfPlayers[indexNumberOfPlayers])
                 {
                     players[i] = new HumanPlayer(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
-                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes");
+                        allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes", practice);
                 }
                 else if (i < numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs])
                 {
@@ -409,7 +413,8 @@ namespace Blackjack
                 tableLimits,
                 players,
                 random,
-                betterUI);
+                betterUI,
+                practice);
         }
     }
 }

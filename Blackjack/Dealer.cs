@@ -178,7 +178,7 @@ namespace Blackjack
                         Hit();
                         if (isVisible)
                         {
-                            betterUI.DisplayDealerStatus(this);
+                            DisplayHand();
                             if (wait)
                             {
                                 Thread.Sleep(1000);
@@ -189,10 +189,7 @@ namespace Blackjack
                         Stand();
                         if (isVisible)
                         {
-                            if (wait)
-                            {
-                                Thread.Sleep(1000);
-                            }
+                            DisplayHand();
                         }
                         break;
                     default:

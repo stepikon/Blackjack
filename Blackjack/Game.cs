@@ -17,14 +17,16 @@ namespace Blackjack
         Player[] players;
         BetterUI betterUI;
         Random random;
+        private bool practice;
 
-        public Game(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI)
+        public Game(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI, bool practice)
         {
             this.dealer = dealer;
             this.tableLimits = tableLimits;
             this.players = players;
             this.random = random;
             this.betterUI = betterUI;
+            this.practice = practice;
         }
 
         public void Run()
@@ -350,7 +352,7 @@ namespace Blackjack
 
                 if (!dealer.HasBlackjack)
                 {
-                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT || Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                     {
                         //betterUI.DisplayMessage(String.Format("Dealer has {0}", dealer.GetHandValue(dealer.hand)));
                     }
@@ -377,8 +379,11 @@ namespace Blackjack
                         p.UpdateRunningCount(players, dealer.hand);
                         p.UpdateTrueCount(dealer.DeckAmount - dealer.GetDecksInDiscard());
 
-                        Console.SetCursorPosition(0, 0);
-                        Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                        if (practice)
+                        {
+                            Console.SetCursorPosition(0, 0);
+                            Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                        }
                     }
                 }
 
@@ -415,6 +420,18 @@ namespace Blackjack
                         {
                             p.ResetCounts();
                         }
+                    }
+
+                    if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT || Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.SetCursorPosition(0, 36);
+                        Console.WriteLine("Shuffling.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Shuffling");
                     }
                 }
 
