@@ -14,7 +14,8 @@ namespace Blackjack
         "Allow resplit: ",
         "--Allow resplit aces: ",
         "Number of AIs: ",
-        "Make dealer and AIs visible: "};
+        "Make dealer and AIs visible: ",
+        "AI leaves when true count is -1 or lower: "};
 
         int[] numberOfDecks = new int[] { 4, 5, 6, 7, 8 };
         string[] dealerHitsSoft17 = new string[] { "yes", "no" };
@@ -24,6 +25,7 @@ namespace Blackjack
         string[] allowResplitAces = new string[] { "yes", "no" };
         int[] numberOfAIs = new int[] { 1, 2, 3, 4, 5, 6, 7 };
         string[] isVisible = new string[] { "yes", "no" };
+        string[] AILeaves = new string[] { "yes", "no" };
 
         public RORSimulationCreator(BetterUI betterUI, Random random)
             : base(betterUI, random)
@@ -41,6 +43,7 @@ namespace Blackjack
             int indexResplitAces = 0;
             int indexNumberOfAIs = 0;
             int indexIsVisible = 0;
+            int indexAILeaves = 0;
             int tableMin;
             int tableMax;;
             int repetitions;
@@ -90,7 +93,7 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
-                        Console.WriteLine(stringOptions[i]);
+                        Console.WriteLine(stringOptions[8] + "<{0}>", AILeaves[indexAILeaves]);
                         break;
                 }
             }
@@ -148,6 +151,8 @@ namespace Blackjack
                                 indexIsVisible = indexIsVisible < 0 ? indexIsVisible + isVisible.Length : indexIsVisible;
                                 break;
                             default:
+                                indexAILeaves--;
+                                indexAILeaves = indexAILeaves < 0 ? indexAILeaves + AILeaves.Length : indexAILeaves;
                                 break;
                         }
                         break;
@@ -191,6 +196,8 @@ namespace Blackjack
                                 indexIsVisible %= isVisible.Length;
                                 break;
                             default:
+                                indexAILeaves++;
+                                indexAILeaves %= AILeaves.Length;
                                 break;
                         }
                         break;
@@ -247,7 +254,7 @@ namespace Blackjack
                             Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                             break;
                         default:
-                            Console.WriteLine(stringOptions[i]);
+                            Console.WriteLine(stringOptions[8] + "<{0}>", AILeaves[indexAILeaves]);
                             break;
                     }
                 }
@@ -299,7 +306,7 @@ namespace Blackjack
                         Console.WriteLine(stringOptions[i] + "<{0}>", isVisible[indexIsVisible]);
                         break;
                     default:
-                        Console.WriteLine(stringOptions[i]);
+                        Console.WriteLine(stringOptions[8] + "<{0}>", AILeaves[indexAILeaves]);
                         break;
                 }
             }
@@ -319,25 +326,25 @@ namespace Blackjack
             //table minimum
             do
             {
-                Console.SetCursorPosition(0, 11);
+                Console.SetCursorPosition(0, 12);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 11);
+                Console.SetCursorPosition(0, 12);
             } while (!(int.TryParse(Console.ReadLine(), out tableMin) && tableMin > 0));
 
             //table maximum
             do
             {
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 14);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 13);
+                Console.SetCursorPosition(0, 14);
             } while (!(int.TryParse(Console.ReadLine(), out tableMax) && tableMax >= tableMin));
 
             //repetitions
             do
             {
-                Console.SetCursorPosition(0, 15);
+                Console.SetCursorPosition(0, 16);
                 Console.Write(new String(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, 15);
+                Console.SetCursorPosition(0, 16);
             } while (!(int.TryParse(Console.ReadLine(), out repetitions) && repetitions > 0));
 
             //players and AIs construction
@@ -387,7 +394,7 @@ namespace Blackjack
                 players,
                 random,
                 betterUI,
-                numberOfAIs[indexNumberOfAIs], repetitions, new List<int>[numberOfAIs[indexNumberOfAIs]], new List<double>[numberOfAIs[indexNumberOfAIs]], isVisible[indexIsVisible] == "yes",
+                numberOfAIs[indexNumberOfAIs], repetitions, new List<int>[numberOfAIs[indexNumberOfAIs]], new List<double>[numberOfAIs[indexNumberOfAIs]], isVisible[indexIsVisible] == "yes", AILeaves[indexAILeaves] == "yes",
                 names, chips, allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes",
                 allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes", betUnits, betSpreadMultipliers, false
                 );

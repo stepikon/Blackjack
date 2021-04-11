@@ -7,7 +7,7 @@ namespace Blackjack
     abstract class Character
     {
         public const int MINIMUM_WINDIW_WIDTH = 7 * 25;
-        public const int MINIMUM_WINDIW_HEIGHT = 38;
+        public const int MINIMUM_WINDIW_HEIGHT = 39;
 
         protected const string CHOICE_HIT = "hit";
         protected const string CHOICE_STAND = "stand";
@@ -37,7 +37,7 @@ namespace Blackjack
 
         public bool HasBlackjack { get { return hasBlackjack; } }
 
-        public abstract Tuple<int, int, bool> GetHandValue(List<Card>hand);
+        public abstract Tuple<int, int, bool> GetHandValue(List<Card> hand);
         public abstract void SetSoftAceToHard(List<Card> hand);
         public abstract void SetHasBlackjack();
     }

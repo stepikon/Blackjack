@@ -10,19 +10,33 @@ namespace Blackjack
 {
     class PracticeTrueCountConversion : Practice
     {
-        public PracticeTrueCountConversion(BetterUI betterUI, Random random)
+        private bool onlyIntegers;
+
+        public PracticeTrueCountConversion(BetterUI betterUI, Random random, bool onlyIntegers)
             : base(betterUI, random)
         {
+            this.onlyIntegers = onlyIntegers;
         }
 
         public override void Run()
         {
             betterUI.ClearAll();
-            Console.WriteLine("To count the True count, you have to devide running count by remaining decks.\n" +
-                "You can play 4-8 deck games and true count is usually less than 40.\n" +
-                "Your goal is to count as many true counts as you can in 10 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
-                "NOTE: true counts are either integers i or they are i.5. They are never bigger then the ratio running count / remaining decks" +
-                "Press any key to start. Press q to quit");
+            if (onlyIntegers)
+            {
+                Console.WriteLine("To count the True count, you have to devide running count by remaining decks.\n" +
+                    "You can play 4-8 deck games and true count is usually between -40 and 40.\n" +
+                    "Your goal is to count as many true counts as you can in 10 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
+                    "NOTE: true counts are only integers less than or oqual to the ratio running count / remaining decks\n" +
+                    "Press any key to start. Press q to quit");
+            }
+            else
+            {
+                Console.WriteLine("To count the True count, you have to devide running count by remaining decks.\n" +
+                    "You can play 4-8 deck games and true count is usually between -40 and 40.\n" +
+                    "Your goal is to count as many true counts as you can in 10 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
+                    "NOTE: true counts are either integers i or they are i.5. They are never bigger then the ratio running count / remaining decks\n" +
+                    "Press any key to start. Press q to quit");
+            }
 
             if (Console.ReadKey().KeyChar == 'q')
             {
@@ -68,7 +82,7 @@ namespace Blackjack
                     halves = 1;
                 }
 
-                trueCount = wholeTrueCount + 0.5 * halves;
+                trueCount = onlyIntegers ? Math.Floor(trueCount) : wholeTrueCount + 0.5 * halves;
 
                 do
                 {
@@ -101,7 +115,14 @@ namespace Blackjack
             stopwatch.Stop();
             stopwatch.Reset();
 
-            AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\TrueCountConversion.txt", score);
+            if (onlyIntegers)
+            {
+                AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\IntegerTrueCountConversion.txt", score);
+            }
+            else
+            {
+                AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\TrueCountConversion.txt", score);
+            }
         }
     }
 }

@@ -16,8 +16,6 @@ namespace Blackjack
         private bool wait;
         private bool isVisible;
 
-        string name;
-
         Card[] shoe;
 
         private Card hiddenCard;
@@ -27,7 +25,6 @@ namespace Blackjack
         public Dealer(string name, List<Card> hand, BetterUI betterUI, int deckAmount, Random random, bool hitSoft17, bool wait, bool isVisible = true)
             :base(name, hand, betterUI)
         {
-            this.name = name;
             this.deckAmount = deckAmount;
             this.random = random;
             this.hitSoft17 = hitSoft17;
@@ -42,9 +39,75 @@ namespace Blackjack
         public int DeckPenetration { get { return deckPenetration; } }
         public bool HitSoft17 { get { return hitSoft17; } }
 
+        public void TakeTurn()
+        {
+            string choice = "";
+
+            do
+            {
+                choice = GetChoice();
+
+                switch (choice)
+                {
+                    case CHOICE_HIT:
+                        Hit();
+                        if (isVisible)
+                        {
+                            DisplayHand();
+                            if (wait)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                        }
+                        break;
+                    case CHOICE_STAND:
+                        Stand();
+                        if (isVisible)
+                        {
+                            DisplayHand();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } while (choice != CHOICE_STAND);
+        }
+
+        public string GetChoice()
+        {
+            if (GetHandValue(hand).Item2 < 17)
+            {
+                return CHOICE_HIT;
+            }
+            else if (GetHandValue(hand).Item2 == 17 && GetHandValue(hand).Item3)
+            {
+                if (hitSoft17)
+                {
+                    return CHOICE_HIT;
+                }
+                else
+                {
+                    return CHOICE_STAND;
+                }
+            }
+            else
+            {
+                return CHOICE_STAND;
+            }
+        }
+
+        private void Hit()
+        {
+            Deal(this, 0);
+        }
+
+        private void Stand()
+        {
+        }
+
         public void CreateShoe()
         {
-            string suit="", color = "";
+            string suit = "", color = "";
             ConsoleColor consoleColor = 0;
 
             CardCreator[] creators = new CardCreator[] {
@@ -102,22 +165,6 @@ namespace Blackjack
             }
         }       
 
-        public void Reset()
-        {
-            Shuffle();
-            SetDeckPenetration();
-            cardToDeal = 0;
-
-            foreach (Card c in shoe)
-            {
-                if (c is CardAce)
-                {
-                    CardAce cA = (CardAce)c;
-                    cA.AceIsOne = false;
-                }
-            }
-        }
-
         public void SetDeckPenetration() //deck penetration is 75%-85%
         { 
             deckPenetration = random.Next(deckAmount * 52 * 3 / 4, deckAmount * 52 * 17 / 20);
@@ -140,11 +187,16 @@ namespace Blackjack
             cardToDeal = 0;
         }
 
-        public void Deal(Character character, int i)
+        public void Deal(Character character, int handIndex)
         {
             Card card = shoe[cardToDeal];
-            character.hands[i].Add(card);
+            character.hands[handIndex].Add(card);
             cardToDeal++;
+
+            if (isVisible && Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+            {
+                betterUI.DisplayShoe(this);
+            }
         }
 
         public void DealHidden()
@@ -162,64 +214,7 @@ namespace Blackjack
         public string GetHiddenCardName()
         {
             return hiddenCard == null ? "" : "?";
-        }
-
-        public void TakeTurn()
-        {
-            string choice = "";
-
-            do
-            {
-                choice = GetChoice();
-
-                switch (choice)
-                {
-                    case CHOICE_HIT:
-                        Hit();
-                        if (isVisible)
-                        {
-                            DisplayHand();
-                            if (wait)
-                            {
-                                Thread.Sleep(1000);
-                            }
-                        }
-                        break;
-                    case CHOICE_STAND:
-                        Stand();
-                        if (isVisible)
-                        {
-                            DisplayHand();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            } while (choice!=CHOICE_STAND);
-        }
-
-        public string GetChoice()
-        {
-            if (GetHandValue(hand).Item2<17)
-            {
-                return CHOICE_HIT;
-            }
-            else if (GetHandValue(hand).Item2 == 17 && GetHandValue(hand).Item3)
-            {
-                if (hitSoft17)
-                {
-                    return CHOICE_HIT;
-                }
-                else
-                {
-                    return CHOICE_STAND;
-                }
-            }
-            else
-            {
-                return CHOICE_STAND;
-            }
-        }
+        }        
 
         public override Tuple<int, int, bool> GetHandValue(List<Card> hand)
         {
@@ -286,16 +281,6 @@ namespace Blackjack
                     }
                 }
             }
-        }
-
-        private void Hit()
-        {
-            Deal(this, 0);
-        }
-
-        private void Stand()
-        { 
-        
         }
 
         public void DisplayHand()
@@ -378,6 +363,22 @@ namespace Blackjack
         {
             hand.Clear();
             hasBlackjack = false;
+        }
+
+        public void Reset()
+        {
+            Shuffle();
+            SetDeckPenetration();
+            cardToDeal = 0;
+
+            foreach (Card c in shoe)
+            {
+                if (c is CardAce)
+                {
+                    CardAce cA = (CardAce)c;
+                    cA.AceIsOne = false;
+                }
+            }
         }
     }
 }

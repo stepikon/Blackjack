@@ -143,7 +143,7 @@ namespace Blackjack
                     Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 19); //player order is from right to left in blackjack; from dealer's POV it's from left to right
                     Console.Write(players[i].Name);
                     Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 20);
-                    Console.Write(players[i].IsRuined || players[i].IsGone ? "Wiped out" : "In game");
+                    Console.Write(players[i].IsRuined || players[i].IsGone ? "Gone" : "In game");
                     Console.SetCursorPosition(Console.WindowWidth - spacing * (i + 1), 21);
                     Console.Write("Chips: ${0}", players[i].Chips >= 1000000000 ? "billions" : String.Format("{0:#,#,0.00}", players[i].Chips));
 

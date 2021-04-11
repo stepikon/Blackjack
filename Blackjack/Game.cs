@@ -10,7 +10,7 @@ namespace Blackjack
     {
         //to display everything in a more fancy way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
-        private const int MINIMUM_WINDIW_HEIGHT = 38;
+        private const int MINIMUM_WINDIW_HEIGHT = 39;
 
         Dealer dealer;
         Tuple<int, int> tableLimits;
@@ -184,6 +184,7 @@ namespace Blackjack
                         }
                         else
                         {
+                            Console.WriteLine(p.Name);
                             p.DisplayHands();
                         }
                     }
@@ -195,6 +196,7 @@ namespace Blackjack
                 else
                 {
                     Console.WriteLine();
+                    Console.WriteLine(dealer.Name);
                     dealer.DisplayHand();
                     Console.WriteLine("-----");
                 }
@@ -381,8 +383,15 @@ namespace Blackjack
 
                         if (practice)
                         {
-                            Console.SetCursorPosition(0, 0);
-                            Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                            if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                            }
+                            else
+                            {
+                                Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                            }
                         }
                     }
                 }
@@ -426,7 +435,7 @@ namespace Blackjack
                     {
                         Console.BackgroundColor = ConsoleColor.Black;
                         Console.ForegroundColor = ConsoleColor.White;
-                        Console.SetCursorPosition(0, 36);
+                        Console.SetCursorPosition(0, 37);
                         Console.WriteLine("Shuffling.");
                     }
                     else
@@ -439,7 +448,7 @@ namespace Blackjack
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.SetCursorPosition(0,37);
+                    Console.SetCursorPosition(0,38);
                     Console.WriteLine("Press any key to continue. Press q to quit");
                 }
                 else
@@ -464,17 +473,24 @@ namespace Blackjack
             }
 
             //highscores
-            foreach (Player p in players)
+            if (practice)
             {
-                if (p!=null)
+                Console.WriteLine("No highscore (practice mode was on)");
+            }
+            else
+            {
+                foreach (Player p in players)
                 {
-                    if (p is HumanPlayer)
+                    if (p != null)
                     {
-                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\AbsoluteChipAmount.txt", p.Name, p.Chips);
-                        AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\RelativeChipAmount.txt", p.Name, (double)p.Chips / p.OriginalChips);
+                        if (p is HumanPlayer)
+                        {
+                            AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\AbsoluteChipAmount.txt", p.Name, p.Chips);
+                            AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\RelativeChipAmount.txt", p.Name, (double)p.Chips / p.OriginalChips);
+                        }
                     }
                 }
-            }
+            }        
         }
 
         private void Surrender(Player player, int handIndex)
@@ -487,8 +503,8 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("You surrender, returning {0} chips, you now have {1} chips.",
-                0.5 * player.GetBet(handIndex), player.Chips);
+                Console.WriteLine("Player {0}: You surrendered, returning {1} chips, you now have {2} chips.",
+                player.Name, 0.5 * player.GetBet(handIndex), player.Chips);
             }
         }
 
@@ -502,8 +518,8 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("You won {0} chips, you now have {1} chips.",
-                player.HasBlackjack ? player.GetBet(handIndex) * 2.5 : player.GetBet(handIndex) * 2,
+                Console.WriteLine("Player {0}, hand {1}: You won {2} chips, you now have {3} chips.",
+                player.Name, handIndex + 1, player.HasBlackjack ? player.GetBet(handIndex) * 1.5 : player.GetBet(handIndex) * 1,
                 player.Chips);
             }           
         }
@@ -524,7 +540,7 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("You lost, you now have {0} chips.", player.Chips);
+                Console.WriteLine("Player {0}, hand {1}: You lost, you now have {2} chips.", player.Name, handIndex + 1, player.Chips);
             }
         }
 
@@ -538,7 +554,8 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("Push, {0} chips returned, you now have {1} chips.", player.GetBet(handIndex), player.Chips);
+                Console.WriteLine("Player {0}, hand {1}: Push, {2} chips returned, you now have {3} chips.", 
+                    player.Name, handIndex + 1, player.GetBet(handIndex), player.Chips);
             }        
         }
 
@@ -552,7 +569,7 @@ namespace Blackjack
             }
             else
             {
-                Console.WriteLine("You get {0} chips from insurance", insurance * 3);
+                Console.WriteLine("Player {0}: You get {1} chips from insurance", player.Name, insurance * 2);
             }
         }
 

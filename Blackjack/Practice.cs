@@ -28,6 +28,14 @@ namespace Blackjack
         {
             GameMode gm;
 
+            GameModeCreator[] creators = new GameModeCreator[]
+            {
+            new PracticeTrueCountConversionCreator(betterUI, random),
+            new PracticeCardCountingCreator(betterUI, random),
+            new PracticeBasicStrategyCreator(betterUI, random),
+            new GameCreator(betterUI, random, true)
+            };
+
             string[] practiceOptions = new string[]
             {
             TRUE_COUNT_CONVERSION,
@@ -36,7 +44,7 @@ namespace Blackjack
             PRACTICE_GAME
             };
 
-            switch (GetChoice("What do you want to practice?", practiceOptions))
+            /*switch (GetChoice("What do you want to practice?", practiceOptions))
             {
                 case TRUE_COUNT_CONVERSION:
                     gm = new GameMode(new PracticeTrueCountConversionCreator(betterUI, random).CreateGameMode());
@@ -53,7 +61,9 @@ namespace Blackjack
                 default:
                     gm = null;
                     break;
-            }
+            }*/
+
+            gm = new GameMode(creators[Array.IndexOf(practiceOptions, GetChoice("What do you want to practice?", practiceOptions))].CreateGameMode());
 
             gm.Run();
         }

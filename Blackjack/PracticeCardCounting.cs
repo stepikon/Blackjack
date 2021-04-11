@@ -21,7 +21,7 @@ namespace Blackjack
             Console.WriteLine("Standard Hi-Lo system.\n" +
                 "After every 26 cards (half a deck) you'll be asked to enter current running count.\n" +
                 "for every correct entry you'll get 1 point. Game ends when you're wrong.\n" +
-                "NOTE: count does NOT reset after your entry" +
+                "NOTE: count does NOT reset after your entry\n" +
                 "Press any key to start. Press 'q' to quit.");
 
             if (Console.ReadKey().KeyChar == 'q')
@@ -61,9 +61,22 @@ namespace Blackjack
                     index = random.Next(13);
 
                     Console.WriteLine("Card {0}:", i + 1);
+
+                    //to distinguish 2 consecutive hands
+                    if (i % 2 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                    }
+
                     Console.WriteLine(cards[index].Item1);
                     runningCount += cards[index].Item2;
                     Thread.Sleep(sleepMiliseconds);
+
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
 
                 do

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Blackjack
 {
-    class Simulation : IPlayable
+    class EVSimulation : IPlayable
     {
         //to display everything in a more fancy way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
-        private const int MINIMUM_WINDIW_HEIGHT = 38;
+        private const int MINIMUM_WINDIW_HEIGHT = 39;
 
         //Game setup
         Dealer dealer;
@@ -21,8 +21,11 @@ namespace Blackjack
         int AIsAmount;
         int handsPerCycle;
         int repetitions;
-        List<double>[] finalChips;
+        List<double>[] finalChips;        
         bool isVisible; //makes the simulation visible
+        bool AILeaves;  //If trueCount <= -1, all AIs leave the table and find another one.
+                        //In this program, AI won't go away from the table; instead, the dealer will shuffle the cards.
+                        //It will have the same effect.
 
         //AI
         string[] name;
@@ -37,8 +40,8 @@ namespace Blackjack
         int runningCount;
         double trueCount;
 
-        public Simulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
-/*simulation*/int AIsAmount, int handsPerCycle, int repetitions, List<double>[] finalChips, bool isVisible,
+        public EVSimulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
+/*simulation*/int AIsAmount, int handsPerCycle, int repetitions, List<double>[] finalChips, bool isVisible, bool AILeaves,
      /*AI:*/string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int[] betUnit, int[] betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0)
         {
@@ -54,6 +57,7 @@ namespace Blackjack
             this.repetitions = repetitions;
             this.finalChips = finalChips;
             this.isVisible = isVisible;
+            this.AILeaves = AILeaves;
 
             //AI
             this.name = name;
@@ -81,6 +85,8 @@ namespace Blackjack
             //I only want this expression to be evaluated once.
             if (isVisible) 
             {
+                bool isTrueCountUnderD1;
+
                 for (int repetition = 0; repetition < repetitions; repetition++)
                 {
                     dealer.CreateShoe();
@@ -107,6 +113,7 @@ namespace Blackjack
 
                     for (int currentHand = 0; currentHand < handsPerCycle; currentHand++)
                     {
+                        isTrueCountUnderD1 = false;
                         dealerSkips = true;
                         betterUI.ClearAll();
 
@@ -443,6 +450,8 @@ namespace Blackjack
 
                                 Console.SetCursorPosition(0, 0);
                                 Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+
+                                isTrueCountUnderD1 = isTrueCountUnderD1 || p.TrueCount <= -1;
                             }
                         }
 
@@ -469,7 +478,7 @@ namespace Blackjack
                         }
 
                         //Shuffle if necessary
-                        if (dealer.CardToDeal >= dealer.DeckPenetration)
+                        if (dealer.CardToDeal >= dealer.DeckPenetration || (AILeaves && isTrueCountUnderD1))
                         {
                             dealer.Reset();
 
@@ -499,6 +508,8 @@ namespace Blackjack
             }
             else //the same simulation, but invisible.
             {
+                bool isTrueCountUnderD1;
+
                 for (int repetition = 0; repetition < repetitions; repetition++)
                 {
                     dealer.CreateShoe();
@@ -525,6 +536,7 @@ namespace Blackjack
 
                     for (int currentHand = 0; currentHand < handsPerCycle; currentHand++)
                     {
+                        isTrueCountUnderD1 = false;
                         dealerSkips = true;
                         /*betterUI.ClearAll();*/
 
@@ -861,6 +873,8 @@ namespace Blackjack
 
                                 Console.SetCursorPosition(0, 0);
                                 //Console.WriteLine("DEBUG: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+
+                                isTrueCountUnderD1 = isTrueCountUnderD1 || p.TrueCount <= -1;
                             }
                         }
 
@@ -887,7 +901,7 @@ namespace Blackjack
                         }
 
                         //Shuffle if necessary
-                        if (dealer.CardToDeal >= dealer.DeckPenetration)
+                        if (dealer.CardToDeal >= dealer.DeckPenetration || (AILeaves && isTrueCountUnderD1))
                         {
                             dealer.Reset();
 

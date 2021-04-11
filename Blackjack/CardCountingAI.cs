@@ -159,7 +159,7 @@ namespace Blackjack
                             {
                                 Console.WriteLine(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
                                String.Format("{0} or {1})", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
-                               : String.Format("{0})", GetHandValue(hands[i]).Item1));
+                               : String.Format("({0})", GetHandValue(hands[i]).Item1));
                             }
                         }
 
@@ -202,7 +202,7 @@ namespace Blackjack
 
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
         //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations, 
-        //best deviations data https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1528&context=gradreports, https://www.blackjacktheforum.com/showthread.php?17600-H17-Deviations-Correct-Expert-OpinionS
+        //best deviations data https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1528&context=gradreports, https://www.blackjacktheforum.com/showthread.php?17600-H17-Deviations-Correct-Expert-OpinionS, https://wizardofodds.com/games/blackjack/card-counting/high-low/
         public string GetChoice(List<Card> hand, Tuple<int, int> limits, Player[] players, Dealer dealer)
         {
             if (dealer.HitSoft17) //Hit 17 decision-making
@@ -351,7 +351,7 @@ namespace Blackjack
                             }
 
                             if (GetHandValue(hand).Item2 == 15 &&
-                                ((dealer.hand[0] is CardAce && trueCount >= -1)
+                                ((dealer.hand[0] is CardAce && trueCount >= -1)//deviation
                                 || (dealer.hand[0].GetCardValue() == 10 && trueCount >= 0) //deviation
                                 || (dealer.hand[0].GetCardValue() == 9 && trueCount >= 2))) //deviation
                             {
@@ -550,8 +550,7 @@ namespace Blackjack
                         {
                             return CHOICE_HIT;
                         }
-                        else if ((GetHandValue(hand).Item2 == 12)
-                               && !(dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6))
+                        else if (GetHandValue(hand).Item2 == 12)
                         {
                             if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 2 && trueCount >= 3) //deviation
                             {
@@ -568,11 +567,26 @@ namespace Blackjack
                                 return CHOICE_STAND;
                             }
 
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 5 && trueCount >= -2) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 12 && dealer.hand[0].GetCardValue() == 6 && trueCount >= -1) //deviation
+                            {
+                                return CHOICE_STAND;
+                            }
+
                             return CHOICE_HIT;
                         }
-                        else if (GetHandValue(hand).Item2 == 13 && !(dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6))
+                        else if (GetHandValue(hand).Item2 == 13 && !(dealer.hand[0].GetCardValue() >= 4 && dealer.hand[0].GetCardValue() <= 6))
                         {
                             if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 2 && trueCount >= -1)
+                            {
+                                return CHOICE_STAND;
+                            }
+
+                            if (GetHandValue(hand).Item2 == 13 && dealer.hand[0].GetCardValue() == 3 && trueCount >= -2)
                             {
                                 return CHOICE_STAND;
                             }
@@ -592,7 +606,7 @@ namespace Blackjack
                                 return CHOICE_STAND;
                             }
 
-                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 4) //deviation
+                            if (GetHandValue(hand).Item2 == 16 && dealer.hand[0].GetCardValue() == 9 && trueCount >= 5) //deviation
                             {
                                 return CHOICE_STAND;
                             }
@@ -1094,6 +1108,7 @@ namespace Blackjack
         }
 
         //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
+        //returns index of the new hand if splitting is valid. Otherwise returns -1
         private int IsSplittingValid(List<Card> hand)
         {
             switch (Array.IndexOf(hands, hand))
@@ -1270,7 +1285,7 @@ namespace Blackjack
                 if (chips >= limits.Item1)
                 {
                     int betMultiplier;
-                    for (betMultiplier = Math.Min((int)trueCount*betSpreadMultiplier, 6*betSpreadMultiplier); betMultiplier > 0; betMultiplier--)
+                    for (betMultiplier = Math.Min((int)(trueCount - 1)*betSpreadMultiplier, 6*betSpreadMultiplier); betMultiplier > 0; betMultiplier--) //https://www.blackjack-trainer.net/blackjack-betting-strategy/
                     {
                         if (chips >= betUnit * betMultiplier && CheckBet(betUnit * betMultiplier, limits))
                         {
