@@ -44,25 +44,6 @@ namespace Blackjack
             PRACTICE_GAME
             };
 
-            /*switch (GetChoice("What do you want to practice?", practiceOptions))
-            {
-                case TRUE_COUNT_CONVERSION:
-                    gm = new GameMode(new PracticeTrueCountConversionCreator(betterUI, random).CreateGameMode());
-                    break;
-                case CARD_COUNTING:
-                    gm = new GameMode(new PracticeCardCountingCreator(betterUI, random).CreateGameMode());
-                    break;
-                case BASIC_STRATEGY:
-                    gm = new GameMode(new PracticeBasicStrategyCreator(betterUI, random).CreateGameMode());
-                    break;
-                case PRACTICE_GAME:
-                    gm = new GameMode(new GameCreator(betterUI, random, true).CreateGameMode());
-                    break;
-                default:
-                    gm = null;
-                    break;
-            }*/
-
             gm = new GameMode(creators[Array.IndexOf(practiceOptions, GetChoice("What do you want to practice?", practiceOptions))].CreateGameMode());
 
             gm.Run();
@@ -71,6 +52,11 @@ namespace Blackjack
         public string GetChoice(string prompt, string[] options)
         {
             return betterUI.GetStringChoiceTopRight(prompt, options);
+        }
+
+        public string GetChoice(string prompt, string[] options, ConsoleColor color)
+        {
+            return betterUI.GetStringChoiceTopRight(prompt, options, color);
         }
 
         public void AddToHighscores(string path, int score)

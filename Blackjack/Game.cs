@@ -8,7 +8,7 @@ namespace Blackjack
 {
     class Game : IPlayable
     {
-        //to display everything in a more fancy way
+        //to display everything in a fancier way
         private const int MINIMUM_WINDIW_WIDTH = 7 * 25;
         private const int MINIMUM_WINDIW_HEIGHT = 39;
 
@@ -72,6 +72,10 @@ namespace Blackjack
                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                 {
                     Console.WriteLine("-----");
+                }
+                else
+                {
+                    betterUI.ClearOptionsSpace();
                 }
 
                 //Dealing
@@ -386,11 +390,11 @@ namespace Blackjack
                             if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                             {
                                 Console.SetCursorPosition(0, 0);
-                                Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                                Console.WriteLine("PRACTICE: RC: {0}, TC: {1}", p.RunningCount, p.TrueCount);
                             }
                             else
                             {
-                                Console.WriteLine("PRACTICE: RC{0}, TC{1}", p.RunningCount, p.TrueCount);
+                                Console.WriteLine("PRACTICE: RC: {0}, TC: {1}", p.RunningCount, p.TrueCount);
                             }
                         }
                     }

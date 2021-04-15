@@ -124,7 +124,7 @@ namespace Blackjack
                             if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                             {
                                 Console.SetCursorPosition(0,2);
-                                Console.Write(new String(' ', 35));
+                                Console.Write(new String(' ', 50));
 
                                 Console.SetCursorPosition(0,2);
                                 if (choice == correctChoice)
@@ -133,7 +133,8 @@ namespace Blackjack
                                 }
                                 else
                                 {
-                                    Console.Write("Correct choice was " + correctChoice);
+                                    Console.Write("Correct choice was {0}, (RC was {1}, TC was {2})",
+                                        correctChoice, GetCurrentRunningCount(players, dealer.hand), trueCount);
                                 }
                             }
                             else
@@ -144,7 +145,8 @@ namespace Blackjack
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Correct choice was " + correctChoice);
+                                    Console.WriteLine("Correct choice was {0}, (RC was {1}, TC was {2})",
+                                        correctChoice, GetCurrentRunningCount(players, dealer.hand), trueCount);
                                 }
                             }
                         }
@@ -834,40 +836,24 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                                 && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 15 || GetHandValue(hand).Item2 == 16)
                             && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 17 || GetHandValue(hand).Item2 == 18)
                             && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 18)
                             && (dealer.hand[0].GetCardValue() == 2)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)
@@ -875,10 +861,6 @@ namespace Blackjack
                             && trueCount >= 0 //deviation
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 17)//deviation
@@ -886,10 +868,6 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)//deviation
@@ -897,10 +875,6 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)//deviation
@@ -908,10 +882,6 @@ namespace Blackjack
                             && trueCount >= 3
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
 
@@ -1069,29 +1039,17 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 10)
                                 && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 11)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 10) //deviation
@@ -1099,10 +1057,6 @@ namespace Blackjack
                                 && trueCount >= 4
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 10) //deviation
@@ -1110,10 +1064,6 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 9) //deviation
@@ -1121,10 +1071,6 @@ namespace Blackjack
                                 && trueCount >= 1
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 9) //deviation
@@ -1132,10 +1078,6 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 8) //deviation
@@ -1143,10 +1085,6 @@ namespace Blackjack
                                 && trueCount >= 2
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                         }
@@ -1263,40 +1201,24 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                                 && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 15 || GetHandValue(hand).Item2 == 16)
                             && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 17 || GetHandValue(hand).Item2 == 18)
                             && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 18)
                             && (dealer.hand[0].GetCardValue() == 2)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)
@@ -1304,10 +1226,6 @@ namespace Blackjack
                             && trueCount >= 1 //deviation
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 17)//deviation
@@ -1315,10 +1233,6 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)//deviation
@@ -1326,10 +1240,6 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
                         else if ((GetHandValue(hand).Item2 == 19)//deviation
@@ -1337,10 +1247,6 @@ namespace Blackjack
                             && trueCount >= 3
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                            {
-                                Console.WriteLine("AI: DOUBLE");
-                            }
                             return CHOICE_DOUBLE;
                         }
 
@@ -1498,30 +1404,18 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 10)
                                 && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 11)
                                 && !(dealer.hand[0] is CardAce)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 11)
@@ -1536,10 +1430,6 @@ namespace Blackjack
                                 && trueCount >= 4
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 10) //deviation
@@ -1547,10 +1437,6 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 9) //deviation
@@ -1558,10 +1444,6 @@ namespace Blackjack
                                 && trueCount >= 1
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 9) //deviation
@@ -1569,10 +1451,6 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                             else if ((GetHandValue(hand).Item2 == 8) //deviation
@@ -1580,10 +1458,6 @@ namespace Blackjack
                                 && trueCount >= 2
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
-                                {
-                                    Console.WriteLine("AI: DOUBLE");
-                                }
                                 return CHOICE_DOUBLE;
                             }
                         }

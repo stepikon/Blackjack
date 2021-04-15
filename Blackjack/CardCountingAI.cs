@@ -94,7 +94,7 @@ namespace Blackjack
                         choice = CHOICE_STAND;
                         isDouble = false;
                     }
-                    else if (hands[i].Count == 1 && hands[i][0] is CardAce) //after splitting aces you only get 1 card. If its an ace and splitting is a valid choice, you can split.
+                    else if (hands[i].Count == 1 && hands[i][0] is CardAce) //after splitting aces you only get 1 card. If its an ace and splitting is a valid choice, you can split again.
                     {
                         Hit(dealer, i);
 
@@ -230,7 +230,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -240,7 +240,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -250,7 +250,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -260,7 +260,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -271,7 +271,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -282,7 +282,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -293,7 +293,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -304,7 +304,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -328,7 +328,7 @@ namespace Blackjack
                     {
                         //check surrender first
                         if (isSurrenderAllowed && hand.Count == 2 && Array.IndexOf(hands, hand) == 0
-                            && hands[1] == null && hands[2] == null && hands[3] == null) //in order to surrender: surrender must be allowed and it MUST be your first move - before doubling down or splitting
+                            && hands[1] == null && hands[2] == null && hands[3] == null) //in order to surrender: surrender must be allowed and it MUST be your first choice - before doubling down or splitting
                         {
                             if (GetHandValue(hand).Item2 == 17 && dealer.hand[0] is CardAce)
                             {
@@ -465,7 +465,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -475,7 +475,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -484,7 +484,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -495,7 +495,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -506,7 +506,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -517,7 +517,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -528,7 +528,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -539,7 +539,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -659,7 +659,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -669,7 +669,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -679,7 +679,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -689,7 +689,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -700,7 +700,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -711,7 +711,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -722,7 +722,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -733,7 +733,7 @@ namespace Blackjack
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
-                                Console.WriteLine("AI: DOUBLE");
+                                Console.WriteLine(Name + ": double");
                             }
                             return CHOICE_DOUBLE;
                         }
@@ -894,7 +894,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -904,7 +904,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -914,7 +914,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -932,7 +932,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -943,7 +943,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -954,7 +954,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -965,7 +965,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -976,7 +976,7 @@ namespace Blackjack
                             {
                                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                                 {
-                                    Console.WriteLine("AI: DOUBLE");
+                                    Console.WriteLine(Name + ": double");
                                 }
                                 return CHOICE_DOUBLE;
                             }
@@ -1082,7 +1082,7 @@ namespace Blackjack
                 Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
                 if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                 {
-                    Console.WriteLine("AI: SPLIT");
+                    Console.WriteLine(Name + ": split");
                 }
             }
         }
@@ -1240,6 +1240,7 @@ namespace Blackjack
             trueCount = wholeTrueCount + 0.5 * halves;
         }
 
+        //counts cards on the table and adds the count to the runningCount
         public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
         {
             int count = 0;
@@ -1360,7 +1361,7 @@ namespace Blackjack
                 {
                     if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                     {
-                        Console.WriteLine("AI: INSURANCE");
+                        Console.WriteLine(Name + ": insurance");
                     }
                 }
 
@@ -1372,7 +1373,7 @@ namespace Blackjack
                 {
                     if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                     {
-                        Console.WriteLine("AI: NO INSURANCE");
+                        Console.WriteLine(Name + ": no insurance");
                     }
                 }
 

@@ -75,7 +75,7 @@ namespace Blackjack
                 dealerCard = cards[random.Next(13)];
                 softTotal = playerHand.Item1.Item2 == 11 || playerHand.Item2.Item2 == 11;
 
-                //normal thought process is: 1] Can I surrender? yes or 2 2) Can I split? Yes or step 3. 3) Can I double? Yes or step 4. 4)Hit/Stand.
+                //normal thought process is: 1) Can I surrender? yes or 2 2) Can I split? Yes or step 3. 3) Can I double? Yes or step 4. 4)Hit/Stand.
                 //here the code goes "backwards", so hit/stand options may be overwritten by double or split or surrender.
                 //basic strategy from https://wizardofodds.com/games/blackjack/strategy/4-decks/ (it's actually 4-8 decks)
 
@@ -318,14 +318,16 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
                                     12, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER });
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER },
+                                    ConsoleColor.Cyan);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
                                     12, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SPLIT, SURRENDER });
+                                    new string[] { HIT, STAND, SPLIT, SURRENDER },
+                                    ConsoleColor.Cyan);
                             }
                         }
                         else
@@ -335,14 +337,16 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
                                     12, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SPLIT });
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT },
+                                    ConsoleColor.Cyan);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0} (pair {1} {1}), dealer shows: {2}",
                                     12, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SPLIT });
+                                    new string[] { HIT, STAND, SPLIT },
+                                    ConsoleColor.Cyan);
                             }
                         }                       
                     }
@@ -355,14 +359,16 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SURRENDER });
+                                    new string[] { HIT, STAND, DOUBLE, SURRENDER },
+                                    ConsoleColor.Cyan);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SURRENDER });
+                                    new string[] { HIT, STAND, SURRENDER },
+                                    ConsoleColor.Cyan);
                             }
                         }
                         else
@@ -372,7 +378,8 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE });
+                                    new string[] { HIT, STAND, DOUBLE },
+                                    ConsoleColor.Cyan);
 
                             }
                             else
@@ -380,7 +387,8 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Soft total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND });
+                                    new string[] { HIT, STAND },
+                                    ConsoleColor.Cyan);
                             }
                         }
                     }
@@ -394,16 +402,18 @@ namespace Blackjack
                             if (doubleAllowed)
                             {
                                 playerChoice = GetChoice(
-                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
-                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER });
+                                    String.Format("Hard total: {0} (pair {1} {2}), dealer shows: {3}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, playerHand.Item2.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT, SURRENDER },
+                                    ConsoleColor.Red);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
-                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
-                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SPLIT, SURRENDER });
+                                    String.Format("Hard total: {0} (pair {1} {2}), dealer shows: {3}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, playerHand.Item2.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT, SURRENDER },
+                                    ConsoleColor.Red);
                             }
                         }
                         else
@@ -411,16 +421,18 @@ namespace Blackjack
                             if (doubleAllowed)
                             {
                                 playerChoice = GetChoice(
-                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
-                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SPLIT });
+                                    String.Format("Hard total: {0} (pair {1} {2}), dealer shows: {3}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, playerHand.Item2.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, DOUBLE, SPLIT },
+                                    ConsoleColor.Red);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
-                                    String.Format("Hard total: {0} (pair {1} {1}), dealer shows: {2}",
-                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SPLIT });
+                                    String.Format("Hard total: {0} (pair {1} {2}), dealer shows: {3}",
+                                    playerHand.Item1.Item2 + playerHand.Item2.Item2, playerHand.Item1.Item1, playerHand.Item2.Item1, dealerCard.Item1),
+                                    new string[] { HIT, STAND, SPLIT },
+                                    ConsoleColor.Red);
                             }
                         }
                     }
@@ -433,14 +445,16 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Hard total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE, SURRENDER });
+                                    new string[] { HIT, STAND, DOUBLE, SURRENDER },
+                                    ConsoleColor.Red);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
                                     String.Format("Hard total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, SURRENDER });
+                                    new string[] { HIT, STAND, SURRENDER },
+                                    ConsoleColor.Red);
                             }
                         }
                         else
@@ -450,14 +464,16 @@ namespace Blackjack
                                 playerChoice = GetChoice(
                                     String.Format("Hard total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND, DOUBLE });
+                                    new string[] { HIT, STAND, DOUBLE },
+                                    ConsoleColor.Red);
                             }
                             else
                             {
                                 playerChoice = GetChoice(
                                     String.Format("Hard total: {0}, dealer shows: {1}",
                                     playerHand.Item1.Item2 + playerHand.Item2.Item2, dealerCard.Item1),
-                                    new string[] { HIT, STAND });
+                                    new string[] { HIT, STAND },
+                                    ConsoleColor.Red);
                             }
                         }
                     }

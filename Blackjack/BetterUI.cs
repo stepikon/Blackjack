@@ -7,9 +7,6 @@ namespace Blackjack
 {
     class BetterUI
     {
-        //private Dealer dealer;
-        //private Player[] players;
-
         private const int MAX_PLAYERS = 7;
 
         private const string BLACKJACK_PAYOUT = "Blackjack pays 3:2";
@@ -17,10 +14,8 @@ namespace Blackjack
         private const string DEALER_RULES_HIT_SOFT17 = "Dealer must hit soft 17.";
         private const string INSURANCE_PAYOUT = "Insurance pays 2:1";
         
-        public BetterUI(/*Dealer dealer, Player[] players*/)
+        public BetterUI()
         {
-            //this.dealer = dealer;
-            //this.players = players;
         }
 
         //DISPLAY FUNCTIONS
@@ -30,7 +25,6 @@ namespace Blackjack
 
             Console.SetCursorPosition((int)((Console.WindowWidth - dealer.Name.Length)/2), 0);
             Console.WriteLine(dealer.Name);
-
 
             Console.SetCursorPosition((int)((Console.WindowWidth - dealer.hand.Count * 2 - "Hand: ".Length) / 2), 1);
             Console.Write("Hand: ");
@@ -49,7 +43,6 @@ namespace Blackjack
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine(dealer.GetHiddenCardName());
-
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
@@ -211,6 +204,7 @@ namespace Blackjack
         public void DisplayMessage(string message)
         {
             ClearMessages();
+
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -484,9 +478,10 @@ namespace Blackjack
                 Console.WriteLine(options[i]);
             }
 
+            //gets the choice; help from https://stackoverflow.com/questions/4351258/c-sharp-arrow-key-input-for-a-console-app
             do
             {
-                k = Console.ReadKey().Key;
+                k = Console.ReadKey(true).Key;
 
                 switch (k)
                 {
@@ -499,6 +494,8 @@ namespace Blackjack
                     case ConsoleKey.S:
                         chosenOption++;
                         chosenOption %= options.Length;
+                        break;
+                    case ConsoleKey.Enter:
                         break;
                     default:
                         prompt = prompt.Contains(" (use up and down arrows or W and S keys)") ? prompt : prompt + " (use up and down arrows or W and S keys)";
@@ -530,6 +527,94 @@ namespace Blackjack
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
             } while (k != ConsoleKey.Enter);
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            return options[chosenOption];
+        }
+
+        public string GetStringChoiceTopRight(string prompt, string[] options, ConsoleColor color)
+        {
+            if (options == null || options[0] == "")
+            {
+                throw new ArgumentException();
+            }
+
+            int chosenOption = 0;
+            ConsoleKey k;
+
+            //initial display
+            ClearAll();
+            Console.ForegroundColor = color;
+            Console.WriteLine(prompt);
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == chosenOption)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                Console.WriteLine(options[i]);
+            }
+
+            //gets the choice; help from https://stackoverflow.com/questions/4351258/c-sharp-arrow-key-input-for-a-console-app
+            do
+            {
+                k = Console.ReadKey(true).Key;
+
+                switch (k)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.W:
+                        chosenOption--;
+                        chosenOption = chosenOption < 0 ? chosenOption + options.Length : chosenOption;
+                        break;
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.S:
+                        chosenOption++;
+                        chosenOption %= options.Length;
+                        break;
+                    case ConsoleKey.Enter:
+                        break;
+                    default:
+                        prompt = prompt.Contains(" (use up and down arrows or W and S keys)") ? prompt : prompt + " (use up and down arrows or W and S keys)";
+                        break;
+                }
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+
+                //Display current choice
+                ClearAll();
+                Console.ForegroundColor = color;
+                Console.WriteLine(prompt);
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == chosenOption)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.WriteLine(options[i]);
+                }
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+            } while (k != ConsoleKey.Enter);
+
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -597,6 +682,8 @@ namespace Blackjack
                             }
 
                             chosenOption %= options.Length;
+                            break;
+                        case ConsoleKey.Enter:
                             break;
                         default:
                             prompt = prompt.Contains(" (use up and down arrows or W and S keys)") ? prompt : prompt + " (use up and down arrows or W and S keys)";
@@ -696,6 +783,8 @@ namespace Blackjack
                             }
 
                             chosenOption %= options.Length;
+                            break;
+                        case ConsoleKey.Enter:
                             break;
                         default:
                             prompt += " (use up and down arrows or W and S keys)";

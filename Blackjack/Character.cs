@@ -6,6 +6,7 @@ namespace Blackjack
 {
     abstract class Character
     {
+        //to display everything in a fancier way
         public const int MINIMUM_WINDIW_WIDTH = 7 * 25;
         public const int MINIMUM_WINDIW_HEIGHT = 39;
 
