@@ -105,7 +105,7 @@ namespace Blackjack
             Console.WriteLine();
             Console.WriteLine("Table maximum: ");
             Console.WriteLine();
-            Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+            Console.WriteLine("Hands per cycle (# hands played per 1 repetition): ");
             Console.WriteLine();
             Console.WriteLine("Repetitions: ");
             Console.WriteLine();
@@ -268,7 +268,7 @@ namespace Blackjack
                 Console.WriteLine();
                 Console.WriteLine("Table maximum: ");
                 Console.WriteLine();
-                Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+                Console.WriteLine("Hands per cycle (# hands played per 1 repetition): ");
                 Console.WriteLine();
                 Console.WriteLine("Repetitions: ");
                 Console.WriteLine();
@@ -322,7 +322,7 @@ namespace Blackjack
             Console.WriteLine();
             Console.WriteLine("Table maximum: ");
             Console.WriteLine();
-            Console.WriteLine("Hands per cycle (# hands played during 1 repetition): ");
+            Console.WriteLine("Hands per cycle (# hands played per 1 repetition): ");
             Console.WriteLine();
             Console.WriteLine("Repetitions: ");
             Console.WriteLine();
@@ -384,7 +384,7 @@ namespace Blackjack
                 do
                 {
                     Console.WriteLine("Enter AI{0}'s chips", i + 1);
-                } while (!int.TryParse(Console.ReadLine(), out chips[i]));
+                } while (!int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0);
 
                 do
                 {

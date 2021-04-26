@@ -47,25 +47,22 @@ namespace Blackjack
             {
                 choice = GetChoice();
 
+                if (isVisible)
+                {
+                    DisplayHand();
+                    if (wait && choice == CHOICE_HIT)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                }
+
                 switch (choice)
                 {
                     case CHOICE_HIT:
                         Hit();
-                        if (isVisible)
-                        {
-                            DisplayHand();
-                            if (wait)
-                            {
-                                Thread.Sleep(1000);
-                            }
-                        }
                         break;
                     case CHOICE_STAND:
                         Stand();
-                        if (isVisible)
-                        {
-                            DisplayHand();
-                        }
                         break;
                     default:
                         break;
@@ -293,7 +290,7 @@ namespace Blackjack
                 }
                 else
                 {
-                    Console.Write("Hand: ");
+                    Console.Write("Dealer's hand: ");
                     foreach (Card c in hand)
                     {
                         Console.Write("{0} ", c.Name);

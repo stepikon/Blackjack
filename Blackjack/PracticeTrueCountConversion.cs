@@ -123,6 +123,11 @@ namespace Blackjack
             {
                 AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\TrueCountConversion.txt", score);
             }
+
+            Console.WriteLine();
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
+            Console.Clear();
         }
     }
 }

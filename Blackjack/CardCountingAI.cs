@@ -82,12 +82,12 @@ namespace Blackjack
                             if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                             {
                                 betterUI.DisplayPlayersStatus(players);
-                                betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                                betterUI.DisplayMessage(String.Format("Last card on hand {0}", i + 1));
                             }
                             else
                             {
                                 DisplayHands();
-                                Console.WriteLine("Last card on hand {0}", i);
+                                Console.WriteLine("Last card on hand {0}", i + 1);
                             }
                         }
 
@@ -105,7 +105,7 @@ namespace Blackjack
                                 if (isVisible)
                                 {
                                     betterUI.DisplayPlayersStatus(players);
-                                    betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                                    betterUI.DisplayMessage(String.Format("Last card on hand {0}", i + 1));
                                 }
                                 choice = CHOICE_STAND;
                             }
@@ -114,7 +114,7 @@ namespace Blackjack
                                 if (isVisible)
                                 {
                                     DisplayHands();
-                                    Console.WriteLine("Last card on hand {0}", i);
+                                    Console.WriteLine("Last card on hand {0}", i + 1);
                                 }
                                 choice = CHOICE_STAND;
                             }
@@ -132,7 +132,7 @@ namespace Blackjack
                                     if (isVisible)
                                     {
                                         betterUI.DisplayPlayersStatus(players);
-                                        betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                                        betterUI.DisplayMessage(String.Format("Last card on hand {0}", i + 1));
                                     }
                                 }
                                 else
@@ -140,7 +140,7 @@ namespace Blackjack
                                     if (isVisible)
                                     {
                                         DisplayHands();
-                                        Console.WriteLine("Last card on hand {0}", i);
+                                        Console.WriteLine("Last card on hand {0}", i + 1);
                                     }
                                 }
                                 choice = CHOICE_STAND;
@@ -151,15 +151,15 @@ namespace Blackjack
                     {
                         choice = CHOICE_HIT;
                     }
-                    else
+                    else //ai makes its choice
                     {
                         if (isVisible)
                         {
                             if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
                             {
                                 Console.WriteLine(GetHandValue(hands[i]).Item1 != GetHandValue(hands[i]).Item2 ?
-                               String.Format("{0} or {1})", GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
-                               : String.Format("({0})", GetHandValue(hands[i]).Item1));
+                               String.Format("hand {0}: {1} or {2}", i + 1, GetHandValue(hands[i]).Item1, GetHandValue(hands[i]).Item2)
+                               : String.Format("hand {0}: {1}", i + 1, GetHandValue(hands[i]).Item1));
                             }
                         }
 
@@ -200,6 +200,7 @@ namespace Blackjack
             }
         }
 
+        //gets the correct choice
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
         //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations, 
         //best deviations data https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1528&context=gradreports, https://www.blackjacktheforum.com/showthread.php?17600-H17-Deviations-Correct-Expert-OpinionS, https://wizardofodds.com/games/blackjack/card-counting/high-low/
@@ -228,7 +229,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                                 && chips >= 1) 
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -238,7 +239,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -248,7 +249,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -258,7 +259,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 2)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -269,7 +270,7 @@ namespace Blackjack
                             && trueCount >= 0 //deviation
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -280,7 +281,7 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -291,7 +292,7 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -302,7 +303,7 @@ namespace Blackjack
                             && trueCount >= 3
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -463,7 +464,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -473,7 +474,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -482,7 +483,7 @@ namespace Blackjack
                             else if ((GetHandValue(hand).Item2 == 11)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -493,7 +494,7 @@ namespace Blackjack
                                 && trueCount >= 4
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -504,7 +505,7 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -515,7 +516,7 @@ namespace Blackjack
                                 && trueCount >= 1
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -526,7 +527,7 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -537,7 +538,7 @@ namespace Blackjack
                                 && trueCount >= 2
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -657,7 +658,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                                 && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -667,7 +668,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -677,7 +678,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 3 || dealer.hand[0].GetCardValue() == 4 || dealer.hand[0].GetCardValue() == 5 || dealer.hand[0].GetCardValue() == 6)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -687,7 +688,7 @@ namespace Blackjack
                             && (dealer.hand[0].GetCardValue() == 2)
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -698,7 +699,7 @@ namespace Blackjack
                             && trueCount >= 1 //deviation
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -709,7 +710,7 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -720,7 +721,7 @@ namespace Blackjack
                             && trueCount >= 1
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -731,7 +732,7 @@ namespace Blackjack
                             && trueCount >= 3
                             && chips >= 1)
                         {
-                            if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                            if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                             {
                                 Console.WriteLine(Name + ": double");
                             }
@@ -892,7 +893,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 3 && dealer.hand[0].GetCardValue() <= 6)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -902,7 +903,7 @@ namespace Blackjack
                                 && (dealer.hand[0].GetCardValue() >= 2 && dealer.hand[0].GetCardValue() <= 9)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -912,7 +913,7 @@ namespace Blackjack
                                 && !(dealer.hand[0] is CardAce)
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -930,7 +931,7 @@ namespace Blackjack
                                 && trueCount >= 4
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -941,7 +942,7 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -952,7 +953,7 @@ namespace Blackjack
                                 && trueCount >= 1
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -963,7 +964,7 @@ namespace Blackjack
                                 && trueCount >= 3
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -974,7 +975,7 @@ namespace Blackjack
                                 && trueCount >= 2
                                 && chips >= 1)
                             {
-                                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                                 {
                                     Console.WriteLine(Name + ": double");
                                 }
@@ -1080,7 +1081,7 @@ namespace Blackjack
                 hands[newHandIndex] = new List<Card>();
                 hands[newHandIndex].Add(temp);
                 Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
-                if (Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH)
+                if ((Console.WindowHeight < MINIMUM_WINDIW_HEIGHT || Console.WindowWidth < MINIMUM_WINDIW_WIDTH) && isVisible)
                 {
                     Console.WriteLine(Name + ": split");
                 }
@@ -1384,6 +1385,7 @@ namespace Blackjack
             insurance = bet;
         }
 
+        //betting on pairs isn't worth it so AI turns that option off if it's turned on.
         public override void BetPair(Tuple<int, int> limits)
         {
             if (allowPairBets)

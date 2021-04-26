@@ -100,6 +100,11 @@ namespace Blackjack
             Console.WriteLine("WRONG, running count is {0}", runningCount);
             Console.WriteLine("Your score was {0}", score);
             AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\CardCounting.txt", score);
+
+            Console.WriteLine();
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
+            Console.Clear();
         }
     }
 }

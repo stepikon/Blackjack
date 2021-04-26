@@ -142,7 +142,7 @@ namespace Blackjack
 
                     for (int j = 0; j < players[i].hands.Length; j++)
                     {
-                        if (players[i].hands[j] != null)
+                        if (players[i].hands[j] != null && !players[i].IsGone && !players[i].IsRuined)
                         {
                             if (players[i].Bets[j] >= 1000000000)
                             {

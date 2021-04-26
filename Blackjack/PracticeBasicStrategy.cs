@@ -496,6 +496,11 @@ namespace Blackjack
 
             Console.WriteLine("Your score was {0}", score);
             AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\BasicStrategy.txt", score);
+
+            Console.WriteLine();
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
+            Console.Clear();
         }
     }
 }

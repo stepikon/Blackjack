@@ -12,27 +12,36 @@ namespace Blackjack
 
             Console.WriteLine("Pro tip: if you can't see the whole console, set it to full screen\n" +
                 "or right/click -> Properties -> Layout, uncheck the \"let system position the window\" box and set both values to 0");
-            Console.WriteLine("Press any key to start.");
+            Console.WriteLine("Press any key to start. Press q to quit");
 
-            Console.ReadKey();
+            char quit;
+            quit = Console.ReadKey().KeyChar;
+            if (quit == 'q' || quit == 'Q')
+            {
+                return;
+            }
 
             Random random = new Random();
             BetterUI betterUI = new BetterUI();
             GameMode gm = new GameMode();
 
-            betterUI.ClearAll();
+            Console.Clear();
 
             do
             {
+                //Strategy pattern https://refactoring.guru/design-patterns/strategy/csharp/example
                 gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
+
                 Console.WriteLine("Game over.\n" +
                     "Press any key to play a new game. Press q to quit");
-            } while (Console.ReadKey().KeyChar != 'q');
+                quit = Console.ReadKey().KeyChar;
+            } while (quit != 'q' && quit != 'Q');
         }
 
         public static IPlayable ChooseGamemode(BetterUI betterUI, Random random)
         {
+            //Factory pattern https://www.dofactory.com/net/factory-method-design-pattern
             GameModeCreator[] creators = new GameModeCreator[] { 
                 new GameCreator(betterUI, random, false),
                 new PracticeCreator(betterUI, random), 

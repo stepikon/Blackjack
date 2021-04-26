@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blackjack
 {
-    class GameMode : IPlayable
+    class GameMode
     {
         private IPlayable mode;
 

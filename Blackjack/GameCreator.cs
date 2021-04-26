@@ -385,7 +385,7 @@ namespace Blackjack
                 do
                 {
                     Console.WriteLine("Enter AI{0}'s chips", i + 1 - numberOfPlayers[indexNumberOfPlayers]);
-                } while (!int.TryParse(Console.ReadLine(), out chips[i]));
+                } while (!int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0);
 
                 betterUI.ClearAll();
             }

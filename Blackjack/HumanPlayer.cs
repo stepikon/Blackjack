@@ -62,22 +62,22 @@ namespace Blackjack
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                         {
                             betterUI.DisplayPlayersStatus(players);
-                            betterUI.DisplayMessage(String.Format("Last card on hand {0}", i));
+                            betterUI.DisplayMessage(String.Format("Last card on hand {0}", i + 1));
                         }
                         else
                         {
                             DisplayHands();
-                            Console.WriteLine("Last card on hand {0}", i);
+                            Console.WriteLine("Last card on hand {0}", i + 1);
                         }
 
                         choice = CHOICE_STAND;
                         isDouble = false;
                     }
-                    else if (hands[i].Count == 1 && hands[i][0] is CardAce)
+                    else if (hands[i].Count == 1 && hands[i][0] is CardAce) //after splitting aces you only get 1 card. If it's an ace and splitting is a valid option, you can split again
                     {
                         Hit(dealer, i);
 
-                        if (IsSplittingValid(hands[i])!=-1 && isResplitAcesAllowed)
+                        if (IsSplittingValid(hands[i]) != -1 && isResplitAcesAllowed)
                         {
                             choice = betterUI.GetStringChoice("Do you want to split again?", new string[] { CHOICE_STAND, CHOICE_SPLIT});
                         }
@@ -90,7 +90,7 @@ namespace Blackjack
                     {
                         choice = CHOICE_HIT;
                     }
-                    else
+                    else //player makes a choice
                     {
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                         {
@@ -117,6 +117,7 @@ namespace Blackjack
                             choice = GetChoice();
                         }
 
+                        //if practice mode is turned on, player receives feedback
                         if (practice)
                         {
                             CountDealt(players, dealer.hand, dealer.DeckAmount - dealer.GetDecksInDiscard());
@@ -212,6 +213,7 @@ namespace Blackjack
             }
         }
 
+        //reads player's choice in the worse UI.
         public string GetChoice()
         {
             if (isSurrenderAllowed)
@@ -262,6 +264,7 @@ namespace Blackjack
             }
         }
 
+        //counts cards on the table and updates the running count if and only if the practice mode is turned on
         public override void CountDealt(Player[] players,List<Card> dealerHand, double remainingDecks)
         {
             if (practice)
@@ -375,6 +378,7 @@ namespace Blackjack
             }
         }
 
+        //returns current running count (after counting all cards on the table)
         public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
         {
             int count = 0;
@@ -465,7 +469,7 @@ namespace Blackjack
                     do
                     {
                         Console.WriteLine("Are you sure you want to quit? (Y/N)");
-                        switch (Console.ReadKey().KeyChar)
+                        switch (Console.ReadKey(true).KeyChar)
                         {
                             case 'y':
                             case 'Y':
@@ -546,7 +550,7 @@ namespace Blackjack
                 do
                 {
                     Console.WriteLine("Insurance is open. Do you want to buy insurance? (Y/N)");
-                    switch (Console.ReadKey().KeyChar)
+                    switch (Console.ReadKey(true).KeyChar)
                     {
                         case 'y':
                         case 'Y':
@@ -613,7 +617,7 @@ namespace Blackjack
                         do
                         {
                             Console.WriteLine("Allow this side bet for future rounds? (Y/N)");
-                            switch (Console.ReadKey().KeyChar)
+                            switch (Console.ReadKey(true).KeyChar)
                             {
                                 case 'y':
                                 case 'Y':
@@ -654,7 +658,7 @@ namespace Blackjack
         {
             int newHandIndex = IsSplittingValid(hand);
 
-            if (newHandIndex!=-1)
+            if (newHandIndex != -1)
             {
                 Card temp = hand[1];
 
@@ -705,6 +709,7 @@ namespace Blackjack
         }
 
         //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
+        //returns index of a new hand if splitting is a valid option. Otherwise returns -1.
         private int IsSplittingValid(List<Card> hand)
         {
             switch (Array.IndexOf(hands, hand))
@@ -808,6 +813,8 @@ namespace Blackjack
             hasBlackjack = false;
             surrender = false;
         }
+
+        //returns the best choice for feedback purposes in practice mode.
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
         //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations, 
         //best deviations data https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1528&context=gradreports, https://www.blackjacktheforum.com/showthread.php?17600-H17-Deviations-Correct-Expert-OpinionS, https://wizardofodds.com/games/blackjack/card-counting/high-low/
