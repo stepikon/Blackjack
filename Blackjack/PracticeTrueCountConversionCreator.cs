@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Practice Factory pattern>
+    //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
     class PracticeTrueCountConversionCreator : PracticeCreator
     {
         public PracticeTrueCountConversionCreator(BetterUI betterUI, Random random)
@@ -128,4 +131,6 @@ namespace Blackjack
             return new PracticeTrueCountConversion(betterUI, random, onlyIntegers[indexOnlyIntegers] == "yes");
         }
     }
+
+    //</Practice Factory pattern>
 }

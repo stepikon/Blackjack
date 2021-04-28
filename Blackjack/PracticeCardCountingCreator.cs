@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Practice Factory pattern>
+    //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
     class PracticeCardCountingCreator : PracticeCreator
     {
         public PracticeCardCountingCreator(BetterUI betterUI, Random random)
@@ -15,4 +18,6 @@ namespace Blackjack
             return new PracticeCardCounting(betterUI, random);
         }
     }
+
+    //<Practice Factory pattern>
 }

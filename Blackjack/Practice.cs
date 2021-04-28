@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace Blackjack
 {
+    //this class is a part of a <Strategy pattern>
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+    
     class Practice : IPlayable
     {
         private const string TRUE_COUNT_CONVERSION = "True count conversion";
@@ -27,6 +30,9 @@ namespace Blackjack
 
         public virtual void Run()
         {
+            //part of a <Practice Factory pattern>
+            //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
             GameMode gm;
 
             GameModeCreator[] creators = new GameModeCreator[]
@@ -47,9 +53,15 @@ namespace Blackjack
             QUIT
             };
 
+            //part of a <Practice Strategy pattern>
+            //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
             gm = new GameMode(creators[Array.IndexOf(practiceOptions, GetChoice("What do you want to practice?", practiceOptions))].CreateGameMode());
 
             gm.Run();
+
+            //</Practice Factory pattern>
+            //</Practice Strategy pattern>
         }
 
         public string GetChoice(string prompt, string[] options)
@@ -110,4 +122,6 @@ namespace Blackjack
             }
         }
     }
+
+    //</Strategy pattern>
 }

@@ -6,6 +6,9 @@ using System.IO;
 
 namespace Blackjack
 {
+    //part of a <Strategy pattern>
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
     class Game : IPlayable
     {
         //to display everything in a fancier way
@@ -718,4 +721,6 @@ namespace Blackjack
             }
         }
     }
+
+    //</Strategy pattern>
 }

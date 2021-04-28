@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Practice Factory pattern>
+    //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
     class PracticeBasicStrategyCreator : PracticeCreator
     {
         string[] stringOptions = new string[] {

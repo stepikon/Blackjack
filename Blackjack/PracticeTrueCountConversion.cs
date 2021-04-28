@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace Blackjack
 {
+    //part of a <Practice Strategy pattern>
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
     class PracticeTrueCountConversion : Practice
     {
         private bool onlyIntegers;
@@ -131,4 +134,6 @@ namespace Blackjack
             Console.Clear();
         }
     }
+
+    //<Practice Strategy pattern>
 }

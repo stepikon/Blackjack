@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Strategy pattern>
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
     class RORSimulation : IPlayable
     {
         //to display everything in a fancier way
@@ -933,5 +936,7 @@ namespace Blackjack
             return existActivePlayers;
         }
     }
+
+    //</Strategy pattern>
 }
 

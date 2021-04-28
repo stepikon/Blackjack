@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace Blackjack
 {
+    //part of a <Practice Strategy pattern>
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
     class PracticeBasicStrategy : Practice
     {
         private bool hit17;
@@ -503,4 +506,6 @@ namespace Blackjack
             Console.Clear();
         }
     }
+
+    //</Practice Strategy pattertn>
 }

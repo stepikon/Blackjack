@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Card Factory pattern>
+    //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
     abstract class CardCreator
     {
         protected string name;
@@ -175,4 +178,6 @@ namespace Blackjack
             return new CardAce(name, suit, color, consoleColor, aceIsOne);
         }
     }
+
+    //</Card Factory pattern>
 }

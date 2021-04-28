@@ -107,6 +107,9 @@ namespace Blackjack
             string suit = "", color = "";
             ConsoleColor consoleColor = 0;
 
+            //part of a <Card Factory pattern>
+            //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
             CardCreator[] creators = new CardCreator[] {
                 new CardTwoCreator("2"),
                 new CardThreeCreator("3"),
@@ -160,6 +163,8 @@ namespace Blackjack
                     }
                 }
             }
+
+            //</Card Factory pattern>
         }       
 
         public void SetDeckPenetration() //deck penetration is 75%-85%

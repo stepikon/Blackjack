@@ -24,15 +24,21 @@ namespace Blackjack
 
             do
             {
-                //Strategy pattern https://refactoring.guru/design-patterns/strategy/csharp/example
+                //part of a <Strategy pattern>
+                //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+                
                 gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
+
+                //</Strategy pattern>
             } while (!(gm.GetGamemode() is Quit));
         }
 
         public static IPlayable ChooseGamemode(BetterUI betterUI, Random random)
         {
-            //Factory pattern https://www.dofactory.com/net/factory-method-design-pattern
+            //part of a <Factory pattern>
+            //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+            
             GameModeCreator[] creators = new GameModeCreator[] { 
                 new GameCreator(betterUI, random, false),
                 new PracticeCreator(betterUI, random), 
@@ -44,6 +50,8 @@ namespace Blackjack
             string[] options = new string[] { "Game", "Practice", "EV simulation", "Risk of ruin simulation", "Quit"};
 
             return creators[Array.IndexOf(options, betterUI.GetStringChoiceTopRight("Choose gamemode:", options))].CreateGameMode();
+            
+            //</Factory pattern>
         }
     }
 }

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Strategy pattern> (and <Practice Strategy pattern>)
+    //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+
     class GameMode
     {
         private IPlayable mode;
@@ -32,4 +35,6 @@ namespace Blackjack
             mode.Run();
         }
     }
+
+    //</Strategy pattern> (</Practice Strategy pattern>)
 }

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Blackjack
 {
+    //part of a <Factory pattern>
+    //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
+
     class GameCreator : GameModeCreator
     {
         string[] stringOptions = new string[] { 
@@ -417,4 +420,6 @@ namespace Blackjack
                 practice);
         }
     }
+
+    //</Factory pattern>
 }
