@@ -22,6 +22,11 @@ namespace Blackjack
             this.mode = mode;
         }
 
+        public IPlayable GetGamemode()
+        {
+            return mode;
+        }
+
         public void Run()
         {
             mode.Run();

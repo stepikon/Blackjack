@@ -12,14 +12,9 @@ namespace Blackjack
 
             Console.WriteLine("Pro tip: if you can't see the whole console, set it to full screen\n" +
                 "or right/click -> Properties -> Layout, uncheck the \"let system position the window\" box and set both values to 0");
-            Console.WriteLine("Press any key to start. Press q to quit");
+            Console.WriteLine("Press any key to start.");
 
-            char quit;
-            quit = Console.ReadKey().KeyChar;
-            if (quit == 'q' || quit == 'Q')
-            {
-                return;
-            }
+            Console.ReadKey();
 
             Random random = new Random();
             BetterUI betterUI = new BetterUI();
@@ -32,11 +27,7 @@ namespace Blackjack
                 //Strategy pattern https://refactoring.guru/design-patterns/strategy/csharp/example
                 gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
-
-                Console.WriteLine("Game over.\n" +
-                    "Press any key to play a new game. Press q to quit");
-                quit = Console.ReadKey().KeyChar;
-            } while (quit != 'q' && quit != 'Q');
+            } while (!(gm.GetGamemode() is Quit));
         }
 
         public static IPlayable ChooseGamemode(BetterUI betterUI, Random random)
@@ -46,10 +37,11 @@ namespace Blackjack
                 new GameCreator(betterUI, random, false),
                 new PracticeCreator(betterUI, random), 
                 new EVSimulationCreator(betterUI, random),
-                new RORSimulationCreator(betterUI, random)
+                new RORSimulationCreator(betterUI, random),
+                new QuitCreator(betterUI, random)
             };
 
-            string[] options = new string[] { "game", "practice", "EV simulation", "Risk of ruin simulation"};
+            string[] options = new string[] { "Game", "Practice", "EV simulation", "Risk of ruin simulation", "Quit"};
 
             return creators[Array.IndexOf(options, betterUI.GetStringChoiceTopRight("Choose gamemode:", options))].CreateGameMode();
         }

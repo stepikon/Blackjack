@@ -14,6 +14,7 @@ namespace Blackjack
         private const string CARD_COUNTING = "Card counting";
         private const string BASIC_STRATEGY = "Basic strategy";
         private const string PRACTICE_GAME = "Practice game";
+        private const string QUIT = "Return to main menu";
 
         protected BetterUI betterUI;
         protected Random random;
@@ -33,7 +34,8 @@ namespace Blackjack
             new PracticeTrueCountConversionCreator(betterUI, random),
             new PracticeCardCountingCreator(betterUI, random),
             new PracticeBasicStrategyCreator(betterUI, random),
-            new GameCreator(betterUI, random, true)
+            new GameCreator(betterUI, random, true),
+            new QuitCreator(betterUI, random)
             };
 
             string[] practiceOptions = new string[]
@@ -41,7 +43,8 @@ namespace Blackjack
             TRUE_COUNT_CONVERSION,
             CARD_COUNTING,
             BASIC_STRATEGY,
-            PRACTICE_GAME
+            PRACTICE_GAME,
+            QUIT
             };
 
             gm = new GameMode(creators[Array.IndexOf(practiceOptions, GetChoice("What do you want to practice?", practiceOptions))].CreateGameMode());
