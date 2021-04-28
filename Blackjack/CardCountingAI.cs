@@ -58,14 +58,15 @@ namespace Blackjack
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
                         {
                             betterUI.DisplayPlayersStatus(players);
-                            if (wait)
-                            {
-                                Thread.Sleep(1000);
-                            }
                         }
                         else
                         {
                             DisplayHands();
+                        }
+
+                        if (wait)
+                        {
+                            Thread.Sleep(1000);
                         }
                     }                   
 

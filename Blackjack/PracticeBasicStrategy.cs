@@ -492,7 +492,7 @@ namespace Blackjack
                     Console.WriteLine("You are wrong, correct decision is {0}", correctChoice);
                     isCorrect = false;
                 }
-            } while (isCorrect && Console.ReadKey().KeyChar != 'q');
+            } while (isCorrect && Console.ReadKey(true).KeyChar != 'q');
 
             Console.WriteLine("Your score was {0}", score);
             AddToHighscores(Directory.GetCurrentDirectory() + @"\Highscores\BasicStrategy.txt", score);

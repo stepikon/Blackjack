@@ -186,7 +186,10 @@ namespace Blackjack
 
         public void Deal(Character character, int handIndex)
         {
-            Card card = shoe[cardToDeal];
+            //I use % to avoid IndexOutOfRangeException; it's extremely ugly, but it works. 
+            //it's useful if and only if cardToDeal is bigger than or equal to 52*deckAmount;
+            //that should seldom happen even in a 4-deck game.
+            Card card = shoe[cardToDeal % (52*deckAmount)]; 
             character.hands[handIndex].Add(card);
             cardToDeal++;
 
@@ -198,7 +201,7 @@ namespace Blackjack
 
         public void DealHidden()
         {
-            hiddenCard = shoe[cardToDeal];
+            hiddenCard = shoe[cardToDeal % (52*deckAmount)];
             cardToDeal++;
         }
 
