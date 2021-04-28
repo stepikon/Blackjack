@@ -25,16 +25,17 @@ namespace Blackjack
             {
                 Console.WriteLine("To count the True count, you have to devide running count by remaining decks.\n" +
                     "You can play 4-8 deck games and true count is usually between -40 and 40.\n" +
-                    "Your goal is to count as many true counts as you can in 10 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
-                    "NOTE: true counts are only integers less than or oqual to the ratio running count / remaining decks\n" +
+                    "Your goal is to count as many true counts as you can in 5 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
+                    "NOTE: true counts are only integers less than or equal to the ratio running count / remaining decks\n" +
                     "Press any key to start. Press q to quit");
             }
             else
             {
                 Console.WriteLine("To count the True count, you have to devide running count by remaining decks.\n" +
                     "You can play 4-8 deck games and true count is usually between -40 and 40.\n" +
-                    "Your goal is to count as many true counts as you can in 10 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
-                    "NOTE: true counts are either integers i or they are i.5. They are never bigger then the ratio running count / remaining decks\n" +
+                    "Your goal is to count as many true counts as you can in 5 minutes. Correct answers are worth 1 point, wrong are worth -1 point. Good luck.\n" +
+                    "NOTE: true counts are in format k*0.5, where k is an integer (i.e. 1; 0.5; -3.5).\n" +
+                    "They are never bigger then the ratio running count / remaining decks\n" +
                     "Press any key to start. Press q to quit");
             }
 
@@ -108,7 +109,7 @@ namespace Blackjack
                     }
 
                 } while (answer != trueCount);
-            } while (stopwatch.ElapsedMilliseconds < 600000);
+            } while (stopwatch.ElapsedMilliseconds < 300000);
 
             Console.WriteLine("Your score was {0}", score);
 
