@@ -10,28 +10,28 @@ namespace Blackjack
         protected const string CHOICE_SPLIT = "split";
         protected const string CHOICE_SURRENDER = "surrender";
 
-        protected bool isSurrenderAllowed;
+        protected bool isSurrenderAllowed; //allows surrender
         protected bool isDASAllowed; //double after split
         protected bool isResplitAllowed; //split up to 4 hands
         protected bool isResplitAcesAllowed; //split aces up to 4 hands
 
-        protected double originalChips;
-        protected double chips;
-        protected double insurance;
-        protected int pairBet;
+        protected double originalChips; //chips player started with
+        protected double chips; //chips player currently has
+        protected double insurance; //this is true if the player bought insurance
+        protected int pairBet; //player's side bet
 
         protected int runningCount;
         protected double trueCount;
 
-        protected bool surrender;
+        protected bool surrender; //this is true if player surrendered
 
-        private bool isRuined;
-        private bool isGone;
+        private bool isRuined; //this is true if player is ruined
+        private bool isGone; //this is true if player left
 
-        protected bool allowPairBets;
+        protected bool allowPairBets; //player can turn off bets on pairs if he wants to
 
         protected Tuple<int, int> tableLimits;
-        protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets. TODO: new int[4]
+        protected int[] bets = { 0,0,0,0 }; //you can have up to 4 hands => you can have up to 4 bets.
 
         public Player(string name, List<Card> hand, BetterUI betterUI, double originalChips, Tuple<int,int> tableLimits,
             bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed,
@@ -52,21 +52,19 @@ namespace Blackjack
             this.isGone = isGone;
         }
 
+
         public double OriginalChips
         {
-            get 
-            {
-                return originalChips;
-            }
+            get { return originalChips; }
         }
+
 
         public double Chips 
         {
-            get
-            { return chips; }
+            get { return chips; }
             set 
             {
-                if (value<0)
+                if (value < 0)
                 {
                     throw new ArgumentException();
                 }
@@ -77,34 +75,34 @@ namespace Blackjack
             }
         }
 
+
         public double Insurance
         {
-            get
-            { return insurance; }
+            get { return insurance; }
         }
+
 
         public int PairBet
         {
-            get
-            { return pairBet; }
+            get { return pairBet; }
         }
+
 
         public int RunningCount
         {
-            get
-            { return runningCount; }
+            get { return runningCount; }
         }
+
 
         public double TrueCount
         {
-            get
-            { return trueCount; }
+            get { return trueCount; }
         }
+
 
         public bool IsRuined
         {
-            get 
-            { return isRuined; }
+            get { return isRuined; }
             set
             {
                 if (value==true||value==false)
@@ -118,10 +116,10 @@ namespace Blackjack
             }
         }
 
+
         public bool IsGone
         {
-            get
-            { return isGone; }
+            get { return isGone; }
             set
             {
                 if (value == true || value == false)
@@ -135,15 +133,18 @@ namespace Blackjack
             }
         }
 
+
         public bool Surrender
         {
             get { return surrender; }
         }
 
+
         public int[] Bets
-        { get
-            { return bets; } 
+        { 
+            get { return bets; } 
         }
+
 
         public abstract void TakeTurn(Player[] players, Dealer dealer);
         public abstract void Bet(List<Card> hand, Tuple<int, int> limits);
@@ -161,6 +162,8 @@ namespace Blackjack
         public abstract void DisplayHands();
         public abstract List<int> GetHandValues();
 
+        
+        //returns sums of card values on a hand and whether or not the hand contains a soft ace (ace for 11 points)
         public override Tuple<int, int, bool> GetHandValue(List<Card> hand)
         {
             int handValue = 0;
@@ -212,6 +215,8 @@ namespace Blackjack
             return new Tuple<int, int, bool>(hasSoftAce ? handValue - 10 : handValue, handValue, hasSoftAce);
         }
 
+
+        //sets soft ace (for 11 points) to hard (for 1)
         public override void SetSoftAceToHard(List<Card> hand)
         {
             foreach (Card c in hand)
@@ -227,6 +232,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         public override void SetHasBlackjack()
         {

@@ -16,10 +16,15 @@ namespace Blackjack
         private const int MINIMUM_WINDIW_HEIGHT = 39;
 
         Dealer dealer;
+
         Tuple<int, int> tableLimits;
+
         Player[] players;
+
         BetterUI betterUI;
+
         Random random;
+
         private bool practice;
 
         public Game(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI, bool practice)
@@ -32,12 +37,13 @@ namespace Blackjack
             this.practice = practice;
         }
 
+
         public void Run()
         {
             dealer.CreateShoe();
             dealer.Shuffle();
             dealer.Reset();
-            bool dealerSkips; //skips dealer turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
+            bool dealerSkips; //skips dealer's turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
 
             //initial check
             foreach (Player p in players)
@@ -511,6 +517,8 @@ namespace Blackjack
             Console.Clear();
         }
 
+
+        //HAND OUTCOMES
         private void Surrender(Player player, int handIndex)
         {
             player.Chips += 0.5 * player.GetBet(handIndex);
@@ -525,6 +533,7 @@ namespace Blackjack
                 player.Name, 0.5 * player.GetBet(handIndex), player.Chips);
             }
         }
+
 
         private void Win(Player player, int handIndex)
         {
@@ -542,6 +551,7 @@ namespace Blackjack
             }           
         }
 
+
         private void Lose(Player player, int handIndex)
         {
             if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
@@ -553,6 +563,7 @@ namespace Blackjack
                 Console.WriteLine("Player {0}, hand {1}: You lost, you now have {2} chips.", player.Name, handIndex + 1, player.Chips);
             }
         }
+
 
         private void Push(Player player, int handIndex)
         {
@@ -569,6 +580,7 @@ namespace Blackjack
             }        
         }
 
+
         private void WinInsurance(Player player, double insurance)
         {            
             player.Chips += insurance * 3;
@@ -582,6 +594,7 @@ namespace Blackjack
                 Console.WriteLine("Player {0}: You get {1} chips from insurance", player.Name, insurance * 2);
             }
         }
+
 
         private bool ExistActivePlayers()
         {
@@ -597,6 +610,7 @@ namespace Blackjack
 
             return existActivePlayers;
         }
+
 
         public void AddToHighscores(string path, string name, double score)
         {

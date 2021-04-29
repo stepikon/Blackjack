@@ -22,16 +22,17 @@ namespace Blackjack
 
             Console.Clear();
 
+            //part of a <Strategy pattern>
+            //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
+            
             do
-            {
-                //part of a <Strategy pattern>
-                //STRUKTURU STRATEGY PATTERNU JSEM PREVZAL Z https://refactoring.guru/design-patterns/strategy/csharp/example
-                
+            {           
                 gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
 
-                //</Strategy pattern>
             } while (!(gm.GetGamemode() is Quit));
+
+            //</Strategy pattern>
         }
 
         public static IPlayable ChooseGamemode(BetterUI betterUI, Random random)

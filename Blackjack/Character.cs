@@ -34,9 +34,18 @@ namespace Blackjack
             hands[0] = hand;
         }
 
-        public string Name { get { return name; } }
 
-        public bool HasBlackjack { get { return hasBlackjack; } }
+        public string Name 
+        { 
+            get { return name; } 
+        }
+
+
+        public bool HasBlackjack 
+        { 
+            get { return hasBlackjack; } 
+        }
+
 
         public abstract Tuple<int, int, bool> GetHandValue(List<Card> hand);
         public abstract void SetSoftAceToHard(List<Card> hand);

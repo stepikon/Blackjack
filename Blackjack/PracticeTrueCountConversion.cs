@@ -21,6 +21,7 @@ namespace Blackjack
             this.onlyIntegers = onlyIntegers;
         }
 
+
         public override void Run()
         {
             betterUI.ClearAll();

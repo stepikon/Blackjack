@@ -18,6 +18,7 @@ namespace Blackjack
             this.random = random;
         }
 
+
         public abstract IPlayable CreateGameMode();
     }
 

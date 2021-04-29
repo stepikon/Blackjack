@@ -28,6 +28,8 @@ namespace Blackjack
             this.random = random;
         }
 
+
+        //launches a concrete practice mode
         public virtual void Run()
         {
             //part of a <Practice Factory pattern>
@@ -64,15 +66,20 @@ namespace Blackjack
             //</Practice Strategy pattern>
         }
 
+
+        //gets user's string choice
         public string GetChoice(string prompt, string[] options)
         {
             return betterUI.GetStringChoiceTopRight(prompt, options);
         }
 
+
+        //gets user's string choice with colorised prompt
         public string GetChoice(string prompt, string[] options, ConsoleColor color)
         {
             return betterUI.GetStringChoiceTopRight(prompt, options, color);
         }
+
 
         public void AddToHighscores(string path, int score)
         {

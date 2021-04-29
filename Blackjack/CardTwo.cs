@@ -8,17 +8,21 @@ namespace Blackjack
     {
         public CardTwo(string name, string suit, string color, ConsoleColor colorOfConsole)
             :base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 2;
         }
 
+
         public override int GetCardCountValue()
         {
             return 1;
         }
+
 
         public override void Display()
         {
@@ -26,21 +30,26 @@ namespace Blackjack
         }
     }
 
+
     class CardThree:Card
     {
         public CardThree(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 3;
         }
 
+
         public override int GetCardCountValue()
         {
             return 1;
         }
+
 
         public override void Display()
         {
@@ -48,21 +57,26 @@ namespace Blackjack
         }
     }
 
+
     class CardFour : Card
     {
         public CardFour(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 4;
         }
 
+
         public override int GetCardCountValue()
         {
             return 1;
         }
+
 
         public override void Display()
         {
@@ -70,21 +84,26 @@ namespace Blackjack
         }
     }
 
+
     class CardFive : Card
     {
         public CardFive(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 5;
         }
 
+
         public override int GetCardCountValue()
         {
             return 1;
         }
+
 
         public override void Display()
         {
@@ -96,17 +115,21 @@ namespace Blackjack
     {
         public CardSix(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 6;
         }
 
+
         public override int GetCardCountValue()
         {
             return 1;
         }
+
 
         public override void Display()
         {
@@ -114,21 +137,26 @@ namespace Blackjack
         }
     }
 
+
     class CardSeven : Card
     {
         public CardSeven(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 7;
         }
 
+
         public override int GetCardCountValue()
         {
             return 0;
         }
+
 
         public override void Display()
         {
@@ -140,17 +168,21 @@ namespace Blackjack
     {
         public CardEight(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 8;
         }
 
+
         public override int GetCardCountValue()
         {
             return 0;
         }
+
 
         public override void Display()
         {
@@ -162,17 +194,21 @@ namespace Blackjack
     {
         public CardNine(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 9;
         }
 
+
         public override int GetCardCountValue()
         {
             return 0;
         }
+
 
         public override void Display()
         {
@@ -184,17 +220,21 @@ namespace Blackjack
     {
         public CardTen(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 10;
         }
 
+
         public override int GetCardCountValue()
         {
             return -1;
         }
+
 
         public override void Display()
         {
@@ -206,17 +246,21 @@ namespace Blackjack
     {
         public CardJack(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 10;
         }
 
+
         public override int GetCardCountValue()
         {
             return -1;
         }
+
 
         public override void Display()
         {
@@ -228,17 +272,21 @@ namespace Blackjack
     {
         public CardQueen(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 10;
         }
 
+
         public override int GetCardCountValue()
         {
             return -1;
         }
+
 
         public override void Display()
         {
@@ -250,17 +298,21 @@ namespace Blackjack
     {
         public CardKing(string name, string suit, string color, ConsoleColor colorOfConsole)
             : base(name, suit, color, colorOfConsole)
-        { }
+        {
+        }
+
 
         public override int GetCardValue()
         {
             return 10;
         }
 
+
         public override int GetCardCountValue()
         {
             return -1;
         }
+
 
         public override void Display()
         {
@@ -278,6 +330,7 @@ namespace Blackjack
             this.aceIsOne = aceIsOne;
         }
 
+
         public bool AceIsOne {
             get { return aceIsOne; }
             set
@@ -293,6 +346,7 @@ namespace Blackjack
             }
         }
 
+
         public override int GetCardValue()
         {
             if (aceIsOne)
@@ -305,10 +359,12 @@ namespace Blackjack
             }
         }
 
+
         public override int GetCardCountValue()
         {
             return -1;
         }
+
 
         public override void Display()
         {

@@ -23,7 +23,9 @@ namespace Blackjack
 
         public PracticeBasicStrategyCreator(BetterUI betterUI, Random random)
         : base(betterUI, random)
-        { }
+        {
+        }
+
 
         public override IPlayable CreateGameMode()
         {
@@ -75,6 +77,7 @@ namespace Blackjack
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
+            //reads user's inputs
             do
             {
                 k = Console.ReadKey(true).Key;

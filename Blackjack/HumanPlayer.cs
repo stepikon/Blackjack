@@ -17,7 +17,8 @@ namespace Blackjack
             this.practice = practice;
             this.runningCount = runningCount;
             this.trueCount = trueCount;
-        }        
+        } 
+        
 
         public override void TakeTurn(Player[] players, Dealer dealer)
         {
@@ -213,6 +214,7 @@ namespace Blackjack
             }
         }
 
+
         //reads player's choice in the worse UI.
         public string GetChoice()
         {
@@ -264,7 +266,125 @@ namespace Blackjack
             }
         }
 
-        //counts cards on the table and updates the running count if and only if the practice mode is turned on
+
+        private void Hit(Dealer dealer, int handIndex)
+        {
+            dealer.Deal(this, handIndex);
+        }
+
+
+        private void Stand()
+        {
+        }
+
+
+        private void Split(List<Card> hand)
+        {
+            int newHandIndex = IsSplittingValid(hand);
+
+            if (newHandIndex != -1)
+            {
+                Card temp = hand[1];
+
+                if (temp is CardAce)
+                {
+                    CardAce cA = (CardAce)temp;
+                    CardAce cA2 = (CardAce)hand[0];
+
+                    cA.AceIsOne = false;
+                    cA2.AceIsOne = false;
+                }
+
+                hand.Remove(hand[1]);
+                hands[newHandIndex] = new List<Card>();
+                hands[newHandIndex].Add(temp);
+                Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
+            }
+            else
+            {
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    betterUI.DisplayMessage("Cannot split");
+                }
+                else
+                {
+                    Console.WriteLine("Cannot split");
+                }
+            }
+        }
+
+
+        private void Double(int index, Tuple<int, int> limits)
+        {
+            if (chips >= limits.Item1)
+            {
+                Bet(hands[index], limits);
+            }
+            else
+            {
+                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
+                {
+                    betterUI.DisplayMessage("Cannot split");
+                }
+                else
+                {
+                    Console.WriteLine("Cannot split");
+                }
+            }
+        }
+
+
+        //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
+        //returns index of a new hand if splitting is a valid option. Otherwise returns -1.
+        private int IsSplittingValid(List<Card> hand)
+        {
+            switch (Array.IndexOf(hands, hand))
+            {
+                case 0:
+                    if (hand.Count == 2
+                        && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType())) //GetType for AA hands
+                        && (hands[1] == null || hands[2] == null)
+                        && CheckBet(bets[0], tableLimits)
+                        && (isResplitAllowed || hands[1] == null))
+                    {
+                        return hands[1] == null ? 1 : 2;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                case 1:
+                    if (hand.Count == 2
+                        && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType()))
+                        && (hands[2] == null || hands[3] == null)
+                        && CheckBet(bets[1], tableLimits)
+                        && isResplitAllowed)
+                    {
+                        return hands[2] == null ? 2 : 3;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                case 2: //splitted twice
+                    return -1;
+                case 3: //splitted twice
+                    return -1;
+                default:
+                    return -1;
+            }
+        }
+
+
+        public void SetSurrender()
+        {
+            surrender = true;
+        }
+
+
+        //CARD COUNTING METHODS
+        //counts cards on the table and updates the true count if and only if the practice mode is turned on
+        //doesn't change this.runningCount
         public override void CountDealt(Player[] players,List<Card> dealerHand, double remainingDecks)
         {
             if (practice)
@@ -273,9 +393,10 @@ namespace Blackjack
             }
             else
             {
-                //Console.WriteLine("Human does this on his own");
+                //Human does this on his own
             }
         }
+
 
         public override void UpdateRunningCount(Player[] players, List<Card> dealerHand)
         {
@@ -308,9 +429,10 @@ namespace Blackjack
             }
             else
             {
-                //Console.WriteLine("Human does this on his own");
+                //Human does this on his own
             }
         }
+
 
         public override void UpdateTrueCount(int runningCount, double remainingDecks)
         {
@@ -341,9 +463,10 @@ namespace Blackjack
             }
             else
             {
-                //Console.WriteLine("Human does this on his own");
+                //Human does this on his own
             }
         }
+
 
         public override void UpdateTrueCount(double remainingDecks)
         {
@@ -374,9 +497,10 @@ namespace Blackjack
             }
             else
             {
-                //Console.WriteLine("Human does this on his own");
+                //Human does this on his own
             }
         }
+
 
         //returns current running count (after counting all cards on the table)
         public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
@@ -411,6 +535,7 @@ namespace Blackjack
             return runningCount + count;
         }
 
+
         public override void ResetCounts()
         {
             if (practice)
@@ -420,10 +545,12 @@ namespace Blackjack
             }
             else
             {
-                //Console.WriteLine("Human does this on his own");
+                //Human does this on his own
             }
         }
 
+
+        //BETTING METHODS
         public override void Bet(List<Card> hand, Tuple<int, int> limits)
         {
             int bet;
@@ -502,6 +629,7 @@ namespace Blackjack
             }
         }
 
+
         public override void Bet(List<Card> hand, int bet, Tuple<int, int> limits)
         {
             if (CheckBet(bet, limits))
@@ -510,6 +638,7 @@ namespace Blackjack
                 chips -= bet;
             }
         }
+
 
         public override bool CheckBet(double bet, Tuple<int, int> limits)
         {
@@ -523,10 +652,12 @@ namespace Blackjack
             }
         }
 
+
         public override int GetBet(int index)
         {
             return bets[index];
         }
+
 
         public override void BetInsurance()
         {
@@ -573,6 +704,7 @@ namespace Blackjack
                 chips -= insurance;
             }
         }
+
 
         public override void BetPair(Tuple<int, int> limits)
         {
@@ -644,116 +776,9 @@ namespace Blackjack
                 chips -= bet;
             }
         }
+        
 
-        private void Hit(Dealer dealer, int handIndex)
-        {
-            dealer.Deal(this, handIndex);
-        }
-
-        private void Stand()
-        { 
-        }
-
-        private void Split(List<Card> hand)
-        {
-            int newHandIndex = IsSplittingValid(hand);
-
-            if (newHandIndex != -1)
-            {
-                Card temp = hand[1];
-
-                if (temp is CardAce)
-                {
-                    CardAce cA = (CardAce)temp;
-                    CardAce cA2 = (CardAce)hand[0];
-
-                    cA.AceIsOne = false;
-                    cA2.AceIsOne = false;
-                }
-
-                hand.Remove(hand[1]);
-                hands[newHandIndex] = new List<Card>();
-                hands[newHandIndex].Add(temp);
-                Bet(hands[newHandIndex], bets[Array.IndexOf(hands, hand)], tableLimits);
-            }
-            else
-            {
-                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
-                {
-                    betterUI.DisplayMessage("Cannot split");
-                }
-                else
-                {
-                    Console.WriteLine("Cannot split");
-                }
-            }
-        }
-
-        private void Double(int index, Tuple<int, int> limits)
-        {
-            if (chips >= limits.Item1)
-            {
-                Bet(hands[index], limits);
-            }
-            else
-            {
-                if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
-                {
-                    betterUI.DisplayMessage("Cannot split");
-                }
-                else
-                {
-                    Console.WriteLine("Cannot split");
-                }
-            }
-        }
-
-        //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
-        //returns index of a new hand if splitting is a valid option. Otherwise returns -1.
-        private int IsSplittingValid(List<Card> hand)
-        {
-            switch (Array.IndexOf(hands, hand))
-            {
-                case 0:
-                    if (hand.Count==2
-                        && ((hand[0].GetCardValue()==hand[1].GetCardValue()) || (hand[0].GetType()==hand[1].GetType())) //GetType for AA hands
-                        &&(hands[1]==null||hands[2]==null)
-                        &&CheckBet(bets[0], tableLimits)
-                        && (isResplitAllowed || hands[1] == null))
-                    {
-                        return hands[1]==null? 1 : 2;
-                    }
-                    else
-                    {
-                        return -1;
-                    }
-                case 1:
-                    if (hand.Count == 2
-                        && ((hand[0].GetCardValue() == hand[1].GetCardValue()) || (hand[0].GetType() == hand[1].GetType()))
-                        && (hands[2] == null || hands[3] == null)
-                        && CheckBet(bets[1], tableLimits)
-                        && isResplitAllowed)
-                    {
-                        return hands[2] == null ? 2 : 3;
-                    }
-                    else
-                    {
-                        return -1;
-                    }
-                case 2: //splitted twice
-                    return -1;
-                case 3: //splitted twice
-                    return -1;
-                default:
-                    return -1;
-            }
-        }
-
-        public void SetSurrender()
-        {
-            surrender = true;
-        }
-
+        //"HAND METHODS"
         public override List<int> GetHandValues()
         {
             List<int> handValues = new List<int>();
@@ -768,6 +793,7 @@ namespace Blackjack
 
             return handValues;
         }
+
 
         public override void DisplayHands()
         {
@@ -797,6 +823,7 @@ namespace Blackjack
             }
         }
 
+
         public override void ResetHands()
         {
             hands[0].Clear();
@@ -814,6 +841,8 @@ namespace Blackjack
             surrender = false;
         }
 
+
+        //IF PRACTICE
         //returns the best choice for feedback purposes in practice mode.
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
         //Deviations data: https://www.reddit.com/r/blackjack/comments/5fgf1a/deviations/, https://quizlet.com/18561678/blackjack-h17-deviations-flash-cards/, https://www.888casino.com/blog/advanced-card-counting-blackjack-strategy-deviations, 

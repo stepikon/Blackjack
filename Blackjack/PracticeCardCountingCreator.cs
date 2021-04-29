@@ -11,7 +11,9 @@ namespace Blackjack
     {
         public PracticeCardCountingCreator(BetterUI betterUI, Random random)
             : base(betterUI, random)
-        { }
+        {
+        }
+
 
         public override IPlayable CreateGameMode()
         {

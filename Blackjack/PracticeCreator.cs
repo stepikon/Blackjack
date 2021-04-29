@@ -11,7 +11,9 @@ namespace Blackjack
     {
         public PracticeCreator(BetterUI betterUI, Random random)
             : base(betterUI, random)
-        { }
+        {
+        }
+
 
         public override IPlayable CreateGameMode()
         {

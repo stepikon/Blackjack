@@ -14,6 +14,7 @@ namespace Blackjack
         {
         }
 
+
         public override IPlayable CreateGameMode()
         {
             return new Quit();

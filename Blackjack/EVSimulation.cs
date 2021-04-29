@@ -44,8 +44,8 @@ namespace Blackjack
         double trueCount;
 
         public EVSimulation(Dealer dealer, Tuple<int, int> tableLimits, Player[] players, Random random, BetterUI betterUI,
-/*simulation*/int AIsAmount, int handsPerCycle, int repetitions, List<double>[] finalChips, bool isVisible, bool AILeaves,
-     /*AI:*/string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int[] betUnit, int[] betSpreadMultiplier, bool wait,
+            int AIsAmount, int handsPerCycle, int repetitions, List<double>[] finalChips, bool isVisible, bool AILeaves,
+            string[] name, int[] chips, bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int[] betUnit, int[] betSpreadMultiplier, bool wait,
             int runningCount = 0, double trueCount = 0)
         {
             this.dealer = dealer;
@@ -76,6 +76,7 @@ namespace Blackjack
             this.trueCount = trueCount;
         }
 
+
         public void Run()
         {
             for (int i = 0; i < AIsAmount; i++)
@@ -85,7 +86,7 @@ namespace Blackjack
 
             //simulation with display. If isVisible = false, then the same simulation will be run, 
             //but it will be invisible. This adds so many lines of code, but for performance reasons 
-            //I only want this expression to be evaluated once.
+            //I want this expression to be evaluated only once.
             if (isVisible) 
             {
                 bool isTrueCountUnderD1;
@@ -95,7 +96,7 @@ namespace Blackjack
                     dealer.CreateShoe();
                     dealer.Shuffle();
                     dealer.Reset();
-                    bool dealerSkips; //skips dealer turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
+                    bool dealerSkips; //skips dealer's turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
 
                     for (int i = 0; i < AIsAmount; i++)
                     {
@@ -526,7 +527,7 @@ namespace Blackjack
                     dealer.CreateShoe();
                     dealer.Shuffle();
                     dealer.Reset();
-                    bool dealerSkips; //skips dealer turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
+                    bool dealerSkips; //skips dealer's turn. Dealer skips his turn if all players are over 21, all have blackjack, all surrendered or some combination of those situations
 
                     for (int i = 0; i < AIsAmount; i++)
                     {
@@ -779,6 +780,7 @@ namespace Blackjack
 
             betterUI.ClearAll();
 
+            //displays simulation outcomes
             for (int i = 0; i < 7; i++)
             {
                 int brokeCounter = 0;
@@ -810,6 +812,8 @@ namespace Blackjack
             Console.Clear();
         }
 
+
+        //HAND OUTCOMES
         private void Surrender(Player player, int handIndex)
         {
             player.Chips += 0.5 * player.GetBet(handIndex);
@@ -827,6 +831,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         private void Win(Player player, int handIndex)
         {
@@ -847,6 +852,7 @@ namespace Blackjack
             }
         }
 
+
         private void Lose(Player player, int handIndex)
         {
             if (isVisible)
@@ -861,6 +867,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         private void Push(Player player, int handIndex)
         {
@@ -879,6 +886,7 @@ namespace Blackjack
             }
         }
 
+
         private void WinInsurance(Player player, double insurance)
         {
             player.Chips += insurance * 3;
@@ -895,6 +903,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         private bool ExistActivePlayers()
         {

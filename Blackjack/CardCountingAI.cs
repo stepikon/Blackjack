@@ -11,8 +11,10 @@ namespace Blackjack
     {
         private int betUnit;
         private int betSpreadMultiplier;
+
         bool wait;
         bool isVisible;
+
 
         public CardCountingAI(string name, List<Card> hand, BetterUI betterUI, int originalChips, Tuple<int, int> tableLimits,
             bool isSurrenderAllowed, bool isDASAllowed, bool isResplitAllowed, bool isResplitAcesAllowed, int betUnit, int betSpreadMultiplier, bool wait,
@@ -27,11 +29,13 @@ namespace Blackjack
             this.isVisible = isVisible;
         }
 
+
         public override void TakeTurn(Player[] players, Dealer dealer)
         {
             string choice;
-            bool isDouble = false;
+            bool isDouble = false; //after AI doubles, isDouble will be true
 
+            //displays turn prompt
             if (isVisible)
             {
                 if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
@@ -53,6 +57,7 @@ namespace Blackjack
 
                 do
                 {
+                    //displays AI if if AI is visible
                     if (isVisible)
                     {
                         if (Console.WindowHeight >= MINIMUM_WINDIW_HEIGHT && Console.WindowWidth >= MINIMUM_WINDIW_WIDTH)
@@ -200,6 +205,7 @@ namespace Blackjack
                 } while (!(choice == CHOICE_STAND || choice == CHOICE_SURRENDER));
             }
         }
+
 
         //gets the correct choice
         //Basic strategy data: https://wizardofodds.com/games/blackjack/strategy/4-decks/
@@ -436,8 +442,8 @@ namespace Blackjack
                                         break;
                                     }
                                 case 10:
-                                    if ((trueCount >= 6 && dealer.hand[0].GetCardCountValue() == 4)
-                                        || (trueCount >= 5 && dealer.hand[0].GetCardCountValue() == 5)
+                                    if ((trueCount >= 6 && dealer.hand[0].GetCardCountValue() == 4) //deviation
+                                        || (trueCount >= 5 && dealer.hand[0].GetCardCountValue() == 5) //deviation
                                         || (trueCount >= 4 && dealer.hand[0].GetCardCountValue() == 6)) //deviation
                                     {
                                         return CHOICE_SPLIT;
@@ -1052,14 +1058,17 @@ namespace Blackjack
             
         }
 
+
         private void Hit(Dealer dealer, int handIndex)
         {
             dealer.Deal(this, handIndex);
         }
 
+
         private void Stand()
         {
         }
+
 
         private void Split(List<Card> hand)
         {
@@ -1089,6 +1098,7 @@ namespace Blackjack
             }
         }
 
+
         private void Double(int index, Tuple<int, int> limits)
         {
             int bet;
@@ -1109,7 +1119,8 @@ namespace Blackjack
             Bet(hands[index], bet, limits);
         }
 
-        //splitting is valid if and only if it contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
+
+        //splitting is valid if and only if a hand contains exactly 2 cards of the same VALUE (not rank!!) and the hand has not been splitted twice.
         //returns index of the new hand if splitting is valid. Otherwise returns -1
         private int IsSplittingValid(List<Card> hand)
         {
@@ -1150,16 +1161,20 @@ namespace Blackjack
             }
         }
 
+
         public void SetSurrender()
         {
             surrender = true;
         }
 
+
+        //CARD COUNTING METHODS
         //does NOT change this.runningCount. Only counts cards on the table and updates this.trueCount
         public override void CountDealt(Player[] players, List<Card> dealerHand, double remainingDecks)
         {           
             UpdateTrueCount(GetCurrentRunningCount(players, dealerHand), remainingDecks);
         }
+
 
         //updates this.runningCount
         public override void UpdateRunningCount(Player[] players, List<Card> dealerHand)
@@ -1190,6 +1205,7 @@ namespace Blackjack
             }
         }
 
+
         public override void UpdateTrueCount(int runningCount, double remainingDecks)
         {
             int wholeTrueCount = (int)(runningCount / remainingDecks);
@@ -1216,6 +1232,7 @@ namespace Blackjack
             trueCount = wholeTrueCount + 0.5 * halves;
         }
 
+
         public override void UpdateTrueCount(double remainingDecks)
         {
             int wholeTrueCount = (int)(runningCount / remainingDecks);
@@ -1241,6 +1258,7 @@ namespace Blackjack
 
             trueCount = wholeTrueCount + 0.5 * halves;
         }
+
 
         //counts cards on the table and adds the count to the runningCount
         public int GetCurrentRunningCount(Player[] players, List<Card> dealerHand)
@@ -1275,12 +1293,16 @@ namespace Blackjack
             return runningCount + count;
         }
 
+
         public override void ResetCounts()
         {
             runningCount = 0;
             trueCount = 0;
         }
 
+
+        //BETTING METHODS
+        //BETTING SYSTEM JE UPRAVENOU VERZI SYSTEMU DOSTUPNEHO NA TOMTO ODKAZU: https://www.blackjack-trainer.net/blackjack-betting-strategy/
         public override void Bet(List<Card> hand, Tuple<int, int> limits)
         {
             if (hand != null)
@@ -1315,6 +1337,7 @@ namespace Blackjack
             }            
         }
 
+
         public override void Bet(List<Card> hand, int bet, Tuple<int, int> limits)
         {
             if (CheckBet(bet, limits))
@@ -1323,6 +1346,7 @@ namespace Blackjack
                 chips -= bet;
             }
         }
+
 
         public override bool CheckBet(double bet, Tuple<int, int> limits)
         {
@@ -1336,10 +1360,12 @@ namespace Blackjack
             }
         }
 
+
         public override int GetBet(int index)
         {
             return bets[index];
         }
+
 
         public override void BetInsurance()
         {
@@ -1386,6 +1412,7 @@ namespace Blackjack
             insurance = bet;
         }
 
+
         //betting on pairs isn't worth it so AI turns that option off if it's turned on.
         public override void BetPair(Tuple<int, int> limits)
         {
@@ -1395,6 +1422,8 @@ namespace Blackjack
             }
         }
 
+
+        //"HAND" METHODS
         public override void DisplayHands()
         {
             for (int i = 0; i < hands.Length; i++)
@@ -1423,6 +1452,7 @@ namespace Blackjack
             }
         }
 
+
         public override List<int> GetHandValues()
         {
             List<int> handValues = new List<int>();
@@ -1437,6 +1467,7 @@ namespace Blackjack
 
             return handValues;
         }
+
 
         public override void ResetHands()
         {

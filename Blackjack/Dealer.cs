@@ -10,9 +10,9 @@ namespace Blackjack
     {
         private int deckAmount;
         private int deckPenetration;
-        private int cardToDeal;
+        private int cardToDeal; //index of card in the shoe that will ´be dealt next
 
-        private bool hitSoft17;
+        private bool hitSoft17; //H17 or S17 game
         private bool wait;
         private bool isVisible;
 
@@ -34,10 +34,30 @@ namespace Blackjack
             shoe = new Card[52*deckAmount];
         }
 
-        public int DeckAmount { get { return deckAmount; } }
-        public int CardToDeal { get { return cardToDeal; } }
-        public int DeckPenetration { get { return deckPenetration; } }
-        public bool HitSoft17 { get { return hitSoft17; } }
+
+        public int DeckAmount
+        { 
+            get { return deckAmount; }
+        }
+
+
+        public int CardToDeal 
+        { 
+            get { return cardToDeal; } 
+        }
+
+
+        public int DeckPenetration 
+        { 
+            get { return deckPenetration; } 
+        }
+
+
+        public bool HitSoft17 
+        { 
+            get { return hitSoft17; } 
+        }
+
 
         public void TakeTurn()
         {
@@ -70,6 +90,7 @@ namespace Blackjack
             } while (choice != CHOICE_STAND);
         }
 
+
         public string GetChoice()
         {
             if (GetHandValue(hand).Item2 < 17)
@@ -93,15 +114,19 @@ namespace Blackjack
             }
         }
 
+
         private void Hit()
         {
             Deal(this, 0);
         }
 
+
         private void Stand()
         {
         }
 
+
+        //creates a multideck of cards
         public void CreateShoe()
         {
             string suit = "", color = "";
@@ -165,12 +190,14 @@ namespace Blackjack
             }
 
             //</Card Factory pattern>
-        }       
+        }     
+        
 
         public void SetDeckPenetration() //deck penetration is 75%-85%
         { 
             deckPenetration = random.Next(deckAmount * 52 * 3 / 4, deckAmount * 52 * 17 / 20);
         }
+
 
         public void Shuffle()
         {
@@ -189,6 +216,7 @@ namespace Blackjack
             cardToDeal = 0;
         }
 
+
         public void Deal(Character character, int handIndex)
         {
             //I use % to avoid IndexOutOfRangeException; it's extremely ugly, but it works. 
@@ -204,11 +232,13 @@ namespace Blackjack
             }
         }
 
+
         public void DealHidden()
         {
             hiddenCard = shoe[cardToDeal % (52*deckAmount)];
             cardToDeal++;
         }
+
 
         public void RevealHidden()
         {
@@ -216,10 +246,12 @@ namespace Blackjack
             hiddenCard = null;
         }
 
+
         public string GetHiddenCardName()
         {
             return hiddenCard == null ? "" : "?";
-        }        
+        }      
+        
 
         public override Tuple<int, int, bool> GetHandValue(List<Card> hand)
         {
@@ -272,6 +304,8 @@ namespace Blackjack
             return new Tuple<int, int, bool>(hasSoftAce ? handValue - 10 : handValue, handValue, hasSoftAce);
         }
 
+
+        //sets soft ace (for 11 points) to hard (for 1)
         public override void SetSoftAceToHard(List<Card> hand)
         {
             foreach (Card c in hand)
@@ -287,6 +321,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         public void DisplayHand()
         {
@@ -308,6 +343,8 @@ namespace Blackjack
             }        
         }
 
+
+        //testing function
         public void Display()
         {
             foreach (Card card in shoe)
@@ -315,6 +352,7 @@ namespace Blackjack
                 Console.WriteLine(card.Name);
             }
         }
+
 
         public override void SetHasBlackjack()
         {
@@ -342,6 +380,8 @@ namespace Blackjack
             }
         }
 
+
+        //returns the # of decks (precision: halfdecks) in the discard tray, useful for card counting
         public double GetDecksInDiscard()
         {
             int wholeDecks = cardToDeal / 52;
@@ -364,11 +404,13 @@ namespace Blackjack
             return wholeDecks + 0.5 * halfDecks;
         }
 
+
         public void ResetHand()
         {
             hand.Clear();
             hasBlackjack = false;
         }
+
 
         public void Reset()
         {

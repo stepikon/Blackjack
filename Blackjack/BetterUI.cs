@@ -18,7 +18,8 @@ namespace Blackjack
         {
         }
 
-        //DISPLAY FUNCTIONS
+
+        //DISPLAY METHODS
         public void DisplayDealerStatus(Dealer dealer)
         {
             ClearDealerStatus(dealer);
@@ -54,6 +55,7 @@ namespace Blackjack
 
             DisplayShoe(dealer);
         }
+
 
         public void DisplayShoe(Dealer dealer)
         {
@@ -105,6 +107,7 @@ namespace Blackjack
             }
         }
 
+
         public void DisplayDealerBlackjack(Dealer dealer)
         {
             ClearDealerBlackjack();
@@ -120,6 +123,7 @@ namespace Blackjack
                 Console.WriteLine("Nobody home");
             }
         }
+
         
         public void DisplayPlayersStatus(Player[] players)
         {
@@ -183,6 +187,7 @@ namespace Blackjack
             }
         }
 
+
         public void DisplayPlayersBlackjack(Player[] players)
         {
             ClearPlayersBlackjack();
@@ -200,6 +205,7 @@ namespace Blackjack
                 }
             }
         }
+
 
         public void DisplayMessage(string message)
         {
@@ -230,6 +236,8 @@ namespace Blackjack
             }
         }
 
+
+        //displays whose turn it is
         public void DisplayTurn(string name)
         {
             ClearTurn();
@@ -240,6 +248,7 @@ namespace Blackjack
             Console.Write("It's {0}'s turn.", name);
         }
 
+
         public void DisplayLimits(Tuple<int, int> tablelimits)
         {
             Console.BackgroundColor = ConsoleColor.Black;
@@ -247,6 +256,7 @@ namespace Blackjack
             Console.SetCursorPosition(0,32);
             Console.Write("Table limits: {0}-{1}", tablelimits.Item1, tablelimits.Item2);
         }
+
 
         public void DisplayTableRules(bool hit17)
         {
@@ -271,6 +281,8 @@ namespace Blackjack
             Console.Write(INSURANCE_PAYOUT);
         }
 
+
+        //displays whether a player won/lost/pushed/surrendered/won an insurance on a certain hand
         public void DisplayOutcomes(string outcome, int handIndex, int handValue, Player[] players, Player player)
         {
             int spacing = (int)(Console.WindowWidth / MAX_PLAYERS);
@@ -281,6 +293,8 @@ namespace Blackjack
             Console.Write("Hand {0}: {1} ({2})", handIndex + 1, outcome, handValue);
         }
 
+
+        //displays whether a player won a side bet
         public void DisplayPairs(Player[] players, Player player, string outcome)
         {
             int spacing = (int)(Console.WindowWidth / MAX_PLAYERS);
@@ -291,7 +305,8 @@ namespace Blackjack
             Console.Write(outcome);
         }
 
-        //CLEAR FUNCTIONS
+
+        //CLEAR METHODS
         public void ClearDealerStatus(Dealer dealer)
         {
             Console.SetCursorPosition((int)((Console.WindowWidth - dealer.Name.Length) / 2), 0);
@@ -305,11 +320,13 @@ namespace Blackjack
             Console.WriteLine(new String(' ',"Hand total: dd".Length));
         }
 
+
         public void ClearDealerBlackjack()
         {
             Console.SetCursorPosition((int)((Console.WindowWidth - "Nobody home".Length) / 2), 3);
             Console.WriteLine(new String(' ',"Nobody home".Length));
         }
+
 
         public void ClearPlayersStatus()
         {
@@ -326,6 +343,7 @@ namespace Blackjack
             }
         }
 
+
         public void ClearPlayersBlackjack()
         {
             int spacing = (int)(Console.WindowWidth / MAX_PLAYERS);
@@ -339,6 +357,7 @@ namespace Blackjack
             }
         }
 
+
         public void ClearOptionsSpace()
         {
             Console.BackgroundColor = ConsoleColor.Black;
@@ -349,6 +368,7 @@ namespace Blackjack
                 Console.Write(new String(' ', Console.WindowWidth));
             }
         }
+
 
         public void ClearMessages()
         {
@@ -367,6 +387,7 @@ namespace Blackjack
             }
         }
 
+
         public void ClearTurn()
         {
             Console.BackgroundColor = ConsoleColor.Black;
@@ -375,12 +396,14 @@ namespace Blackjack
             Console.Write(new String(' ', Console.WindowWidth));
         }
 
+
         public void ClearLimits()
         {
             Console.BackgroundColor = ConsoleColor.Black;
             Console.SetCursorPosition(0, 32);
             Console.Write(new String(' ', Console.WindowWidth));
         }
+
 
         public void ClearAll()
         {
@@ -394,7 +417,9 @@ namespace Blackjack
             Console.SetCursorPosition(0,0);
         }
 
-        //GET INPUT FUNCTIONS
+
+        //GET INPUT METHODS
+        //reads user input, 1 prompt
         public int GetIntInput(string prompt)
         {
             ClearOptionsSpace();
@@ -418,6 +443,8 @@ namespace Blackjack
             return i;
         }
 
+
+        //reads user int input, multiple prompts
         public int GetIntInput(string[] prompts)
         {
             ClearOptionsSpace();
@@ -449,6 +476,8 @@ namespace Blackjack
             return i;
         }
 
+
+        //prompt and options will be displayed in the top right corner
         public string GetStringChoiceTopRight(string prompt, string[] options) 
         {
             if (options == null || options[0] == "")
@@ -534,6 +563,8 @@ namespace Blackjack
             return options[chosenOption];
         }
 
+
+        //prompt and options will be displayed in the top right corner, prompt will be colorised
         public string GetStringChoiceTopRight(string prompt, string[] options, ConsoleColor color)
         {
             if (options == null || options[0] == "")
@@ -621,6 +652,8 @@ namespace Blackjack
             return options[chosenOption];
         }
 
+
+        //prompt and options will be displayed in the middle
         public string GetStringChoice(string prompt, string[] options)
         {
             ClearOptionsSpace();
@@ -722,6 +755,8 @@ namespace Blackjack
             }
         }
 
+
+        //method for for Yes/No input
         public bool GetBoolChoice(string prompt, string[] options)
         {
             ClearOptionsSpace();

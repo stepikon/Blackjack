@@ -30,13 +30,14 @@ namespace Blackjack
         int[] numberOfPlayers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
         int[] numberOfAIs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
 
-        bool practice;
+        bool practice; //sets up a normal or a practice game
 
         public GameCreator(BetterUI betterUI, Random random, bool practice)
             : base (betterUI, random)
         {
             this.practice = practice;
         }
+
 
         public override IPlayable CreateGameMode()
         {
@@ -117,6 +118,7 @@ namespace Blackjack
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
+            //reads user's inputs
             do
             {
                 k = Console.ReadKey(true).Key;

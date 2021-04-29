@@ -15,20 +15,24 @@ namespace Blackjack
         {
         }
 
+
         public GameMode(IPlayable mode)
         {
             this.mode = mode;
         }
+
 
         public void SetGamemode(IPlayable mode)
         {
             this.mode = mode;
         }
 
+
         public IPlayable GetGamemode()
         {
             return mode;
         }
+
 
         public void Run()
         {

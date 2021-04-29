@@ -27,6 +27,7 @@ namespace Blackjack
             this.DASAllowed = DASAllowed;
         }
 
+
         public override void Run()
         {
             betterUI.ClearAll();
@@ -78,10 +79,10 @@ namespace Blackjack
                 dealerCard = cards[random.Next(13)];
                 softTotal = playerHand.Item1.Item2 == 11 || playerHand.Item2.Item2 == 11;
 
+                //determines the correct choice
                 //normal thought process is: 1) Can I surrender? yes or 2 2) Can I split? Yes or step 3. 3) Can I double? Yes or step 4. 4)Hit/Stand.
                 //here the code goes "backwards", so hit/stand options may be overwritten by double or split or surrender.
                 //basic strategy from https://wizardofodds.com/games/blackjack/strategy/4-decks/ (it's actually 4-8 decks)
-
                 if (hit17)
                 {
                     if (softTotal)
@@ -310,6 +311,7 @@ namespace Blackjack
                     }
                 }
 
+                //gets player's choice
                 if (softTotal)
                 {
                     if (playerHand.Item1.Item2 == playerHand.Item2.Item2) //only AA pairs. Soft total of AA is 12

@@ -12,13 +12,16 @@ namespace Blackjack
     {
         protected string name;
 
+
         public CardCreator(string name)
         {
             this.name = name;
         }
 
+
         public abstract Card CreateCard(string suit, string color, ConsoleColor consoleColor);
     }
+
 
     class CardTwoCreator : CardCreator
     {
@@ -26,11 +29,13 @@ namespace Blackjack
         { 
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardTwo(name, suit, color, consoleColor);
         }
     }
+
 
     class CardThreeCreator : CardCreator
     {
@@ -38,11 +43,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardThree(name, suit, color, consoleColor);
         }
     }
+
 
     class CardFourCreator : CardCreator
     {
@@ -50,11 +57,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardFour(name, suit, color, consoleColor);
         }
     }
+
 
     class CardFiveCreator : CardCreator
     {
@@ -62,11 +71,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardFive(name, suit, color, consoleColor);
         }
     }
+
 
     class CardSixCreator : CardCreator
     {
@@ -74,11 +85,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardSix(name, suit, color, consoleColor);
         }
     }
+
 
     class CardSevenCreator : CardCreator
     {
@@ -86,11 +99,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardSeven(name, suit, color, consoleColor);
         }
     }
+
 
     class CardEightCreator : CardCreator
     {
@@ -98,11 +113,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardEight(name, suit, color, consoleColor);
         }
     }
+
 
     class CardNineCreator : CardCreator
     {
@@ -110,11 +127,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardNine(name, suit, color, consoleColor);
         }
     }
+
 
     class CardTenCreator : CardCreator
     {
@@ -122,11 +141,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardTen(name, suit, color, consoleColor);
         }
     }
+
 
     class CardJackCreator : CardCreator
     {
@@ -134,11 +155,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardJack(name, suit, color, consoleColor);
         }
     }
+
 
     class CardQueenCreator : CardCreator
     {
@@ -146,11 +169,13 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardQueen(name, suit, color, consoleColor);
         }
     }
+
 
     class CardKingCreator : CardCreator
     {
@@ -158,20 +183,24 @@ namespace Blackjack
         {
         }
 
+
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
             return new CardKing(name, suit, color, consoleColor);
         }
     }
 
+
     class CardAceCreator : CardCreator
     {
         bool aceIsOne;
+
 
         public CardAceCreator(string name, bool aceIsOne) : base(name)
         {
             this.aceIsOne = aceIsOne;
         }
+
 
         public override Card CreateCard(string suit, string color, ConsoleColor consoleColor)
         {
