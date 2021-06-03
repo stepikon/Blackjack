@@ -25,9 +25,18 @@ namespace Blackjack
 
             ConsoleKey k;
             int optionSelected = 0;
+
+            /*<before>
             int indexOnlyIntegers = 0;
+            </before>*/
+
+            //<after>
+            string[][] displayedOptions = new string[][] { onlyIntegers };
+            int[] indexes = { 0 };
+            //</after>
 
             //initial display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -58,11 +67,17 @@ namespace Blackjack
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your practice or press enter to move on", stringOptions, displayedOptions, indexes, null, optionSelected, -1, ConsoleColor.DarkGray, true);
+            //</after>
 
             //reads user's input
             do
             {
                 k = Console.ReadKey(true).Key;
+
+                /*<before>
                 switch (k)
                 {
                     case ConsoleKey.LeftArrow:
@@ -129,9 +144,27 @@ namespace Blackjack
                 }
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
+                </before>*/
+                //<after>
+                indexes = betterUI.GetUserIntArrayInput("Use arrows to customize your practice or press enter to move on", stringOptions, displayedOptions, indexes, null, k, optionSelected, -1, ConsoleColor.DarkGray);
+
+                switch (k)
+                {
+                    case ConsoleKey.UpArrow:
+                        optionSelected--;
+                        optionSelected = optionSelected < 0 ? optionSelected += stringOptions.Length : optionSelected;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        optionSelected++;
+                        optionSelected %= stringOptions.Length;
+                        break;
+                    default:
+                        break;
+                }
+                //</after>
             } while (k != ConsoleKey.Enter);
 
-            return new PracticeTrueCountConversion(betterUI, random, onlyIntegers[indexOnlyIntegers] == "yes");
+            return new PracticeTrueCountConversion(betterUI, random, onlyIntegers[indexes[0]] == "yes");
         }
     }
 

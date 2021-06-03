@@ -31,12 +31,21 @@ namespace Blackjack
         {
             ConsoleKey k;
             int optionSelected = 0;
+
+            /*<before>
             int indexDealerHits = 0;
             int indexSurrender = 0;
             int indexDouble = 0;
             int indexDAS = 0;
+            </before>*/
+
+            //<after>
+            string[][] displayedOptions = new string[][] { dealerHitsSoft17, allowSurrender, allowDouble, allowDAS };
+            int[] indexes = { 0, 0, 0, 0 };
+            //</after>
 
             //initial display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -76,11 +85,17 @@ namespace Blackjack
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your practice or press enter to move on", stringOptions, displayedOptions, indexes, null, optionSelected, 3, ConsoleColor.DarkGray, true);
+            //</after>
 
             //reads user's inputs
             do
             {
                 k = Console.ReadKey(true).Key;
+
+                /*<before>
                 switch (k)
                 {
                     case ConsoleKey.LeftArrow:
@@ -180,13 +195,31 @@ namespace Blackjack
                 }
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
+                </before>*/
+                //<after>
+                indexes = betterUI.GetUserIntArrayInput("Use arrows to customize your practice or press enter to move on", stringOptions, displayedOptions, indexes, null, k, optionSelected, 3, ConsoleColor.DarkGray);
+
+                switch (k)
+                {
+                    case ConsoleKey.UpArrow:
+                        optionSelected--;
+                        optionSelected = optionSelected < 0 ? optionSelected += stringOptions.Length : optionSelected;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        optionSelected++;
+                        optionSelected %= stringOptions.Length;
+                        break;
+                    default:
+                        break;
+                }
+                //</after>
             } while (k != ConsoleKey.Enter);
         
             return new PracticeBasicStrategy(betterUI, random,
-                dealerHitsSoft17[indexDealerHits] == "yes",
-                allowSurrender[indexSurrender] == "yes",
-                allowDouble[indexDouble] == "yes",
-                allowDAS[indexDAS] == "yes" && allowDouble[indexDouble] == "yes");
+                dealerHitsSoft17[indexes[0]] == "yes",
+                allowSurrender[indexes[1]] == "yes",
+                allowDouble[indexes[2]] == "yes",
+                allowDAS[indexes[3]] == "yes" && allowDouble[indexes[2]] == "yes");
         }
     }
 }

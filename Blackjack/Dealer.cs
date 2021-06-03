@@ -135,6 +135,7 @@ namespace Blackjack
             //part of a <Card Factory pattern>
             //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
 
+            /*<before>
             CardCreator[] creators = new CardCreator[] {
                 new CardTwoCreator("2"),
                 new CardThreeCreator("3"),
@@ -150,6 +151,11 @@ namespace Blackjack
                 new CardKingCreator("Q"),
                 new CardAceCreator("A", false),
             };
+            </before>*/
+            //<after>
+            CardCreator creator = new CardCreator();
+            string[] names = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+            //</after>
 
             for (int i = 0; i < deckAmount; i++)
             {
@@ -184,7 +190,7 @@ namespace Blackjack
 
                     for (int k = 0; k < 13; k++)
                     {
-                        shoe[i * 52 + j * 13 + k] = creators[k].CreateCard(suit, color, consoleColor);
+                        shoe[i * 52 + j * 13 + k] = creator.CreateCard(names[k], suit, color, consoleColor);
                     }
                 }
             }
@@ -204,14 +210,17 @@ namespace Blackjack
             Card temp;
             int index;
 
-            for (int i = 0; i < deckAmount*52; i++)
+            //<Fisher-YatesShuffle>. Unbiased
+            //PREVZATO Z https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+            for (int i = deckAmount * 52 - 1; i > 0; i--)
             {
-                index = random.Next(deckAmount*52);
+                index = random.Next(i);
 
                 temp = shoe[i];
                 shoe[i] = shoe[index];
                 shoe[index] = temp;
             }
+            //</Fisher-YatesShuffle>
 
             cardToDeal = 0;
         }
