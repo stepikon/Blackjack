@@ -7,8 +7,9 @@ namespace Blackjack
     //part of a <Factory pattern>
     //STRUKTURU FACTORY PATTERNU JSEM PREVZAL Z https://www.dofactory.com/net/factory-method-design-pattern
 
-    class EVSimulationCreator : GameModeCreator
+    class EVSimulationCreator : SimulationCreator
     {
+        /*<before>
         string[] stringOptions = new string[] {
         "Number of decks: ",
         "Dealer hits soft 17: ",
@@ -29,6 +30,7 @@ namespace Blackjack
         int[] numberOfAIs = new int[] { 1, 2, 3, 4, 5, 6, 7 };
         string[] isVisible = new string[] { "yes", "no" };
         string[] AILeaves = new string[] { "yes", "no" };
+        </before>*/
 
         public EVSimulationCreator(BetterUI betterUI, Random random)
             : base(betterUI, random)
@@ -40,6 +42,12 @@ namespace Blackjack
         {
             ConsoleKey k;
             int optionSelected = 0;
+            int tableMin;
+            int tableMax;
+            int handsPerCycle;
+            int repetitions;
+
+            /*<before>
             int indexNumberOfDecks = 0;
             int indexDealerHits = 0;
             int indexSurrender = 0;
@@ -49,12 +57,15 @@ namespace Blackjack
             int indexNumberOfAIs = 0;
             int indexIsVisible = 0;
             int indexAILeaves = 0;
-            int tableMin;
-            int tableMax;
-            int handsPerCycle;
-            int repetitions;
+            </before>*/
+
+            //<after>
+            string[][] displayedOptions = new string[][] { numberOfDecks, dealerHitsSoft17, allowSurrender, allowDAS, allowResplit, allowResplitAces, numberOfAIs, isVisible, AILeaves };
+            int[] indexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            //</after>
 
             //initial display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -117,11 +128,17 @@ namespace Blackjack
             Console.WriteLine(new String('=', 10));
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your simulation or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: ", "Hands per cycle (# hands played per 1 repetition): ", "Repetitions: " }, optionSelected, 5, ConsoleColor.DarkGray, true);
+            //</after>
 
             //reads user's inputs
             do
             {
                 k = Console.ReadKey(true).Key;
+
+                /*<before>
                 switch (k)
                 {
                     case ConsoleKey.LeftArrow:
@@ -281,9 +298,28 @@ namespace Blackjack
                 Console.WriteLine(new String('=', 10));
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
+                </before>*/
+                //<after>
+                indexes = betterUI.GetUserIntArrayInput("Use arrows to customize your simulation or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: ", "Hands per cycle (# hands played per 1 repetition): ", "Repetitions: " }, k, optionSelected, 5, ConsoleColor.DarkGray);
+
+                switch (k)
+                {
+                    case ConsoleKey.UpArrow:
+                        optionSelected--;
+                        optionSelected = optionSelected < 0 ? optionSelected += stringOptions.Length : optionSelected;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        optionSelected++;
+                        optionSelected %= stringOptions.Length;
+                        break;
+                    default:
+                        break;
+                }
+                //</after>
             } while (k != ConsoleKey.Enter);
 
             //Final Display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -335,7 +371,13 @@ namespace Blackjack
             Console.WriteLine(new String('=', 10));
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your simulation or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: ", "Hands per cycle (# hands played per 1 repetition): ", "Repetitions: " }, optionSelected, 5, ConsoleColor.White, false);
+            //</after>
 
+
+            /*<before>
             //table minimum
             do
             {
@@ -367,8 +409,21 @@ namespace Blackjack
                 Console.Write(new String(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 18);
             } while (!(int.TryParse(Console.ReadLine(), out repetitions) && repetitions > 0));
+            </before>*/
+
+            //<after>
+            //table minimum
+            tableMin = betterUI.GetIntInput(12, 1);
+            //table maximum
+            tableMax = betterUI.GetIntInput(14, tableMin);
+            //hands per cycle
+            handsPerCycle = betterUI.GetIntInput(16, 1);
+            //repetitions
+            repetitions = betterUI.GetIntInput(18, 1);
+            //</after>
 
             //players and AIs construction
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
@@ -419,6 +474,68 @@ namespace Blackjack
                 names, chips, allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes",
                 allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes", betUnits, betSpreadMultipliers, false
                 );
+            </before>*/
+
+            //<after>
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+            Player[] players = new Player[7];            
+            Tuple<int, int> tableLimits = new Tuple<int, int>(tableMin, tableMax);
+
+            /*<before>
+            string[] names = new string[7];
+            int[] chips = new int[7];
+            int[] betUnits = new int[7];
+            int[] betSpreadMultipliers = new int[7];
+            </before>*/
+
+            /*<before>
+            for (int i = 0; i < int.Parse(numberOfAIs[indexes[6]]); i++)
+            {
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s name (1-25 characters)", i + 1);
+                    names[i] = Console.ReadLine();
+                } while (names[i].Length > 25 || names[i].Length < 1);
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s chips", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0));
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s bet unit. Value must fall within the table limits.", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out betUnits[i]) && betUnits[i] >= tableLimits.Item1 && betUnits[i] <= tableLimits.Item2));
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s bet spread multiplier \n" +
+                        "(bet spread will be 6*multiplier). Expecting integer from <1;5>", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out betSpreadMultipliers[i]) && betSpreadMultipliers[i] >= 1 && betSpreadMultipliers[i] <= 5));
+
+                betterUI.ClearAll();
+            }
+            </before>*/
+            //<after>
+            DoSpecifyAIsAlgorithm(int.Parse(numberOfAIs[indexes[6]]), tableLimits);
+            //</after>
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            return new EVSimulation(
+                new Dealer("Dealer", new List<Card>(), betterUI, int.Parse(numberOfDecks[indexes[0]]), random, dealerHitsSoft17[indexes[1]] == "yes", false, isVisible[indexes[7]] == "yes"),
+                tableLimits,
+                players,
+                random,
+                betterUI,
+                int.Parse(numberOfAIs[indexes[6]]), handsPerCycle, repetitions, new List<double>[int.Parse(numberOfAIs[indexes[6]])], isVisible[indexes[7]] == "yes", AILeaves[indexes[8]] == "yes",
+                names, chips, allowSurrender[indexes[2]] == "yes", allowDAS[indexes[3]] == "yes",
+                allowResplit[indexes[4]] == "yes", allowResplit[indexes[4]] == "yes" && allowResplitAces[indexes[5]] == "yes", betUnits, betSpreadMultipliers, false
+                );
+            //</after>
         }
     }
 

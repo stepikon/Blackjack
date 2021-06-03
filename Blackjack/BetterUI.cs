@@ -306,6 +306,61 @@ namespace Blackjack
         }
 
 
+        public void DisplayMenu(string prompt, string[] stringOptions, string[][] displayedOptions, int[] indexes, string[] grayPrompts, int optionSelected, int conditionIndex, ConsoleColor promptsColor, bool showSelected)
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            ClearAll();
+            Console.WriteLine(prompt);
+            for (int i = 0; i < stringOptions.Length; i++)
+            {
+                if (i == optionSelected && showSelected)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                if (conditionIndex > 0 && conditionIndex < stringOptions.Length && i == conditionIndex)
+                {
+                    Console.WriteLine(stringOptions[i] + "<{0}>", displayedOptions[i][Math.Max(indexes[i - 1], indexes[i])]);
+                }
+                else
+                {
+                    Console.WriteLine(stringOptions[i] + "<{0}>", displayedOptions[i][indexes[i]]);
+                }
+
+            }
+            if (grayPrompts != null)
+            {
+                DisplayPrompts(grayPrompts, promptsColor);
+            }
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+
+        public void DisplayPrompts(string[] grayPrompts, ConsoleColor color)
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = color;
+            Console.WriteLine(new String('=', 10));
+            for (int i = 0; i < grayPrompts.Length; i++)
+            {
+                Console.WriteLine(grayPrompts[i]);
+                Console.WriteLine();
+            }
+            Console.WriteLine(new String('=', 10));
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+
         //CLEAR METHODS
         public void ClearDealerStatus(Dealer dealer)
         {
@@ -444,6 +499,36 @@ namespace Blackjack
         }
 
 
+        public int GetIntInput(int cursorTop, int minimum)
+        {
+            int output;
+
+            do
+            {
+                Console.SetCursorPosition(0, cursorTop);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, cursorTop);
+            } while (!(int.TryParse(Console.ReadLine(), out output) && output >= minimum));
+
+            return output;
+        }
+
+
+        public int GetIntInput(int cursorTop, int maximum, int minimum)
+        {
+            int output;
+
+            do
+            {
+                Console.SetCursorPosition(0, cursorTop);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, cursorTop);
+            } while (!(int.TryParse(Console.ReadLine(), out output) && output >= minimum && output <= maximum));
+
+            return output;
+        }
+
+
         //reads user int input, multiple prompts
         public int GetIntInput(string[] prompts)
         {
@@ -474,6 +559,22 @@ namespace Blackjack
             } while (!int.TryParse(input, out i));
 
             return i;
+        }
+
+
+        public string GetStringInput(int cursorTop, int maxLength, int minLength)
+        {
+            string output;
+
+            do
+            {
+                Console.SetCursorPosition(0, cursorTop);
+                Console.Write(new String(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, cursorTop);
+                output = Console.ReadLine();
+            } while (output.Length > maxLength || output.Length < minLength);
+
+            return output;
         }
 
 
@@ -856,6 +957,46 @@ namespace Blackjack
                 Console.WriteLine("New window size is too small");
                 return false;
             }
+        }
+
+
+        
+        public int[] GetUserIntArrayInput(string prompt, string[] stringOptions, string[][] displayedOptions, int[] indexes, string[] grayPrompts,
+            ConsoleKey k, int optionSelected, int conditionIndex, ConsoleColor promptsColor)
+        {
+            optionSelected %= stringOptions.Length;
+
+            switch (k)
+            {
+                case ConsoleKey.LeftArrow:
+                    indexes[optionSelected]--;
+                    indexes[optionSelected] = indexes[optionSelected] < 0 ? indexes[optionSelected] + displayedOptions[optionSelected].Length : indexes[optionSelected];
+                    break;
+                case ConsoleKey.UpArrow:
+                    optionSelected--;
+                    optionSelected = optionSelected < 0 ? optionSelected += stringOptions.Length : optionSelected;
+                    break;
+                case ConsoleKey.RightArrow:
+                    indexes[optionSelected]++;
+                    indexes[optionSelected] %= displayedOptions[optionSelected].Length;
+                    break;
+                case ConsoleKey.DownArrow:
+                    optionSelected++;
+                    optionSelected %= stringOptions.Length;
+                    break;
+                default:
+                    break;
+            }
+
+            if (conditionIndex > 0 && conditionIndex < stringOptions.Length)
+            {
+                indexes[conditionIndex] = Math.Max(indexes[conditionIndex - 1], indexes[conditionIndex]);
+            }
+
+            //Display
+            DisplayMenu(prompt, stringOptions, displayedOptions, indexes, grayPrompts, optionSelected, conditionIndex, promptsColor, true);
+
+            return indexes;
         }
     }
 }

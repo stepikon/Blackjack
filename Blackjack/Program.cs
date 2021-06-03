@@ -29,7 +29,6 @@ namespace Blackjack
             {           
                 gm.SetGamemode(ChooseGamemode(betterUI, random));
                 gm.Run();
-
             } while (!(gm.GetGamemode() is Quit));
 
             //</Strategy pattern>

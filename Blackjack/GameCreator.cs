@@ -9,7 +9,7 @@ namespace Blackjack
 
     class GameCreator : GameModeCreator
     {
-        string[] stringOptions = new string[] { 
+        string[] stringOptions = new string[] {
         "Number of decks: ",
         "Dealer hits soft 17: ",
         "Allow surrender: ",
@@ -20,6 +20,7 @@ namespace Blackjack
         "Number of human players: ",
         "Number of AIs: "};
 
+        /*<before>
         int[] numberOfDecks = new int[] { 4, 5, 6, 7, 8 };
         string[] dealerHitsSoft17 = new string[] { "yes", "no" };
         string[] allowSurrender = new string[] { "yes", "no" };
@@ -29,6 +30,19 @@ namespace Blackjack
         string[] waiting = new string[] { "yes", "no" };
         int[] numberOfPlayers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
         int[] numberOfAIs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+        </before>*/
+
+        //<after>
+        string[] numberOfDecks = new string[] { "4", "5", "6", "7", "8" };
+        string[] dealerHitsSoft17 = new string[] { "yes", "no" };
+        string[] allowSurrender = new string[] { "yes", "no" };
+        string[] allowDAS = new string[] { "yes", "no" };
+        string[] allowResplit = new string[] { "yes", "no" };
+        string[] allowResplitAces = new string[] { "yes", "no" };
+        string[] waiting = new string[] { "yes", "no" };
+        string[] numberOfPlayers = new string[] { "0", "1", "2", "3", "4", "5", "6", "7" };
+        string[] numberOfAIs = new string[] { "0", "1", "2", "3", "4", "5", "6", "7" };
+        //</after>
 
         bool practice; //sets up a normal or a practice game
 
@@ -43,6 +57,10 @@ namespace Blackjack
         {
             ConsoleKey k;
             int optionSelected = 0;
+            int tableMin;
+            int tableMax;
+
+            /*<before>
             int indexNumberOfDecks = 0;
             int indexDealerHits = 0;
             int indexSurrender = 0;
@@ -52,10 +70,15 @@ namespace Blackjack
             int indexWaiting = 0;
             int indexNumberOfPlayers = 0;
             int indexNumberOfAIs = 0;
-            int tableMin;
-            int tableMax;
+            </before>*/
+
+            //<after>
+            string[][] displayedOptions = new string[][] { numberOfDecks, dealerHitsSoft17, allowSurrender, allowDAS, allowResplit, allowResplitAces, waiting, numberOfPlayers, numberOfAIs };
+            int[] indexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            //</after>
 
             //initial display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -117,11 +140,17 @@ namespace Blackjack
             Console.WriteLine(new String('=', 10));
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your game or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: " }, optionSelected, 5, ConsoleColor.DarkGray, true);
+            //</after>
 
             //reads user's inputs
             do
             {
                 k = Console.ReadKey(true).Key;
+
+                /*<before>
                 switch (k)
                 {
                     case ConsoleKey.LeftArrow:
@@ -284,9 +313,28 @@ namespace Blackjack
                 Console.WriteLine(new String('=', 10));
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
-            } while (k != ConsoleKey.Enter || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] == 0 || numberOfPlayers[indexNumberOfPlayers] + numberOfAIs[indexNumberOfAIs] > 7);
+                </before>*/
+                //<after>
+                indexes = betterUI.GetUserIntArrayInput("Use arrows to customize your game or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: " }, k, optionSelected, 5, ConsoleColor.DarkGray);
+                
+                switch (k)
+                {                   
+                    case ConsoleKey.UpArrow:
+                        optionSelected--;
+                        optionSelected = optionSelected < 0 ? optionSelected += stringOptions.Length : optionSelected;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        optionSelected++;
+                        optionSelected %= stringOptions.Length;
+                        break;                    
+                    default:
+                        break;
+                }
+                //</after>
+            } while (k != ConsoleKey.Enter || int.Parse(numberOfPlayers[indexes[7]]) + int.Parse(numberOfAIs[indexes[8]]) == 0 || int.Parse(numberOfPlayers[indexes[7]]) + int.Parse(numberOfAIs[indexes[8]]) > 7);
 
             //Final Display
+            /*<before>
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             betterUI.ClearAll();
@@ -337,7 +385,12 @@ namespace Blackjack
             Console.WriteLine(new String('=', 10));
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
+            </before>*/
+            //<after>
+            betterUI.DisplayMenu("Use arrows to customize your game or press enter to move on", stringOptions, displayedOptions, indexes, new string[] { "Table minimum: ", "Table maximum: " }, optionSelected, 5, ConsoleColor.White, false);
+            //</after>
 
+            /*<before>
             //table minimum
             do
             {
@@ -353,7 +406,16 @@ namespace Blackjack
                 Console.Write(new String(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 14);
             } while (!(int.TryParse(Console.ReadLine(), out tableMax) && tableMax >= tableMin));
+            </before>*/
 
+            //<after>
+            //table minimum
+            tableMin = betterUI.GetIntInput(12, 1);
+            //table maximum
+            tableMax = betterUI.GetIntInput(14, tableMin);
+            //</after>
+
+             /*<before>
             //players and AIs construction
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
@@ -363,7 +425,7 @@ namespace Blackjack
             int[] chips = new int[7];
             Tuple<int, int> tableLimits = new Tuple<int, int>(tableMin, tableMax);
 
-            for (int i = 0; i < numberOfPlayers[indexNumberOfPlayers]; i++)
+            for (int i = 0; i < (numberOfPlayers[indexNumberOfPlayers]); i++)
             {                
                 do
                 {
@@ -397,7 +459,7 @@ namespace Blackjack
 
             for (int i = 0; i < 7; i++)
             {
-                if (i<numberOfPlayers[indexNumberOfPlayers])
+                if (i < numberOfPlayers[indexNumberOfPlayers])
                 {
                     players[i] = new HumanPlayer(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
                         allowSurrender[indexSurrender] == "yes", allowDAS[indexDAS] == "yes", allowResplit[indexResplit] == "yes", allowResplit[indexResplit] == "yes" && allowResplitAces[indexResplitAces] == "yes", practice);
@@ -420,6 +482,76 @@ namespace Blackjack
                 random,
                 betterUI,
                 practice);
+            </before>*/
+
+            //<after>
+            //players and AIs construction
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+            Player[] players = new Player[7];
+            string[] names = new string[7];
+            int[] chips = new int[7];
+            Tuple<int, int> tableLimits = new Tuple<int, int>(tableMin, tableMax);
+
+            for (int i = 0; i < int.Parse(numberOfPlayers[indexes[7]]); i++)
+            {
+                do
+                {
+                    Console.WriteLine("Enter player {0}'s name (1-25 characters)", i + 1);
+                    names[i] = Console.ReadLine();
+                } while (names[i].Length > 25 || names[i].Length < 1);
+
+                do
+                {
+                    Console.WriteLine("Enter player {0}'s chips", i + 1);
+                } while (!(int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0));
+
+                betterUI.ClearAll();
+            }
+
+            for (int i = int.Parse(numberOfPlayers[indexes[7]]); i < int.Parse(numberOfPlayers[indexes[7]]) + int.Parse(numberOfAIs[indexes[8]]); i++)
+            {
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s name (1-25 characters)", i + 1 - int.Parse(numberOfPlayers[indexes[7]]));
+                    names[i] = Console.ReadLine();
+                } while (names[i].Length > 25 || names[i].Length < 1);
+
+                do
+                {
+                    Console.WriteLine("Enter AI{0}'s chips", i + 1 - int.Parse(numberOfPlayers[indexes[7]]));
+                } while (!(int.TryParse(Console.ReadLine(), out chips[i]) && chips[i] >= 0));
+
+                betterUI.ClearAll();
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                if (i < int.Parse(numberOfPlayers[indexes[7]]))
+                {
+                    players[i] = new HumanPlayer(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
+                        allowSurrender[indexes[2]] == "yes", allowDAS[indexes[3]] == "yes", allowResplit[indexes[4]] == "yes", allowResplit[indexes[4]] == "yes" && allowResplitAces[indexes[5]] == "yes", practice);
+                }
+                else if (i < int.Parse(numberOfPlayers[indexes[7]]) + int.Parse(numberOfAIs[indexes[8]]))
+                {
+                    players[i] = new CardCountingAI(names[i], new List<Card>(), betterUI, chips[i], tableLimits,
+                        allowSurrender[indexes[2]] == "yes", allowDAS[indexes[3]] == "yes", allowResplit[indexes[4]] == "yes", allowResplit[indexes[4]] == "yes" && allowResplitAces[indexes[5]] == "yes",
+                        Math.Max(tableMin, chips[i] / 1000), 2, waiting[indexes[6]] == "yes");
+                }
+            }
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            return new Game(
+                new Dealer("Dealer", new List<Card>(), betterUI, int.Parse(numberOfDecks[indexes[0]]), random, dealerHitsSoft17[indexes[1]] == "yes", waiting[indexes[6]] == "yes"),
+                tableLimits,
+                players,
+                random,
+                betterUI,
+                practice);
+            //</after>
         }
     }
 
